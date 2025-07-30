@@ -1,0 +1,363 @@
+---
+author: "Northeast Coastal & Barrier Network (NCBN)"
+date: "JUN 25 2025"
+execute:
+  message: false
+  warning: false
+output: 
+  bookdown::html_document2:
+    toc: true
+    toc_float: true
+    fig_caption: true
+    number_sections: false
+    df_print: kable
+    theme: journal
+    css: journalnps.min.css
+    includes:
+        before_body:
+          - header.html
+
+params:
+  park_code: "ASIS"
+  park_name: "Assateague Island National Seashore"
+  front_photo_file: "ASIS_title_photo.jpg"
+  data_package_id: "2309427"
+  data_package_year: "2025"
+  data_package_pub_date: "20250409"
+  download_DP: FALSE
+  accepted_data: TRUE
+  no_double_reads: TRUE
+  exclude_cumul_noted: TRUE
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+options(dplyr.summarise.inform = FALSE)
+```
+
+```{css caption-hack, echo=FALSE, eval=TRUE}
+
+span.dummy-fig + div.figure > span {
+  display: none !important;
+}
+
+span.dummy-fig + div.figure > img {
+  display: none !important;
+}
+
+div.plotly {
+  margin-bottom: 0px !important;
+}
+```
+
+```{r packages, include=FALSE}
+library(tidyverse)
+library(kableExtra)
+library(leaflet)
+library(leaflet.extras)
+library(sf)
+library(SETrNCBN)
+library(english)
+library(bookdown)
+library(here)
+library(plotly)
+library(treemapify)
+library(data.table)
+library(DT)
+library(crosstalk)
+library(htmltools)
+library(sparkline)
+library(ggforce)
+```
+
+```{r source-scripts, include=FALSE}
+source(here::here("R", "SET_spatial.R"), echo = FALSE)
+source(here::here("R", "format_results.R"), echo = FALSE)
+```
+
+```{r define-inactive-sites-stations, include=FALSE}
+inactive_sites <- {
+  if (params$park_code == "ASIS")
+    c("Pine Tree Study")
+  else
+    NULL
+}
+
+inactive_stations <- {
+  if (params$park_code == "ASIS")
+    NULL
+  else
+    NULL
+}
+
+```
+
+```{r load-data, include=FALSE}
+# Download/Load data from the 2025 SET data package
+
+DP_url <- paste0("https://irma.nps.gov/DataStore/Reference/Profile/", params$data_package_id)
+
+if(params$download_DP == TRUE) {
+  raw_data <- SETrNCBN::load_set_data() # only needs to be run once to download the data package
+} else {
+  raw_data <- readr::read_csv(here::here("data", params$data_package_id, paste0("pin_data_" , params$data_package_pub_date, ".csv")))
+}
+
+data <- raw_data %>%
+  filter(park_code == params$park_code) %>%
+  {if (params$accepted_data)
+    filter(., dpl_label == "Accepted")} %>%
+  {if (params$no_double_reads)
+    filter(., observation_type == "Standard")} %>%
+  {if (params$exclude_cumul_noted)
+    filter(., is.na(exclude_cumul_reason))} %>%
+  mutate(.,
+         site_status = if_else(site_name %in% inactive_sites, "inactive", "active"),
+         station_status = if_else(site_name %in% inactive_sites | station_code %in% inactive_stations, "inactive", "active"))
+
+# Get monitoring years
+years <- data %>%
+  group_by(park_code) %>%
+  summarise(min_year = lubridate::year(min(event_date_UTC)),
+            max_year = lubridate::year(max(event_date_UTC))) %>%
+  mutate(years_string = paste(min_year, "-", max_year)) %>%
+  pull(years_string)
+```
+
+```{=html}
+<style>
+.vscroll-plot {
+    width: 1000px;
+    height: 400px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+</style>
+```
+
+---
+title: "Salt Marsh Elevation Monitoring at `r params$park_name`: `r years`"
+---
+
+```{r title-park-fig, echo=FALSE, fig.cap=paste0("Surface elevation table (SET) monitoring at ", params$park_name, "."), out.width = '100%'}
+knitr::include_graphics(paste0(here::here("images"), "/", params$front_photo_file))
+```
+
+# Background
+
+Coastal wetlands exist within a narrow range of elevation which is influenced by local hydrologic conditions. As sea level rises, coastal wetland systems must build elevation at a rate equal to or greater than the rate of sea-level rise to maintain favorable hydrologic conditions for their survival (Figure \@ref(fig:surface-elev-diagram)). With global rates of sea-level rise predicted to increase over the coming decades ([Church et al. 2010](#refs)), many more coastal wetlands may become vulnerable to increased inundation. Additionally, certain areas of the coast, such as the mid-Atlantic region, can undergo even greater sea-level rise due to changes in coastal ocean circulation ([Sallenger et al. 2012](#refs)).
+
+The Northeast Coastal & Barrier Inventory and Monitoring Network (NCBN) uses the SET-MH technique (surface elevation table-marker horizon) to monitor elevation change as a vital sign of salt marsh health at `r params$park_name`. In the following sections, we use these data to answer the following questions:
+
+1.  What are the elevation characteristics of coastal wetlands in `r params$park_name`? (Figure 2A; Results Section 1)
+
+2.  How do surface and subsurface processes control surface elevation change at `r params$park_name`? (Figure 2B; Results Section 2)
+
+3.  How do local wetland elevation dynamics relate to the local hydrology (e.g., local tidal datums)? (Figure 2C; Results Section 3)
+
+4.  Is elevation gain sufficient to keep pace with current and predicted sea level rise? (Figure 2D; Results Section 3)
+
+```{r surface-elev-diagram, echo=FALSE, fig.cap=paste("Conceptual diagram showing the relationship among wetland surface elevation (A), tidal datums (C), and their respective rates of change (B and D). Understanding these relationships is important for evaluating the sustainability of a wetland community to sea-level rise."), out.width = '100%'}
+
+knitr::include_graphics(paste0(here::here("images"), "/surface_elevation_diagram.jpg"))
+```
+
+# Methods
+
+### Protocols (Vital Signs)
+
+NCBN's long-term, standardized monitoring protocol for monitoring surface elevation change ([Lynch et al. 2015](#refs)) is implemented semiannually in the spring and fall at `r params$park_name`. Changes in surface elevation are measured using the SET-MH technique (surface elevation table (SET) – marker horizon (MH)):
+
+-   The SET is a portable mechanical leveling device providing repeated, high-resolution measurements of elevation change in wetland sediments or shallow water bottoms relative to the depth of a permanent benchmark that has been anchored into the soil until refusal. During measurements, the SET arm is attached to the permanent SET benchmark and extended over the marsh surface at four fixed positions. The SET arm is carefully leveled to rest horizontally to the ground, and each of nine fiberglass pins are lowered through the arm to the soil surface. The height of each pin above the arm is measured on repeated sampling events. Changes in the height of the pins between sampling events are used to quantify soil surface elevation change over time relative to the permanent benchmark.
+
+-   Marker horizons are artificial soil layers (e.g., feldspar) established on the surface of wetland or shallow water bottoms to measure subsequent surface sediment accretion. Cores are taken with a soil corer from the soil surface to this layer on repeated sampling events, and the thickness of the sediment accumulated above the layer is measured as vertical accretion.
+
+### Sample Size
+
+```{r sample-size, include=FALSE}
+active_site_count <- data %>% # count of regularly monitored, active sites (excludes experimental sites)
+  filter(site_status == "active") %>%
+  group_by(park_code) %>%
+  summarise(site_count = n_distinct(site_name)) %>%
+  pull(site_count)
+
+{if (params$park_code == "ASIS")
+  extra_sample_size_text1 <- paste("A fifth site, Pine Tree, was monitored between 2016 to 2022 as part of a pilot effort to compare rates of surface elevation change derived from SETs to rates derived by other elevation measurement methods (Lynch et al. 2024).")
+  else
+    extra_sample_size_text1 <- ""}
+```
+
+Surface elevation change is actively monitored at `r as.character(english::english(active_site_count))` site`r if (active_site_count > 1){'s'}` within `r params$park_name` (Figure \@ref(fig:station-map)). `r extra_sample_size_text1` Additional details on the status of each site, the number of replicate SET-MH stations at each site, and the dates of the initial and most recent measurements are shown in Table \@ref(tab:site-info-tbl) below.
+
+All data utilized in this report are available for public use and can be downloaded from the NPS [DataStore](%60r%20DP_url%60).
+
+```{r site-info-tbl, echo=FALSE, message=FALSE, warning=FALSE, layout="l-body-outset"}
+data %>%
+  group_by(network_code, park_code, park_name, site_name) %>%
+  summarise(station_count = n_distinct(station_code),
+            first_year = lubridate::year(min(event_date_UTC)),
+            last_year = lubridate::year(max(event_date_UTC)),
+            site_status = unique(site_status)) %>%
+  ungroup() %>%
+  select("Site" = site_name, "SET-MH station count" = station_count, "First reading" = first_year, "Most recent reading" = last_year, "Status" = site_status) %>%
+  kable(booktabs = T, label = NA, caption = paste0("Surface elevation table sites monitored by NCBN within ", params$park_name, ".")) %>%
+  kable_styling()
+```
+
+```{r station-map, out.width = '100%', echo=FALSE, fig.cap=paste0("Individual SET stations within ", params$park_name, ". Click on the points to see the site and station labels."), message=FALSE, warning=FALSE}
+
+map_SETs(data)
+```
+
+# Results
+
+### 1. What are the elevation characteristics of coastal wetlands at `r params$park_name`?
+
+```{r include=FALSE}
+park_set_rate <- data %>%
+  group_by(site_status) %>% # group site status to maintain the site_status column when using 'calc_linear_rates' 
+  NPSETr::calc_linear_rates(., level = "site") %>%
+  ungroup() %>%
+  mutate(site_set_rate_text = paste0(format_result_vals(rate), " ± ", format_result_vals(rate_se), " mm/yr")) %>%
+  {assign("site_set_rates", ., envir = .GlobalEnv); . } %>% # assign site rates to separate data frame for future use
+  {if (params$park_code %in% c("ASIS"))
+    filter(., site_status == "active")} %>% # leave inactive sites out of calculate of park-level SET rate
+  group_by(network_code, park_code) %>%
+  summarise(park_set_rate = mean(rate, na.rm = TRUE),
+            park_set_rate_se = sd(rate, na.rm = TRUE)/sqrt(sum(!is.na(rate)))) %>%
+  mutate(park_set_rate_text = paste0(format_result_vals(park_set_rate), " ± ", format_result_vals(park_set_rate_se), " mm/yr")) %>%
+  ungroup()
+```
+
+Across all `r as.character(english::english(active_site_count))` actively monitored sites at `r params$park_name`, the park-wide average rate of surface elevation change was **`r park_set_rate$park_set_rate_text`**. Site-level rates of surface elevation change varied from a low of `r site_set_rates %>% slice_min(rate) %>% pull(site_set_rate_text)` at `r site_set_rates %>% slice_min(rate) %>% pull(site_name)` to a high of `r site_set_rates %>% slice_max(rate) %>% pull(site_set_rate_text)` at `r site_set_rates %>% slice_max(rate) %>% pull(site_name)` (Table \@ref(tab:site-elev-rates-tbl); Figure \@ref(fig:site-sets-fig)).
+
+```{r site-elev-rates-tbl, echo=FALSE, message=FALSE, warning=FALSE, layout="l-body-outset"}
+site_set_rates %>%
+  mutate(site_set_rate_text_tbl = paste0(format_result_vals(rate), " ± ", format_result_vals(rate_se), format_pval(rate_p, output_type = "stars2")),
+         adj_r2 = format_result_vals(rate_r2),
+         first_year = map_chr(data, function(x) as.character(lubridate::year(min(x$event_date_UTC)))),
+         last_year = map_chr(data, function(x) as.character(lubridate::year(max(x$event_date_UTC)))),
+         date_range = paste0(first_year, "-", last_year)) %>%
+  ungroup() %>%
+  select(site_name, site_set_rate_text_tbl, adj_r2, date_range) %>%  
+  kable(booktabs = T, label = NA, caption = paste0("Site-level rates of surface elevation change within ", params$park_name, ". Symbols next to surface elevation change rates denote the model p-value, where * indicates the rate is significantly different from 0, and · indicates the rate is not significantly different from 0."), col.names = c("Site", "Rate of surface elevation change (mm/yr)", "Adjusted *r*^2^", "Date range"), format = "markdown") %>%
+  kable_styling() 
+```
+
+```{r site-sets-fig, echo=FALSE, fig.cap=paste0("Site-level surface elevation change at ", params$park_name, ". Rates of surface elevation change (SEC) are shown in panel labels. Hover the mouse over a data point to see the cumulative surface elevation change value on a specific date, or click and drag over a specific time to zoom in. Double click to zoom back out"), message=FALSE, warning=FALSE, out.width='100%'}
+#NPSETr::plot_cumu(SET_data = data, level = "site", rate_type = "linear", columns = 3)
+
+site_set_cumu <- site_set_rates %>%
+  unnest(cols = c(data))
+
+labels <- site_set_rates %>%
+  ungroup() %>%
+  select(site_name, rate) %>%
+  mutate(label = paste0(site_name, "<br>", "SEC Rate: ", format_result_vals(rate), " mm/yr")) %>%
+  pull(label, name = site_name)
+
+
+p <- ggplot(data = site_set_cumu, aes(x = event_date_UTC, y = mean_cumu)) +
+    geom_smooth(method = "lm", formula = y ~ x, fullrange = TRUE, se = FALSE) +
+    geom_point(aes(text = paste("Date:", format(event_date_UTC, "%m/%d/%Y"), "<br>", "SEC:", format(round(mean_cumu, 2), nsmall = 2), "mm"))) +
+    facet_wrap(~site_name, labeller=as_labeller(labels)) +
+    labs(subtitle = "Marsh Surface elevation change") +
+    scale_x_date(date_labels = "%Y") +
+    scale_y_continuous(name = "Surface elevation change (mm)") +
+    theme(
+      axis.title.y = element_blank()
+    )
+
+text = list(
+  bgcolor = "red",
+  bordercolor = "transparent",
+  font = list(color = "white")
+)
+
+ggplotly(p, tooltip = "text") %>%
+   style(hoverlabel = text) 
+```
+
+### 2. How do surface and subsurface processes control surface elevation change at `r params$park_name`?
+
+```{r message=FALSE, warning=FALSE, include=FALSE}
+
+acc_data <- readr::read_csv(here::here("data", params$data_package_id, paste0("marker_horizon_data_" , params$data_package_pub_date, ".csv"))) %>%
+  filter(park_code == params$park_code) %>%
+  {if (params$accepted_data)
+    filter(., dpl == "Accepted")} %>%
+  mutate(.,
+         site_status = if_else(site_name %in% inactive_sites, "inactive", "active"),
+         station_status = if_else(site_name %in% inactive_sites | station_code %in% inactive_stations, "inactive", "active"))
+
+park_acc_rate <- acc_data %>%
+  group_by(site_status) %>% # group site status to maintain the site_status column when using 'calc_linear_rates' 
+  NPSETr::calc_linear_rates(., level = "site") %>%
+  ungroup() %>%
+  mutate(site_acc_rate_text = paste0(format_result_vals(rate), " ± ", format_result_vals(rate_se), " mm/yr")) %>%
+  {assign("site_acc_rates", ., envir = .GlobalEnv); . } %>% # assign site rates to separate data frame for future use
+  {if (params$park_code %in% c("ASIS"))
+    filter(., site_status == "active")} %>% # leave inactive sites out of calculate of park-level SET rate
+  group_by(network_code, park_code) %>%
+  summarise(park_acc_rate = mean(rate, na.rm = TRUE),
+            park_acc_rate_se = sd(rate, na.rm = TRUE)/sqrt(sum(!is.na(rate)))) %>%
+  mutate(park_acc_rate_text = paste0(format_result_vals(park_acc_rate), " ± ", format_result_vals(park_acc_rate_se), " mm/yr")) %>%
+  ungroup()
+
+park_sub_rate <- site_set_rates %>%
+  select(network_code, park_code, site_name, rate, rate_p) %>%
+  left_join(., site_acc_rates %>% 
+              select(site_name, rate, rate_p), 
+            by = c("site_name"), 
+            suffix = c("_set", "_acc")) %>%
+  mutate(rate_sub = rate_set - rate_acc,
+         across(-c(network_code, park_code, site_name, rate_p_set, rate_p_acc), 
+                ~if_else(!is.na(.x), format(round(.x, 2), nsmall = 2), "NA"),
+                .names = "{.col}_chr")) %>%
+  mutate(across(c(rate_p_set, rate_p_acc), ~if_else(!is.na(.x), format_pval(.x, output_type = "stars2"), ""))) %>%
+  mutate(rate_set_text = paste0(rate_set_chr, rate_p_set),
+         rate_acc_text = paste0(rate_acc_chr, rate_p_acc)) %>%
+  {assign("site_sub_rates", ., envir = .GlobalEnv); . } %>% # assign site rates to separate data frame for future use
+  group_by(network_code, park_code) %>%
+  summarise(park_sub_rate = mean(rate_sub, na.rm = TRUE),
+            park_sub_rate_se = sd(rate_sub, na.rm = TRUE)/sqrt(sum(!is.na(rate_sub))),
+            park_sub_rate_text = paste(format_result_vals(park_sub_rate), "±", format_result_vals(park_sub_rate_se), "mm/yr")) 
+```
+
+Across all `r as.character(english::english(active_site_count))` actively monitored sites at `r params$park_name`, the park-wide average rate of vertical accretion was **`r park_acc_rate$park_acc_rate_text`**. Site-level rates of vertical accretion varied from a low of `r site_acc_rates %>% slice_min(rate) %>% pull(site_acc_rate_text)` at `r site_acc_rates %>% slice_min(rate) %>% pull(site_name)` to a high of `r site_acc_rates %>% slice_max(rate) %>% pull(site_acc_rate_text)` at `r site_acc_rates %>% slice_max(rate) %>% pull(site_name)` (Table \@ref(tab:site-acc-rates-tbl); Figure ). 
+
+The park-wide average rate of subsurface elevation change was **`r park_sub_rate$park_sub_rate_text`**. Site-level rates of subsurface elevation change varied from a low of `r site_sub_rates %>% slice_min(rate_sub) %>% pull(rate_sub_chr)` at `r site_sub_rates %>% slice_min(rate_sub) %>% pull(site_name)` to a high of `r site_sub_rates %>% slice_max(rate_sub) %>% pull(rate_sub_chr)` at `r site_sub_rates %>% slice_max(rate_sub) %>% pull(site_name)` (Table \@ref(tab:site-acc-rates-tbl); Figure ).
+
+```{r site-acc-rates-tbl, echo=FALSE, message=FALSE, warning=FALSE, layout="l-body-outset"}
+site_sub_rates %>%
+  select(site_name, rate_set_text, rate_acc_text, rate_sub_chr) %>%
+  kable(booktabs = TRUE, label = NA, col.names = c("Site", "Rate of surface elevation change (mm/yr)", "Rate of vertical accretion (mm/yr)", "Subsurface elevation change (mm/yr)"), caption = paste0("Site-level rates of surface elevation change, vertical accretion, and subsurface elevation change within ", params$park_name, ". Subsurface elevation change represents the difference between surface elevation change and vertical accretion. Symbols next to surface elevation change and vertical accretion rates denote the model p-value, where * indicates the rate is significantly different from 0, and · indicates the rate is not significantly different from 0. \"NA\" indicates that vertical accretion was not measured at a specific site."), format = "markdown") %>%
+  kable_styling()
+```
+
+# References {#refs}
+
+| [Lynch, J.C., P. Hensel, and D.R. Cahoon. 2015. The surface elevation table and marker horizon technique: A protocol for monitoring wetland elevation dynamics. Natural Resource Report NPS/NCBN/NRR---2015/1078. National Park Service, Fort Collins, Colorado.](https://irma.nps.gov/DataStore/Reference/Profile/2225005)
+| 
+| [Church, J.A, P.L. Woodworth, T. Aarup, and W.S. Wilson. 2010. Understanding sea level rise and variability. Blackwell, New York, NY.](https://doi.org/10.1002/9781444323276)
+| 
+| [Lynch, J.C., N. Winn, K. Kovalenko, and G. Guntenspergen. 2024. Comparing wetland elevation change using a surface elevation table, digital level, and total station. Estuaries and Coasts, 47, 2071-2079.](https://doi.org/10.1007/s12237-023-01263-1)
+| 
+| [Ainsworth, A., Berkowitz, P., Jacobi, J.D., Loh, R.K., & Kozar, K. 2011. Focal Terrestrial Plant Communities Monitoring Protocol: Pacific Island Network. Natural Resource Report NPS/PACN/NRR---2011/410. National Park Service, Fort Collins, Colorado.](https://irma.nps.gov/DataStore/DownloadFile/429572)
+
+## Contact Information
+
+| Laura Feher, Biologist
+| Laura_Feher\@nps.gov
+| 
+| [Vital Signs: Northeastern Coastal & Barrier Inventory and Monitoring Network](https://www.nps.gov/im/ncbn/what-we-monitor.htm)
+| [Reports & Publications (U.S. National Park Service) (nps.gov)](https://www.nps.gov/im/ncbn/reports-publications-data.htm)
+
+```{js fix-filtering, echo=FALSE, message=FALSE, warning=FALSE}
+function filter_default(){
+  document.getElementById("show_all").style.display = "none";
+  document.getElementById("show_all").getElementsByClassName("selectized")[0].selectize.setValue("Select all", false);
+}
+    
+$(document).ready(filter_default);
+```

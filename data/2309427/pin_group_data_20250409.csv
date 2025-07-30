@@ -1,0 +1,307 @@
+"network_code","network_name","group_label","pin_position","pin_label","pin_material","pin_length_mm","pin_diameter_in","foot_present","foot_diameter_in","group_created_date","group_isretired"
+"NCBN","Northeast Coastal and Barrier Network","ASIS RSET 30"" pins",1,"ASIS1","Fiberglass",762,0.187,FALSE,0,2020-01-22,FALSE
+"NCBN","Northeast Coastal and Barrier Network","ASIS RSET 30"" pins",2,"ASIS2","Fiberglass",762,0.187,FALSE,0,2020-01-22,FALSE
+"NCBN","Northeast Coastal and Barrier Network","ASIS RSET 30"" pins",3,"ASIS3","Fiberglass",762,0.187,FALSE,0,2020-01-22,FALSE
+"NCBN","Northeast Coastal and Barrier Network","ASIS RSET 30"" pins",4,"ASIS4","Fiberglass",762,0.187,FALSE,0,2020-01-22,FALSE
+"NCBN","Northeast Coastal and Barrier Network","ASIS RSET 30"" pins",5,"ASIS5","Fiberglass",762,0.187,FALSE,0,2020-01-22,FALSE
+"NCBN","Northeast Coastal and Barrier Network","ASIS RSET 30"" pins",6,"ASIS6","Fiberglass",762,0.187,FALSE,0,2020-01-22,FALSE
+"NCBN","Northeast Coastal and Barrier Network","ASIS RSET 30"" pins",7,"ASIS7","Fiberglass",762,0.187,FALSE,0,2020-01-22,FALSE
+"NCBN","Northeast Coastal and Barrier Network","ASIS RSET 30"" pins",8,"ASIS8","Fiberglass",762,0.187,FALSE,0,2020-01-22,FALSE
+"NCBN","Northeast Coastal and Barrier Network","ASIS RSET 30"" pins",9,"ASIS9","Fiberglass",762,0.187,FALSE,0,2020-01-22,FALSE
+"NCBN","Northeast Coastal and Barrier Network","ASIS RSET 36"" pins",1,"ASIS1 36","Fiberglass",914,0.187,FALSE,0,2024-12-09,FALSE
+"NCBN","Northeast Coastal and Barrier Network","ASIS RSET 36"" pins",2,"ASIS2 36","Fiberglass",914,0.187,FALSE,0,2024-12-09,FALSE
+"NCBN","Northeast Coastal and Barrier Network","ASIS RSET 36"" pins",3,"ASIS3 36","Fiberglass",914,0.187,FALSE,0,2024-12-09,FALSE
+"NCBN","Northeast Coastal and Barrier Network","ASIS RSET 36"" pins",4,"ASIS4 36","Fiberglass",914,0.187,FALSE,0,2024-12-09,FALSE
+"NCBN","Northeast Coastal and Barrier Network","ASIS RSET 36"" pins",5,"ASIS5 36","Fiberglass",914,0.187,FALSE,0,2024-12-09,FALSE
+"NCBN","Northeast Coastal and Barrier Network","ASIS RSET 36"" pins",6,"ASIS6 36","Fiberglass",914,0.187,FALSE,0,2024-12-09,FALSE
+"NCBN","Northeast Coastal and Barrier Network","ASIS RSET 36"" pins",7,"ASIS7 36","Fiberglass",914,0.187,FALSE,0,2024-12-09,FALSE
+"NCBN","Northeast Coastal and Barrier Network","ASIS RSET 36"" pins",8,"ASIS8 36","Fiberglass",914,0.187,FALSE,0,2024-12-09,FALSE
+"NCBN","Northeast Coastal and Barrier Network","ASIS RSET 36"" pins",9,"ASIS9 36","Fiberglass",914,0.187,FALSE,0,2024-12-09,FALSE
+"NCBN","Northeast Coastal and Barrier Network","CACO RSET 30"" FG pins",1,"CACO1 RSET","Fiberglass",762,0.25,FALSE,0,2020-03-04,FALSE
+"NCBN","Northeast Coastal and Barrier Network","CACO RSET 30"" FG pins",2,"CACO2 RSET","Fiberglass",762,0.25,FALSE,0,2020-03-04,FALSE
+"NCBN","Northeast Coastal and Barrier Network","CACO RSET 30"" FG pins",3,"CACO3 RSET","Fiberglass",762,0.25,FALSE,0,2020-03-04,FALSE
+"NCBN","Northeast Coastal and Barrier Network","CACO RSET 30"" FG pins",4,"CACO4 RSET","Fiberglass",762,0.25,FALSE,0,2020-03-04,FALSE
+"NCBN","Northeast Coastal and Barrier Network","CACO RSET 30"" FG pins",5,"CACO5 RSET","Fiberglass",762,0.25,FALSE,0,2020-03-04,FALSE
+"NCBN","Northeast Coastal and Barrier Network","CACO RSET 30"" FG pins",6,"CACO6 RSET","Fiberglass",762,0.25,FALSE,0,2020-03-04,FALSE
+"NCBN","Northeast Coastal and Barrier Network","CACO RSET 30"" FG pins",7,"CACO7 RSET","Fiberglass",762,0.25,FALSE,0,2020-03-04,FALSE
+"NCBN","Northeast Coastal and Barrier Network","CACO RSET 30"" FG pins",8,"CACO8 RSET","Fiberglass",762,0.25,FALSE,0,2020-03-04,FALSE
+"NCBN","Northeast Coastal and Barrier Network","CACO RSET 30"" FG pins",9,"CACO9 RSET","Fiberglass",762,0.25,FALSE,0,2020-03-04,FALSE
+"NCBN","Northeast Coastal and Barrier Network","CACO SET 36"" brass pins - top of nut",1,"CACO1b","Brass",888,0.187,FALSE,0,2020-06-24,FALSE
+"NCBN","Northeast Coastal and Barrier Network","CACO SET 36"" brass pins - top of nut",2,"CACO2b","Brass",888,0.187,FALSE,0,2020-06-24,FALSE
+"NCBN","Northeast Coastal and Barrier Network","CACO SET 36"" brass pins - top of nut",3,"CACO3b","Brass",889,0.187,FALSE,0,2020-06-24,FALSE
+"NCBN","Northeast Coastal and Barrier Network","CACO SET 36"" brass pins - top of nut",4,"CACO4b","Brass",889,0.187,FALSE,0,2020-06-24,FALSE
+"NCBN","Northeast Coastal and Barrier Network","CACO SET 36"" brass pins - top of nut",5,"CACO5b","Brass",888,0.187,FALSE,0,2020-06-24,FALSE
+"NCBN","Northeast Coastal and Barrier Network","CACO SET 36"" brass pins - top of nut",6,"CACO6b","Brass",888,0.187,FALSE,0,2020-06-24,FALSE
+"NCBN","Northeast Coastal and Barrier Network","CACO SET 36"" brass pins - top of nut",7,"CACO7b","Brass",888,0.187,FALSE,0,2020-06-24,FALSE
+"NCBN","Northeast Coastal and Barrier Network","CACO SET 36"" brass pins - top of nut",8,"CACO8b","Brass",887,0.187,FALSE,0,2020-06-24,FALSE
+"NCBN","Northeast Coastal and Barrier Network","CACO SET 36"" brass pins - top of nut",9,"CACO9b","Brass",887,0.187,FALSE,0,2020-06-24,FALSE
+"NCBN","Northeast Coastal and Barrier Network","CACO SET 36"" FG pins - top of nut",1,"CACO1 SET - top of nut","Fiberglass",901,0.25,FALSE,0,2020-03-04,FALSE
+"NCBN","Northeast Coastal and Barrier Network","CACO SET 36"" FG pins - top of nut",2,"CACO2 SET - top of nut","Fiberglass",901,0.25,FALSE,0,2020-03-04,FALSE
+"NCBN","Northeast Coastal and Barrier Network","CACO SET 36"" FG pins - top of nut",3,"CACO3 SET - top of nut","Fiberglass",901,0.25,FALSE,0,2020-03-04,FALSE
+"NCBN","Northeast Coastal and Barrier Network","CACO SET 36"" FG pins - top of nut",4,"CACO4 SET - top of nut","Fiberglass",901,0.25,FALSE,0,2020-03-04,FALSE
+"NCBN","Northeast Coastal and Barrier Network","CACO SET 36"" FG pins - top of nut",5,"CACO5 SET - top of nut","Fiberglass",901,0.25,FALSE,0,2020-03-04,FALSE
+"NCBN","Northeast Coastal and Barrier Network","CACO SET 36"" FG pins - top of nut",6,"CACO6 SET - top of nut","Fiberglass",901,0.25,FALSE,0,2020-03-04,FALSE
+"NCBN","Northeast Coastal and Barrier Network","CACO SET 36"" FG pins - top of nut",7,"CACO7 SET - top of nut","Fiberglass",901,0.25,FALSE,0,2020-03-04,FALSE
+"NCBN","Northeast Coastal and Barrier Network","CACO SET 36"" FG pins - top of nut",8,"CACO8 SET - top of nut","Fiberglass",901,0.25,FALSE,0,2020-03-04,FALSE
+"NCBN","Northeast Coastal and Barrier Network","CACO SET 36"" FG pins - top of nut",9,"CACO9 SET - top of nut","Fiberglass",901,0.25,FALSE,0,2020-03-04,FALSE
+"NCBN","Northeast Coastal and Barrier Network","CACO SET 36"" FG pins - top of plate",1,"CACO1 SET - top of plate","Fiberglass",914,0.25,FALSE,0,2024-07-08,FALSE
+"NCBN","Northeast Coastal and Barrier Network","CACO SET 36"" FG pins - top of plate",2,"CACO2 SET - top of plate","Fiberglass",914,0.25,FALSE,0,2024-07-08,FALSE
+"NCBN","Northeast Coastal and Barrier Network","CACO SET 36"" FG pins - top of plate",3,"CACO3 SET - top of plate","Fiberglass",914,0.25,FALSE,0,2024-07-08,FALSE
+"NCBN","Northeast Coastal and Barrier Network","CACO SET 36"" FG pins - top of plate",4,"CACO4 SET - top of plate","Fiberglass",914,0.25,FALSE,0,2024-07-08,FALSE
+"NCBN","Northeast Coastal and Barrier Network","CACO SET 36"" FG pins - top of plate",5,"CACO5 SET - top of plate","Fiberglass",914,0.25,FALSE,0,2024-07-08,FALSE
+"NCBN","Northeast Coastal and Barrier Network","CACO SET 36"" FG pins - top of plate",6,"CACO6 SET - top of plate","Fiberglass",914,0.25,FALSE,0,2024-07-08,FALSE
+"NCBN","Northeast Coastal and Barrier Network","CACO SET 36"" FG pins - top of plate",7,"CACO7 SET - top of plate","Fiberglass",914,0.25,FALSE,0,2024-07-08,FALSE
+"NCBN","Northeast Coastal and Barrier Network","CACO SET 36"" FG pins - top of plate",8,"CACO8 SET - top of plate","Fiberglass",914,0.25,FALSE,0,2024-07-08,FALSE
+"NCBN","Northeast Coastal and Barrier Network","CACO SET 36"" FG pins - top of plate",9,"CACO9 SET - top of plate","Fiberglass",914,0.25,FALSE,0,2024-07-08,FALSE
+"NCBN","Northeast Coastal and Barrier Network","Colo 30"" pin collection",1,"Colo1","Fiberglass",762,0.25,FALSE,0,2019-10-10,FALSE
+"NCBN","Northeast Coastal and Barrier Network","Colo 30"" pin collection",2,"Colo2","Fiberglass",762,0.25,FALSE,0,2019-10-10,FALSE
+"NCBN","Northeast Coastal and Barrier Network","Colo 30"" pin collection",3,"Colo3","Fiberglass",762,0.25,FALSE,0,2019-10-10,FALSE
+"NCBN","Northeast Coastal and Barrier Network","Colo 30"" pin collection",4,"Colo4","Fiberglass",762,0.25,FALSE,0,2019-10-10,FALSE
+"NCBN","Northeast Coastal and Barrier Network","Colo 30"" pin collection",5,"Colo5","Fiberglass",762,0.25,FALSE,0,2019-10-10,FALSE
+"NCBN","Northeast Coastal and Barrier Network","Colo 30"" pin collection",6,"Colo6","Fiberglass",762,0.25,FALSE,0,2019-10-10,FALSE
+"NCBN","Northeast Coastal and Barrier Network","Colo 30"" pin collection",7,"Colo7","Fiberglass",762,0.25,FALSE,0,2019-10-10,FALSE
+"NCBN","Northeast Coastal and Barrier Network","Colo 30"" pin collection",8,"Colo8","Fiberglass",762,0.25,FALSE,0,2019-10-10,FALSE
+"NCBN","Northeast Coastal and Barrier Network","Colo 30"" pin collection",9,"Colo9","Fiberglass",762,0.25,FALSE,0,2019-10-10,FALSE
+"NCBN","Northeast Coastal and Barrier Network","COLO 36"" pin collection",1,"COLO1 36","Fiberglass",914,0.187,FALSE,0,2024-04-30,FALSE
+"NCBN","Northeast Coastal and Barrier Network","COLO 36"" pin collection",2,"COLO2 36","Fiberglass",914,0.187,FALSE,0,2024-04-30,FALSE
+"NCBN","Northeast Coastal and Barrier Network","COLO 36"" pin collection",3,"COLO3 36","Fiberglass",914,0.187,FALSE,0,2024-04-30,FALSE
+"NCBN","Northeast Coastal and Barrier Network","COLO 36"" pin collection",4,"COLO4 36","Fiberglass",914,0.187,FALSE,0,2024-04-30,FALSE
+"NCBN","Northeast Coastal and Barrier Network","COLO 36"" pin collection",5,"COLO5 36","Fiberglass",914,0.187,FALSE,0,2024-04-30,FALSE
+"NCBN","Northeast Coastal and Barrier Network","COLO 36"" pin collection",6,"COLO6 36","Fiberglass",914,0.187,FALSE,0,2024-04-30,FALSE
+"NCBN","Northeast Coastal and Barrier Network","COLO 36"" pin collection",7,"COLO7 36","Fiberglass",914,0.187,FALSE,0,2024-04-30,FALSE
+"NCBN","Northeast Coastal and Barrier Network","COLO 36"" pin collection",8,"COLO8 36","Fiberglass",914,0.187,FALSE,0,2024-04-30,FALSE
+"NCBN","Northeast Coastal and Barrier Network","COLO 36"" pin collection",9,"COLO9 36","Fiberglass",914,0.187,FALSE,0,2024-04-30,FALSE
+"NCBN","Northeast Coastal and Barrier Network","FIIS 30"" Pin collection",1,"FIIS1","Fiberglass",762,0.187,FALSE,0,2020-01-13,FALSE
+"NCBN","Northeast Coastal and Barrier Network","FIIS 30"" Pin collection",2,"FIIS2","Fiberglass",762,0.187,FALSE,0,2020-01-13,FALSE
+"NCBN","Northeast Coastal and Barrier Network","FIIS 30"" Pin collection",3,"FIIS3","Fiberglass",762,0.187,FALSE,0,2020-01-13,FALSE
+"NCBN","Northeast Coastal and Barrier Network","FIIS 30"" Pin collection",4,"FIIS4","Fiberglass",762,0.187,FALSE,0,2020-01-13,FALSE
+"NCBN","Northeast Coastal and Barrier Network","FIIS 30"" Pin collection",5,"FIIS5","Fiberglass",762,0.187,FALSE,0,2020-01-13,FALSE
+"NCBN","Northeast Coastal and Barrier Network","FIIS 30"" Pin collection",6,"FIIS6","Fiberglass",762,0.187,FALSE,0,2020-01-13,FALSE
+"NCBN","Northeast Coastal and Barrier Network","FIIS 30"" Pin collection",7,"FIIS7","Fiberglass",762,0.187,FALSE,0,2020-01-13,FALSE
+"NCBN","Northeast Coastal and Barrier Network","FIIS 30"" Pin collection",8,"FIIS8","Fiberglass",762,0.187,FALSE,0,2020-01-13,FALSE
+"NCBN","Northeast Coastal and Barrier Network","FIIS 30"" Pin collection",9,"FIIS9","Fiberglass",762,0.187,FALSE,0,2020-01-13,FALSE
+"NCBN","Northeast Coastal and Barrier Network","FIIS 36"" Pin Collection",1,"FIIS1 36","Fiberglass",914,0.187,FALSE,0,2024-10-15,FALSE
+"NCBN","Northeast Coastal and Barrier Network","FIIS 36"" Pin Collection",2,"FIIS2 36","Fiberglass",914,0.187,FALSE,0,2024-10-15,FALSE
+"NCBN","Northeast Coastal and Barrier Network","FIIS 36"" Pin Collection",3,"FIIS3 36","Fiberglass",914,0.187,FALSE,0,2024-10-15,FALSE
+"NCBN","Northeast Coastal and Barrier Network","FIIS 36"" Pin Collection",4,"FIIS4 36","Fiberglass",914,0.187,FALSE,0,2024-10-15,FALSE
+"NCBN","Northeast Coastal and Barrier Network","FIIS 36"" Pin Collection",5,"FIIS5 36","Fiberglass",914,0.187,FALSE,0,2024-10-15,FALSE
+"NCBN","Northeast Coastal and Barrier Network","FIIS 36"" Pin Collection",6,"FIIS6 36","Fiberglass",914,0.187,FALSE,0,2024-10-15,FALSE
+"NCBN","Northeast Coastal and Barrier Network","FIIS 36"" Pin Collection",7,"FIIS7 36","Fiberglass",914,0.187,FALSE,0,2024-10-15,FALSE
+"NCBN","Northeast Coastal and Barrier Network","FIIS 36"" Pin Collection",8,"FIIS8 36","Fiberglass",914,0.187,FALSE,0,2024-10-15,FALSE
+"NCBN","Northeast Coastal and Barrier Network","FIIS 36"" Pin Collection",9,"FIIS9 36","Fiberglass",914,0.187,FALSE,0,2024-10-15,FALSE
+"NCBN","Northeast Coastal and Barrier Network","GATE RSET 30"" pins",1,"GATE1 30","Fiberglass",762,0.187,FALSE,0,2020-03-04,FALSE
+"NCBN","Northeast Coastal and Barrier Network","GATE RSET 30"" pins",2,"GATE2 30","Fiberglass",762,0.187,FALSE,0,2020-03-04,FALSE
+"NCBN","Northeast Coastal and Barrier Network","GATE RSET 30"" pins",3,"GATE3 30","Fiberglass",762,0.187,FALSE,0,2020-03-04,FALSE
+"NCBN","Northeast Coastal and Barrier Network","GATE RSET 30"" pins",4,"GATE4 30","Fiberglass",762,0.187,FALSE,0,2020-03-04,FALSE
+"NCBN","Northeast Coastal and Barrier Network","GATE RSET 30"" pins",5,"GATE5 30","Fiberglass",762,0.187,FALSE,0,2020-03-04,FALSE
+"NCBN","Northeast Coastal and Barrier Network","GATE RSET 30"" pins",6,"GATE6 30","Fiberglass",762,0.187,FALSE,0,2020-03-04,FALSE
+"NCBN","Northeast Coastal and Barrier Network","GATE RSET 30"" pins",7,"GATE7 30","Fiberglass",762,0.187,FALSE,0,2020-03-04,FALSE
+"NCBN","Northeast Coastal and Barrier Network","GATE RSET 30"" pins",8,"GATE8 30","Fiberglass",762,0.187,FALSE,0,2020-03-04,FALSE
+"NCBN","Northeast Coastal and Barrier Network","GATE RSET 30"" pins",9,"GATE9 30","Fiberglass",762,0.187,FALSE,0,2020-03-04,FALSE
+"NCBN","Northeast Coastal and Barrier Network","GATE RSET 36"" Pins",1,"GATE 1 36","Fiberglass",914,0.187,FALSE,0,2020-03-09,FALSE
+"NCBN","Northeast Coastal and Barrier Network","GATE RSET 36"" Pins",2,"GATE 2 36","Fiberglass",914,0.187,FALSE,0,2020-03-09,FALSE
+"NCBN","Northeast Coastal and Barrier Network","GATE RSET 36"" Pins",3,"GATE 3 36","Fiberglass",914,0.187,FALSE,0,2020-03-09,FALSE
+"NCBN","Northeast Coastal and Barrier Network","GATE RSET 36"" Pins",4,"GATE 4 36","Fiberglass",914,0.187,FALSE,0,2020-03-09,FALSE
+"NCBN","Northeast Coastal and Barrier Network","GATE RSET 36"" Pins",5,"GATE 5 36","Fiberglass",914,0.187,FALSE,0,2020-03-09,FALSE
+"NCBN","Northeast Coastal and Barrier Network","GATE RSET 36"" Pins",6,"GATE 6 36","Fiberglass",914,0.187,FALSE,0,2020-03-09,FALSE
+"NCBN","Northeast Coastal and Barrier Network","GATE RSET 36"" Pins",7,"GATE 7 36","Fiberglass",914,0.187,FALSE,0,2020-03-09,FALSE
+"NCBN","Northeast Coastal and Barrier Network","GATE RSET 36"" Pins",8,"GATE 8 36","Fiberglass",914,0.187,FALSE,0,2020-03-09,FALSE
+"NCBN","Northeast Coastal and Barrier Network","GATE RSET 36"" Pins",9,"GATE 9 36","Fiberglass",914,0.187,FALSE,0,2020-03-09,FALSE
+"NCBN","Northeast Coastal and Barrier Network","GATE RSET 48"" Pins",1,"GATE 1 48","Fiberglass",1219.2,0.187,FALSE,0,2021-07-02,FALSE
+"NCBN","Northeast Coastal and Barrier Network","GATE RSET 48"" Pins",2,"GATE 2 48","Fiberglass",1219.2,0.187,FALSE,0,2021-07-02,FALSE
+"NCBN","Northeast Coastal and Barrier Network","GATE RSET 48"" Pins",3,"GATE 3 48","Fiberglass",1219.2,0.187,FALSE,0,2021-07-02,FALSE
+"NCBN","Northeast Coastal and Barrier Network","GATE RSET 48"" Pins",4,"GATE 4 48","Fiberglass",1219.2,0.187,FALSE,0,2021-07-02,FALSE
+"NCBN","Northeast Coastal and Barrier Network","GATE RSET 48"" Pins",5,"GATE 5 48","Fiberglass",1219.2,0.187,FALSE,0,2021-07-02,FALSE
+"NCBN","Northeast Coastal and Barrier Network","GATE RSET 48"" Pins",6,"GATE 6 48","Fiberglass",1219.2,0.187,FALSE,0,2021-07-02,FALSE
+"NCBN","Northeast Coastal and Barrier Network","GATE RSET 48"" Pins",7,"GATE 7 48","Fiberglass",1219.2,0.187,FALSE,0,2021-07-02,FALSE
+"NCBN","Northeast Coastal and Barrier Network","GATE RSET 48"" Pins",8,"GATE 8 48","Fiberglass",1219.2,0.187,FALSE,0,2021-07-02,FALSE
+"NCBN","Northeast Coastal and Barrier Network","GATE RSET 48"" Pins",9,"GATE 9 48","Fiberglass",1219.2,0.187,FALSE,0,2021-07-02,FALSE
+"NCRN","National Capital Region Network","GWMP RSET 30"" Pins",1,"GWMP 30 Pin1","Fiberglass",762,0.187,FALSE,0,2021-03-11,FALSE
+"NCRN","National Capital Region Network","GWMP RSET 30"" Pins",2,"GWMP 30 Pin2","Fiberglass",762,0.187,FALSE,0,2021-03-11,FALSE
+"NCRN","National Capital Region Network","GWMP RSET 30"" Pins",3,"GWMP 30 Pin3","Fiberglass",762,0.187,FALSE,0,2021-03-11,FALSE
+"NCRN","National Capital Region Network","GWMP RSET 30"" Pins",4,"GWMP 30 Pin4","Fiberglass",762,0.187,FALSE,0,2021-03-11,FALSE
+"NCRN","National Capital Region Network","GWMP RSET 30"" Pins",5,"GWMP 30 Pin5","Fiberglass",762,0.187,FALSE,0,2021-03-11,FALSE
+"NCRN","National Capital Region Network","GWMP RSET 30"" Pins",6,"GWMP 30 Pin6","Fiberglass",762,0.187,FALSE,0,2021-03-11,FALSE
+"NCRN","National Capital Region Network","GWMP RSET 30"" Pins",7,"GWMP 30 Pin7","Fiberglass",762,0.187,FALSE,0,2021-03-11,FALSE
+"NCRN","National Capital Region Network","GWMP RSET 30"" Pins",8,"GWMP 30 Pin8","Fiberglass",762,0.187,FALSE,0,2021-03-11,FALSE
+"NCRN","National Capital Region Network","GWMP RSET 30"" Pins",9,"GWMP 30 Pin9","Fiberglass",762,0.187,FALSE,0,2021-03-11,FALSE
+"NCRN","National Capital Region Network","GWMP RSET 36"" Pins",1,"GWMP 36 Pin1","Fiberglass",914,0.187,FALSE,0,2024-06-14,FALSE
+"NCRN","National Capital Region Network","GWMP RSET 36"" Pins",2,"GWMP 36 Pin2","Fiberglass",914,0.187,FALSE,0,2024-06-14,FALSE
+"NCRN","National Capital Region Network","GWMP RSET 36"" Pins",3,"GWMP 36 Pin3","Fiberglass",914,0.187,FALSE,0,2024-06-14,FALSE
+"NCRN","National Capital Region Network","GWMP RSET 36"" Pins",4,"GWMP 36 Pin4","Fiberglass",914,0.187,FALSE,0,2024-06-14,FALSE
+"NCRN","National Capital Region Network","GWMP RSET 36"" Pins",5,"GWMP 36 Pin5","Fiberglass",914,0.187,FALSE,0,2024-06-14,FALSE
+"NCRN","National Capital Region Network","GWMP RSET 36"" Pins",6,"GWMP 36 Pin6","Fiberglass",914,0.187,FALSE,0,2024-06-14,FALSE
+"NCRN","National Capital Region Network","GWMP RSET 36"" Pins",7,"GWMP 36 Pin7","Fiberglass",914,0.187,FALSE,0,2024-06-14,FALSE
+"NCRN","National Capital Region Network","GWMP RSET 36"" Pins",8,"GWMP 36 Pin8","Fiberglass",914,0.187,FALSE,0,2024-06-14,FALSE
+"NCRN","National Capital Region Network","GWMP RSET 36"" Pins",9,"GWMP 36 Pin9","Fiberglass",914,0.187,FALSE,0,2024-06-14,FALSE
+"NCRN","National Capital Region Network","NACE RSET 30"" Pins",1,"NACE 30 Pin1","Fiberglass",762,0.187,FALSE,0,2021-03-11,FALSE
+"NCRN","National Capital Region Network","NACE RSET 30"" Pins",2,"NACE 30 Pin2","Fiberglass",762,0.187,FALSE,0,2021-03-11,FALSE
+"NCRN","National Capital Region Network","NACE RSET 30"" Pins",3,"NACE 30 Pin3","Fiberglass",762,0.187,FALSE,0,2021-03-11,FALSE
+"NCRN","National Capital Region Network","NACE RSET 30"" Pins",4,"NACE 30 Pin4","Fiberglass",762,0.187,FALSE,0,2021-03-11,FALSE
+"NCRN","National Capital Region Network","NACE RSET 30"" Pins",5,"NACE 30 Pin5","Fiberglass",762,0.187,FALSE,0,2021-03-11,FALSE
+"NCRN","National Capital Region Network","NACE RSET 30"" Pins",6,"NACE 30 Pin6","Fiberglass",762,0.187,FALSE,0,2021-03-11,FALSE
+"NCRN","National Capital Region Network","NACE RSET 30"" Pins",7,"NACE 30 Pin7","Fiberglass",762,0.187,FALSE,0,2021-03-11,FALSE
+"NCRN","National Capital Region Network","NACE RSET 30"" Pins",8,"NACE 30 Pin8","Fiberglass",762,0.187,FALSE,0,2021-03-11,FALSE
+"NCRN","National Capital Region Network","NACE RSET 30"" Pins",9,"NACE 30 Pin9","Fiberglass",762,0.187,FALSE,0,2021-03-11,FALSE
+"NCRN","National Capital Region Network","NACE RSET 36"" Pins",1,"NACE 36 Pin1","Fiberglass",916,0.187,FALSE,0,2022-08-17,FALSE
+"NCRN","National Capital Region Network","NACE RSET 36"" Pins",2,"NACE 36 Pin2","Fiberglass",916,0.187,FALSE,0,2022-08-17,FALSE
+"NCRN","National Capital Region Network","NACE RSET 36"" Pins",3,"NACE 36 Pin3","Fiberglass",916,0.187,FALSE,0,2022-08-17,FALSE
+"NCRN","National Capital Region Network","NACE RSET 36"" Pins",4,"NACE 36 Pin4","Fiberglass",916,0.187,FALSE,0,2022-08-17,FALSE
+"NCRN","National Capital Region Network","NACE RSET 36"" Pins",5,"NACE 36 Pin5","Fiberglass",917,0.187,FALSE,0,2022-08-17,FALSE
+"NCRN","National Capital Region Network","NACE RSET 36"" Pins",6,"NACE 36 Pin6","Fiberglass",917,0.187,FALSE,0,2022-08-17,FALSE
+"NCRN","National Capital Region Network","NACE RSET 36"" Pins",7,"NACE 36 Pin7","Fiberglass",916,0.187,FALSE,0,2022-08-17,FALSE
+"NCRN","National Capital Region Network","NACE RSET 36"" Pins",8,"NACE 36 Pin8","Fiberglass",917,0.187,FALSE,0,2022-08-17,FALSE
+"NCRN","National Capital Region Network","NACE RSET 36"" Pins",9,"NACE 36 Pin9","Fiberglass",917,0.187,FALSE,0,2022-08-17,FALSE
+"NETN","Northeast Temperate Network","ACAD RSET 30"" Pins",1,"ACAD RSET pin1","Fiberglass",762,0.25,FALSE,0,2020-01-27,FALSE
+"NETN","Northeast Temperate Network","ACAD RSET 30"" Pins",2,"ACAD RSET pin2","Fiberglass",762,0.25,FALSE,0,2020-01-27,FALSE
+"NETN","Northeast Temperate Network","ACAD RSET 30"" Pins",3,"ACAD RSET pin3","Fiberglass",762,0.25,FALSE,0,2020-01-27,FALSE
+"NETN","Northeast Temperate Network","ACAD RSET 30"" Pins",4,"ACAD RSET pin4","Fiberglass",762,0.25,FALSE,0,2020-01-27,FALSE
+"NETN","Northeast Temperate Network","ACAD RSET 30"" Pins",5,"ACAD RSET pin5","Fiberglass",762,0.25,FALSE,0,2020-01-27,FALSE
+"NETN","Northeast Temperate Network","ACAD RSET 30"" Pins",6,"ACAD RSET pin6","Fiberglass",762,0.25,FALSE,0,2020-01-27,FALSE
+"NETN","Northeast Temperate Network","ACAD RSET 30"" Pins",7,"ACAD RSET pin7","Fiberglass",762,0.25,FALSE,0,2020-01-27,FALSE
+"NETN","Northeast Temperate Network","ACAD RSET 30"" Pins",8,"ACAD RSET pin8","Fiberglass",762,0.25,FALSE,0,2020-01-27,FALSE
+"NETN","Northeast Temperate Network","ACAD RSET 30"" Pins",9,"ACAD RSET pin9","Fiberglass",762,0.25,FALSE,0,2020-01-27,FALSE
+"NETN","Northeast Temperate Network","BOHA RSET 30"" Pins",1,"BOHA RSET Pin1","Fiberglass",762,0.187,FALSE,0,2020-02-11,FALSE
+"NETN","Northeast Temperate Network","BOHA RSET 30"" Pins",2,"BOHA RSET Pin2","Fiberglass",762,0.187,FALSE,0,2020-02-11,FALSE
+"NETN","Northeast Temperate Network","BOHA RSET 30"" Pins",3,"BOHA RSET Pin3","Fiberglass",762,0.187,FALSE,0,2020-02-11,FALSE
+"NETN","Northeast Temperate Network","BOHA RSET 30"" Pins",4,"BOHA RSET Pin4","Fiberglass",762,0.187,FALSE,0,2020-02-11,FALSE
+"NETN","Northeast Temperate Network","BOHA RSET 30"" Pins",5,"BOHA RSET Pin5","Fiberglass",762,0.187,FALSE,0,2020-02-11,FALSE
+"NETN","Northeast Temperate Network","BOHA RSET 30"" Pins",6,"BOHA RSET Pin6","Fiberglass",762,0.187,FALSE,0,2020-02-11,FALSE
+"NETN","Northeast Temperate Network","BOHA RSET 30"" Pins",7,"BOHA RSET Pin7","Fiberglass",762,0.187,FALSE,0,2020-02-11,FALSE
+"NETN","Northeast Temperate Network","BOHA RSET 30"" Pins",8,"BOHA RSET Pin8","Fiberglass",762,0.187,FALSE,0,2020-02-11,FALSE
+"NETN","Northeast Temperate Network","BOHA RSET 30"" Pins",9,"BOHA RSET Pin9","Fiberglass",762,0.187,FALSE,0,2020-02-11,FALSE
+"NETN","Northeast Temperate Network","BOHA RSET 36"" Pins",1,"BOHA RSET Extension Pin1","Fiberglass",914,0.187,FALSE,0,2024-09-25,FALSE
+"NETN","Northeast Temperate Network","BOHA RSET 36"" Pins",2,"BOHA RSET Extension Pin2","Fiberglass",914,0.187,FALSE,0,2024-09-25,FALSE
+"NETN","Northeast Temperate Network","BOHA RSET 36"" Pins",3,"BOHA RSET Extension Pin3","Fiberglass",914,0.187,FALSE,0,2024-09-25,FALSE
+"NETN","Northeast Temperate Network","BOHA RSET 36"" Pins",4,"BOHA RSET Extension Pin4","Fiberglass",914,0.187,FALSE,0,2024-09-25,FALSE
+"NETN","Northeast Temperate Network","BOHA RSET 36"" Pins",5,"BOHA RSET Extension Pin5","Fiberglass",914,0.187,FALSE,0,2024-09-25,FALSE
+"NETN","Northeast Temperate Network","BOHA RSET 36"" Pins",6,"BOHA RSET Extension Pin6","Fiberglass",914,0.187,FALSE,0,2024-09-25,FALSE
+"NETN","Northeast Temperate Network","BOHA RSET 36"" Pins",7,"BOHA RSET Extension Pin7","Fiberglass",914,0.187,FALSE,0,2024-09-25,FALSE
+"NETN","Northeast Temperate Network","BOHA RSET 36"" Pins",8,"BOHA RSET Extension Pin8","Fiberglass",914,0.187,FALSE,0,2024-09-25,FALSE
+"NETN","Northeast Temperate Network","BOHA RSET 36"" Pins",9,"BOHA RSET Extension Pin9","Fiberglass",914,0.187,FALSE,0,2024-09-25,FALSE
+"SECN","Southeast Coast Network","GTM 1",1,"GTM 1-1","Fiberglass",760,0.25,FALSE,0,2019-09-19,FALSE
+"SECN","Southeast Coast Network","GTM 1",2,"GTM 1-2","Fiberglass",760,0.25,FALSE,0,2019-09-19,FALSE
+"SECN","Southeast Coast Network","GTM 1",3,"GTM 1-3","Fiberglass",760,0.25,FALSE,0,2019-09-19,FALSE
+"SECN","Southeast Coast Network","GTM 1",4,"GTM 1-4","Fiberglass",760,0.25,FALSE,0,2019-09-19,FALSE
+"SECN","Southeast Coast Network","GTM 1",5,"GTM 1-5","Fiberglass",760,0.25,FALSE,0,2019-09-19,FALSE
+"SECN","Southeast Coast Network","GTM 1",6,"GTM 1-6","Fiberglass",760,0.25,FALSE,0,2019-09-19,FALSE
+"SECN","Southeast Coast Network","GTM 1",7,"GTM 1-7","Fiberglass",760,0.25,FALSE,0,2019-09-19,FALSE
+"SECN","Southeast Coast Network","GTM 1",8,"GTM 1-8","Fiberglass",760,0.25,FALSE,0,2019-09-19,FALSE
+"SECN","Southeast Coast Network","GTM 1",9,"GTM 1-9","Fiberglass",760,0.25,FALSE,0,2019-09-19,FALSE
+"SECN","Southeast Coast Network","GTM 2",1,"GTM 2-1","Fiberglass",910,0.25,FALSE,0,2019-09-19,FALSE
+"SECN","Southeast Coast Network","GTM 2",2,"GTM 2-2","Fiberglass",910,0.25,FALSE,0,2019-09-19,FALSE
+"SECN","Southeast Coast Network","GTM 2",3,"GTM 2-3","Fiberglass",910,0.25,FALSE,0,2019-09-19,FALSE
+"SECN","Southeast Coast Network","GTM 2",4,"GTM 2-4","Fiberglass",910,0.25,FALSE,0,2019-09-19,FALSE
+"SECN","Southeast Coast Network","GTM 2",5,"GTM 2-5","Fiberglass",910,0.25,FALSE,0,2019-09-19,FALSE
+"SECN","Southeast Coast Network","GTM 2",6,"GTM 2-6","Fiberglass",910,0.25,FALSE,0,2019-09-19,FALSE
+"SECN","Southeast Coast Network","GTM 2",7,"GTM 2-7","Fiberglass",910,0.25,FALSE,0,2019-09-19,FALSE
+"SECN","Southeast Coast Network","GTM 2",8,"GTM 2-8","Fiberglass",910,0.25,FALSE,0,2019-09-19,FALSE
+"SECN","Southeast Coast Network","GTM 2",9,"GTM 2-9","Fiberglass",910,0.25,FALSE,0,2019-09-19,FALSE
+"SECN","Southeast Coast Network","GTM 3",1,"GTM 3-1","Fiberglass",1150,0.25,FALSE,0,2019-09-19,FALSE
+"SECN","Southeast Coast Network","GTM 3",2,"GTM 3-2","Fiberglass",1150,0.25,FALSE,0,2019-09-19,FALSE
+"SECN","Southeast Coast Network","GTM 3",3,"GTM 3-3","Fiberglass",1150,0.25,FALSE,0,2019-09-19,FALSE
+"SECN","Southeast Coast Network","GTM 3",4,"GTM 3-4","Fiberglass",1150,0.25,FALSE,0,2019-09-19,FALSE
+"SECN","Southeast Coast Network","GTM 3",5,"GTM 3-5","Fiberglass",1150,0.25,FALSE,0,2019-09-19,FALSE
+"SECN","Southeast Coast Network","GTM 3",6,"GTM 3-6","Fiberglass",1150,0.25,FALSE,0,2019-09-19,FALSE
+"SECN","Southeast Coast Network","GTM 3",7,"GTM 3-7","Fiberglass",1150,0.25,FALSE,0,2019-09-19,FALSE
+"SECN","Southeast Coast Network","GTM 3",8,"GTM 3-8","Fiberglass",1150,0.25,FALSE,0,2019-09-19,FALSE
+"SECN","Southeast Coast Network","GTM 3",9,"GTM 3-9","Fiberglass",1150,0.25,FALSE,0,2019-09-19,FALSE
+"SECN","Southeast Coast Network","SECN 1",1,"SECN 1-1","Fiberglass",762,0.187,FALSE,0,2020-01-22,FALSE
+"SECN","Southeast Coast Network","SECN 1",2,"SECN 1-2","Fiberglass",762,0.187,FALSE,0,2020-01-22,FALSE
+"SECN","Southeast Coast Network","SECN 1",3,"SECN 1-3","Fiberglass",762,0.187,FALSE,0,2020-01-22,FALSE
+"SECN","Southeast Coast Network","SECN 1",4,"SECN 1-4","Fiberglass",762,0.187,FALSE,0,2020-01-22,FALSE
+"SECN","Southeast Coast Network","SECN 1",5,"SECN 1-5","Fiberglass",762,0.187,FALSE,0,2020-01-22,FALSE
+"SECN","Southeast Coast Network","SECN 1",6,"SECN 1-6","Fiberglass",762,0.187,FALSE,0,2020-01-22,FALSE
+"SECN","Southeast Coast Network","SECN 1",7,"SECN 1-7","Fiberglass",762,0.187,FALSE,0,2020-01-22,FALSE
+"SECN","Southeast Coast Network","SECN 1",8,"SECN 1-8","Fiberglass",762,0.187,FALSE,0,2020-01-22,FALSE
+"SECN","Southeast Coast Network","SECN 1",9,"SECN 1-9","Fiberglass",761,0.187,FALSE,0,2020-01-22,FALSE
+"SECN","Southeast Coast Network","SECN 2",1,"SECN 2-1","Fiberglass",762,0.187,FALSE,0,2020-01-22,FALSE
+"SECN","Southeast Coast Network","SECN 2",2,"SECN 2-2","Fiberglass",762,0.187,FALSE,0,2020-01-22,FALSE
+"SECN","Southeast Coast Network","SECN 2",3,"SECN 2-3","Fiberglass",762,0.187,FALSE,0,2020-01-22,FALSE
+"SECN","Southeast Coast Network","SECN 2",4,"SECN 2-4","Fiberglass",762,0.187,FALSE,0,2020-01-22,FALSE
+"SECN","Southeast Coast Network","SECN 2",5,"SECN 2-5","Fiberglass",762,0.187,FALSE,0,2020-01-22,FALSE
+"SECN","Southeast Coast Network","SECN 2",6,"SECN 2-6","Fiberglass",762,0.187,FALSE,0,2020-01-22,FALSE
+"SECN","Southeast Coast Network","SECN 2",7,"SECN 2-7","Fiberglass",762,0.187,FALSE,0,2020-01-22,FALSE
+"SECN","Southeast Coast Network","SECN 2",8,"SECN 2-8","Fiberglass",762,0.187,FALSE,0,2020-01-22,FALSE
+"SECN","Southeast Coast Network","SECN 2",9,"SECN 2-9","Fiberglass",762,0.187,FALSE,0,2020-01-22,FALSE
+"SECN","Southeast Coast Network","SECN 3",1,"SECN 3-1","Fiberglass",762,0.187,FALSE,0,2020-01-22,FALSE
+"SECN","Southeast Coast Network","SECN 3",2,"SECN 3-2","Fiberglass",762,0.187,FALSE,0,2020-01-22,FALSE
+"SECN","Southeast Coast Network","SECN 3",3,"SECN 3-3","Fiberglass",762,0.187,FALSE,0,2020-01-22,FALSE
+"SECN","Southeast Coast Network","SECN 3",4,"SECN 3-4","Fiberglass",762,0.187,FALSE,0,2020-01-22,FALSE
+"SECN","Southeast Coast Network","SECN 3",5,"SECN 3-5","Fiberglass",762,0.187,FALSE,0,2020-01-22,FALSE
+"SECN","Southeast Coast Network","SECN 3",6,"SECN 3-6","Fiberglass",762,0.187,FALSE,0,2020-01-22,FALSE
+"SECN","Southeast Coast Network","SECN 3",7,"SECN 3-7","Fiberglass",762,0.187,FALSE,0,2020-01-22,FALSE
+"SECN","Southeast Coast Network","SECN 3",8,"SECN 3-8","Fiberglass",763,0.187,FALSE,0,2020-01-22,FALSE
+"SECN","Southeast Coast Network","SECN 3",9,"SECN 3-9","Fiberglass",762,0.187,FALSE,0,2020-01-22,FALSE
+"SECN","Southeast Coast Network","SECN 4",1,"SECN 4-1","Fiberglass",1099,0.25,FALSE,0,2020-01-22,FALSE
+"SECN","Southeast Coast Network","SECN 4",2,"SECN 4-2","Fiberglass",1099,0.25,FALSE,0,2020-01-22,FALSE
+"SECN","Southeast Coast Network","SECN 4",3,"SECN 4-3","Fiberglass",1099,0.25,FALSE,0,2020-01-22,FALSE
+"SECN","Southeast Coast Network","SECN 4",4,"SECN 4-4","Fiberglass",1099.5,0.25,FALSE,0,2020-01-22,FALSE
+"SECN","Southeast Coast Network","SECN 4",5,"SECN 4-5","Fiberglass",1099,0.25,FALSE,0,2020-01-22,FALSE
+"SECN","Southeast Coast Network","SECN 4",6,"SECN 4-6","Fiberglass",1099,0.25,FALSE,0,2020-01-22,FALSE
+"SECN","Southeast Coast Network","SECN 4",7,"SECN 4-7","Fiberglass",1099,0.25,FALSE,0,2020-01-22,FALSE
+"SECN","Southeast Coast Network","SECN 4",8,"SECN 4-8","Fiberglass",1099.5,0.25,FALSE,0,2020-01-22,FALSE
+"SECN","Southeast Coast Network","SECN 4",9,"SECN 4-9","Fiberglass",1099,0.25,FALSE,0,2020-01-22,FALSE
+"SECN","Southeast Coast Network","SECN 5",1,"SECN 5-1","Fiberglass",720,0.25,FALSE,0,2020-01-22,FALSE
+"SECN","Southeast Coast Network","SECN 5",2,"SECN 5-2","Fiberglass",720,0.25,FALSE,0,2020-01-22,FALSE
+"SECN","Southeast Coast Network","SECN 5",3,"SECN 5-3","Fiberglass",720,0.25,FALSE,0,2020-01-22,FALSE
+"SECN","Southeast Coast Network","SECN 5",4,"SECN 5-4","Fiberglass",720,0.25,FALSE,0,2020-01-22,FALSE
+"SECN","Southeast Coast Network","SECN 5",5,"SECN 5-5","Fiberglass",720,0.25,FALSE,0,2020-01-22,FALSE
+"SECN","Southeast Coast Network","SECN 5",6,"SECN 5-6","Fiberglass",720,0.25,FALSE,0,2020-01-22,FALSE
+"SECN","Southeast Coast Network","SECN 5",7,"SECN 5-7","Fiberglass",720,0.25,FALSE,0,2020-01-22,FALSE
+"SECN","Southeast Coast Network","SECN 5",8,"SECN 5-8","Fiberglass",720,0.25,FALSE,0,2020-01-22,FALSE
+"SECN","Southeast Coast Network","SECN 5",9,"SECN 5-9","Fiberglass",720,0.25,FALSE,0,2020-01-22,FALSE
+"SECN","Southeast Coast Network","SECN 6",1,"SECN 6-1","Fiberglass",720,0.25,FALSE,0,2020-01-22,FALSE
+"SECN","Southeast Coast Network","SECN 6",2,"SECN 6-2","Fiberglass",720,0.25,FALSE,0,2020-01-22,FALSE
+"SECN","Southeast Coast Network","SECN 6",3,"SECN 6-3","Fiberglass",720,0.25,FALSE,0,2020-01-22,FALSE
+"SECN","Southeast Coast Network","SECN 6",4,"SECN 6-4","Fiberglass",720,0.25,FALSE,0,2020-01-22,FALSE
+"SECN","Southeast Coast Network","SECN 6",5,"SECN 6-5","Fiberglass",720,0.25,FALSE,0,2020-01-22,FALSE
+"SECN","Southeast Coast Network","SECN 6",6,"SECN 6-6","Fiberglass",720,0.25,FALSE,0,2020-01-22,FALSE
+"SECN","Southeast Coast Network","SECN 6",7,"SECN 6-7","Fiberglass",720,0.25,FALSE,0,2020-01-22,FALSE
+"SECN","Southeast Coast Network","SECN 6",8,"SECN 6-8","Fiberglass",720,0.25,FALSE,0,2020-01-22,FALSE
+"SECN","Southeast Coast Network","SECN 6",9,"SECN 6-9","Fiberglass",720,0.25,FALSE,0,2020-01-22,FALSE
+"SECN","Southeast Coast Network","SECN 7",1,"SECN 7-1","Fiberglass",720,0.25,FALSE,0,2020-01-22,FALSE
+"SECN","Southeast Coast Network","SECN 7",2,"SECN 7-2","Fiberglass",720,0.25,FALSE,0,2020-01-22,FALSE
+"SECN","Southeast Coast Network","SECN 7",3,"SECN 7-3","Fiberglass",720,0.25,FALSE,0,2020-01-22,FALSE
+"SECN","Southeast Coast Network","SECN 7",4,"SECN 7-4","Fiberglass",721,0.25,FALSE,0,2020-01-22,FALSE
+"SECN","Southeast Coast Network","SECN 7",5,"SECN 7-5","Fiberglass",720,0.25,FALSE,0,2020-01-22,FALSE
+"SECN","Southeast Coast Network","SECN 7",6,"SECN 7-6","Fiberglass",720,0.25,FALSE,0,2020-01-22,FALSE
+"SECN","Southeast Coast Network","SECN 7",7,"SECN 7-7","Fiberglass",720,0.25,FALSE,0,2020-01-22,FALSE
+"SECN","Southeast Coast Network","SECN 7",8,"SECN 7-8","Fiberglass",719,0.25,FALSE,0,2020-01-22,FALSE
+"SECN","Southeast Coast Network","SECN 7",9,"SECN 7-9","Fiberglass",720,0.25,FALSE,0,2020-01-22,FALSE
+"SFCN","South Florida/Caribbean Network","BISC_pins",1,"FL_1","Fiberglass",761,0.25,FALSE,0,2011-02-11,FALSE
+"SFCN","South Florida/Caribbean Network","BISC_pins",2,"FL_2","Fiberglass",761,0.25,FALSE,0,2011-02-11,FALSE
+"SFCN","South Florida/Caribbean Network","BISC_pins",3,"FL_3","Fiberglass",762,0.25,FALSE,0,2011-02-11,FALSE
+"SFCN","South Florida/Caribbean Network","BISC_pins",4,"FL_4","Fiberglass",761,0.25,FALSE,0,2011-02-11,FALSE
+"SFCN","South Florida/Caribbean Network","BISC_pins",5,"FL_5","Fiberglass",762,0.25,FALSE,0,2011-02-11,FALSE
+"SFCN","South Florida/Caribbean Network","BISC_pins",6,"FL_6","Fiberglass",761,0.25,FALSE,0,2011-02-11,FALSE
+"SFCN","South Florida/Caribbean Network","BISC_pins",7,"FL_7","Fiberglass",761,0.25,FALSE,0,2011-02-11,FALSE
+"SFCN","South Florida/Caribbean Network","BISC_pins",8,"FL_8","Fiberglass",761,0.25,FALSE,0,2011-02-11,FALSE
+"SFCN","South Florida/Caribbean Network","BISC_pins",9,"FL_9","Fiberglass",761,0.25,FALSE,0,2011-02-11,FALSE
+"SFCN","South Florida/Caribbean Network","SARI_long_pins",1,"New_SARI_1","Fiberglass",1141,0.25,FALSE,0,2014-12-14,FALSE
+"SFCN","South Florida/Caribbean Network","SARI_long_pins",2,"New_SARI_2","Fiberglass",1141,0.25,FALSE,0,2014-12-14,FALSE
+"SFCN","South Florida/Caribbean Network","SARI_long_pins",3,"New_SARI_3","Fiberglass",1140,0.25,FALSE,0,2014-12-14,FALSE
+"SFCN","South Florida/Caribbean Network","SARI_long_pins",4,"New_SARI_4","Fiberglass",1141,0.25,FALSE,0,2014-12-14,FALSE
+"SFCN","South Florida/Caribbean Network","SARI_long_pins",5,"New_SARI_5","Fiberglass",1141,0.25,FALSE,0,2014-12-14,FALSE
+"SFCN","South Florida/Caribbean Network","SARI_long_pins",6,"New_SARI_6","Fiberglass",1141,0.25,FALSE,0,2014-12-14,FALSE
+"SFCN","South Florida/Caribbean Network","SARI_long_pins",7,"New_SARI_7","Fiberglass",1141,0.25,FALSE,0,2014-12-14,FALSE
+"SFCN","South Florida/Caribbean Network","SARI_long_pins",8,"New_SARI_8","Fiberglass",1140,0.25,FALSE,0,2014-12-14,FALSE
+"SFCN","South Florida/Caribbean Network","SARI_long_pins",9,"New_SARI_9","Fiberglass",1141,0.25,FALSE,0,2014-12-14,FALSE
+"SFCN","South Florida/Caribbean Network","SARI_short_pins",1,"Old_SARI_1","Fiberglass",759,0.25,FALSE,0,2012-06-22,FALSE
+"SFCN","South Florida/Caribbean Network","SARI_short_pins",2,"Old_SARI_2","Fiberglass",759,0.25,FALSE,0,2012-06-22,FALSE
+"SFCN","South Florida/Caribbean Network","SARI_short_pins",3,"Old_SARI_3","Fiberglass",759,0.25,FALSE,0,2012-06-22,FALSE
+"SFCN","South Florida/Caribbean Network","SARI_short_pins",4,"Old_SARI_4","Fiberglass",759,0.25,FALSE,0,2012-06-22,FALSE
+"SFCN","South Florida/Caribbean Network","SARI_short_pins",5,"Old_SARI_5","Fiberglass",759,0.25,FALSE,0,2012-06-22,FALSE
+"SFCN","South Florida/Caribbean Network","SARI_short_pins",6,"Old_SARI_6","Fiberglass",759,0.25,FALSE,0,2012-06-22,FALSE
+"SFCN","South Florida/Caribbean Network","SARI_short_pins",7,"Old_SARI_7","Fiberglass",759,0.25,FALSE,0,2012-06-22,FALSE
+"SFCN","South Florida/Caribbean Network","SARI_short_pins",8,"Old_SARI_8","Fiberglass",759,0.25,FALSE,0,2012-06-22,FALSE
+"SFCN","South Florida/Caribbean Network","SARI_short_pins",9,"Old_SARI_9","Fiberglass",759,0.25,FALSE,0,2012-06-22,FALSE
+"SFCN","South Florida/Caribbean Network","VIIS_pins",1,"StJohn_1","Fiberglass",763,0.25,FALSE,0,2014-06-03,FALSE
+"SFCN","South Florida/Caribbean Network","VIIS_pins",2,"StJohn_2","Fiberglass",763,0.25,FALSE,0,2014-06-03,FALSE
+"SFCN","South Florida/Caribbean Network","VIIS_pins",3,"StJohn_3","Fiberglass",763,0.25,FALSE,0,2014-06-03,FALSE
+"SFCN","South Florida/Caribbean Network","VIIS_pins",4,"StJohn_4","Fiberglass",763,0.25,FALSE,0,2014-06-03,FALSE
+"SFCN","South Florida/Caribbean Network","VIIS_pins",5,"StJohn_5","Fiberglass",763,0.25,FALSE,0,2014-06-03,FALSE
+"SFCN","South Florida/Caribbean Network","VIIS_pins",6,"StJohn_6","Fiberglass",763,0.25,FALSE,0,2014-06-03,FALSE
+"SFCN","South Florida/Caribbean Network","VIIS_pins",7,"StJohn_7","Fiberglass",763,0.25,FALSE,0,2014-06-03,FALSE
+"SFCN","South Florida/Caribbean Network","VIIS_pins",8,"StJohn_8","Fiberglass",763,0.25,FALSE,0,2014-06-03,FALSE
+"SFCN","South Florida/Caribbean Network","VIIS_pins",9,"StJohn_9","Fiberglass",763,0.25,FALSE,0,2014-06-03,FALSE
