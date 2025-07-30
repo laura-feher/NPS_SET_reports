@@ -151,11 +151,9 @@ The Northeast Coastal & Barrier Inventory and Monitoring Network (NCBN) uses the
 
 1.  What are the elevation characteristics of coastal wetlands in `r params$park_name`? (Figure 2A; Results Section 1)
 
-2.  How do surface and subsurface processes control surface elevation change at `r params$park_name`? (Figure 2B; Results Section 2)
+2.  How do local wetland elevation dynamics relate to the local hydrology (e.g., local tidal datums)? (Figure 2C; Results Section 2)
 
-3.  How do local wetland elevation dynamics relate to the local hydrology (e.g., local tidal datums)? (Figure 2C; Results Section 3)
-
-4.  Is elevation gain sufficient to keep pace with current and predicted sea level rise? (Figure 2D; Results Section 3)
+3.  Is elevation gain sufficient to keep pace with current and predicted sea level rise? (Figure 2D; Results Section 3)
 
 ```{r surface-elev-diagram, echo=FALSE, fig.cap=paste("Conceptual diagram showing the relationship among wetland surface elevation (A), tidal datums (C), and their respective rates of change (B and D). Understanding these relationships is important for evaluating the sustainability of a wetland community to sea-level rise."), out.width = '100%'}
 
@@ -278,62 +276,7 @@ ggplotly(p, tooltip = "text") %>%
    style(hoverlabel = text) 
 ```
 
-### 2. How do surface and subsurface processes control surface elevation change at `r params$park_name`?
 
-```{r message=FALSE, warning=FALSE, include=FALSE}
-
-acc_data <- readr::read_csv(here::here("data", params$data_package_id, paste0("marker_horizon_data_" , params$data_package_pub_date, ".csv"))) %>%
-  filter(park_code == params$park_code) %>%
-  {if (params$accepted_data)
-    filter(., dpl == "Accepted")} %>%
-  mutate(.,
-         site_status = if_else(site_name %in% inactive_sites, "inactive", "active"),
-         station_status = if_else(site_name %in% inactive_sites | station_code %in% inactive_stations, "inactive", "active"))
-
-park_acc_rate <- acc_data %>%
-  group_by(site_status) %>% # group site status to maintain the site_status column when using 'calc_linear_rates' 
-  NPSETr::calc_linear_rates(., level = "site") %>%
-  ungroup() %>%
-  mutate(site_acc_rate_text = paste0(format_result_vals(rate), " ± ", format_result_vals(rate_se), " mm/yr")) %>%
-  {assign("site_acc_rates", ., envir = .GlobalEnv); . } %>% # assign site rates to separate data frame for future use
-  {if (params$park_code %in% c("ASIS"))
-    filter(., site_status == "active")} %>% # leave inactive sites out of calculate of park-level SET rate
-  group_by(network_code, park_code) %>%
-  summarise(park_acc_rate = mean(rate, na.rm = TRUE),
-            park_acc_rate_se = sd(rate, na.rm = TRUE)/sqrt(sum(!is.na(rate)))) %>%
-  mutate(park_acc_rate_text = paste0(format_result_vals(park_acc_rate), " ± ", format_result_vals(park_acc_rate_se), " mm/yr")) %>%
-  ungroup()
-
-park_sub_rate <- site_set_rates %>%
-  select(network_code, park_code, site_name, rate, rate_p) %>%
-  left_join(., site_acc_rates %>% 
-              select(site_name, rate, rate_p), 
-            by = c("site_name"), 
-            suffix = c("_set", "_acc")) %>%
-  mutate(rate_sub = rate_set - rate_acc,
-         across(-c(network_code, park_code, site_name, rate_p_set, rate_p_acc), 
-                ~if_else(!is.na(.x), format(round(.x, 2), nsmall = 2), "NA"),
-                .names = "{.col}_chr")) %>%
-  mutate(across(c(rate_p_set, rate_p_acc), ~if_else(!is.na(.x), format_pval(.x, output_type = "stars2"), ""))) %>%
-  mutate(rate_set_text = paste0(rate_set_chr, rate_p_set),
-         rate_acc_text = paste0(rate_acc_chr, rate_p_acc)) %>%
-  {assign("site_sub_rates", ., envir = .GlobalEnv); . } %>% # assign site rates to separate data frame for future use
-  group_by(network_code, park_code) %>%
-  summarise(park_sub_rate = mean(rate_sub, na.rm = TRUE),
-            park_sub_rate_se = sd(rate_sub, na.rm = TRUE)/sqrt(sum(!is.na(rate_sub))),
-            park_sub_rate_text = paste(format_result_vals(park_sub_rate), "±", format_result_vals(park_sub_rate_se), "mm/yr")) 
-```
-
-Across all `r as.character(english::english(active_site_count))` actively monitored sites at `r params$park_name`, the park-wide average rate of vertical accretion was **`r park_acc_rate$park_acc_rate_text`**. Site-level rates of vertical accretion varied from a low of `r site_acc_rates %>% slice_min(rate) %>% pull(site_acc_rate_text)` at `r site_acc_rates %>% slice_min(rate) %>% pull(site_name)` to a high of `r site_acc_rates %>% slice_max(rate) %>% pull(site_acc_rate_text)` at `r site_acc_rates %>% slice_max(rate) %>% pull(site_name)` (Table \@ref(tab:site-acc-rates-tbl); Figure ). 
-
-The park-wide average rate of subsurface elevation change was **`r park_sub_rate$park_sub_rate_text`**. Site-level rates of subsurface elevation change varied from a low of `r site_sub_rates %>% slice_min(rate_sub) %>% pull(rate_sub_chr)` at `r site_sub_rates %>% slice_min(rate_sub) %>% pull(site_name)` to a high of `r site_sub_rates %>% slice_max(rate_sub) %>% pull(rate_sub_chr)` at `r site_sub_rates %>% slice_max(rate_sub) %>% pull(site_name)` (Table \@ref(tab:site-acc-rates-tbl); Figure ).
-
-```{r site-acc-rates-tbl, echo=FALSE, message=FALSE, warning=FALSE, layout="l-body-outset"}
-site_sub_rates %>%
-  select(site_name, rate_set_text, rate_acc_text, rate_sub_chr) %>%
-  kable(booktabs = TRUE, label = NA, col.names = c("Site", "Rate of surface elevation change (mm/yr)", "Rate of vertical accretion (mm/yr)", "Subsurface elevation change (mm/yr)"), caption = paste0("Site-level rates of surface elevation change, vertical accretion, and subsurface elevation change within ", params$park_name, ". Subsurface elevation change represents the difference between surface elevation change and vertical accretion. Symbols next to surface elevation change and vertical accretion rates denote the model p-value, where * indicates the rate is significantly different from 0, and · indicates the rate is not significantly different from 0. \"NA\" indicates that vertical accretion was not measured at a specific site."), format = "markdown") %>%
-  kable_styling()
-```
 
 # References {#refs}
 
