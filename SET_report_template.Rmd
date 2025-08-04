@@ -20,6 +20,7 @@ output:
 params:
   park_code: "ASIS"
   park_name: "Assateague Island National Seashore"
+  nauset: FALSE
   front_photo_file: "ASIS_title_photo.jpg"
   data_package_id: "2309427"
   data_package_year: "2025"
@@ -155,14 +156,14 @@ The Northeast Coastal & Barrier Inventory and Monitoring Network (NCBN) uses the
 
 3.  Is elevation gain sufficient to keep pace with current and predicted sea level rise? (Figure 2D; Results Section 3)
 
-```{r surface-elev-diagram, echo=FALSE, fig.cap=paste("Conceptual diagram showing the relationship among wetland surface elevation (A), tidal datums (C), and their respective rates of change (B and D). Understanding these relationships is important for evaluating the sustainability of a wetland community to sea-level rise."), out.width = '100%'}
+```{r surface-elev-diagram, echo=FALSE, fig.cap=paste("Conceptual diagram showing the relationship among wetland surface elevation (A), tidal datums (C), and their respective rates of change (B and D). Understanding these relationships is important for evaluating the sustainability of a wetland community to sea-level rise."), message=FALSE, warning=FALSE, out.width='100%'}
 
 knitr::include_graphics(paste0(here::here("images"), "/surface_elevation_diagram.jpg"))
 ```
 
 # Methods
 
-### Protocols (Vital Signs)
+### Protocol
 
 NCBN's long-term, standardized monitoring protocol for monitoring surface elevation change ([Lynch et al. 2015](#refs)) is implemented semiannually in the spring and fall at `r params$park_name`. Changes in surface elevation are measured using the SET-MH technique (surface elevation table (SET) – marker horizon (MH)):
 
@@ -172,7 +173,7 @@ NCBN's long-term, standardized monitoring protocol for monitoring surface elevat
 
 ### Sample Size
 
-```{r sample-size, include=FALSE}
+```{r sample-size, message=FALSE, warning=FALSE, include=FALSE}
 active_site_count <- data %>% # count of regularly monitored, active sites (excludes experimental sites)
   filter(site_status == "active") %>%
   group_by(park_code) %>%
@@ -180,7 +181,7 @@ active_site_count <- data %>% # count of regularly monitored, active sites (excl
   pull(site_count)
 
 {if (params$park_code == "ASIS")
-  extra_sample_size_text1 <- paste("A fifth site, Pine Tree, was monitored between 2016 to 2022 as part of a pilot effort to compare rates of surface elevation change derived from SETs to rates derived by other elevation measurement methods (Lynch et al. 2024).")
+  extra_sample_size_text1 <- paste("A fifth site, Pine Tree Study, was monitored between 2016 to 2022 as part of a pilot effort to compare rates of surface elevation change derived from SETs to rates derived by other elevation measurement methods (Lynch et al. 2024).")
   else
     extra_sample_size_text1 <- ""}
 ```
@@ -202,8 +203,17 @@ data %>%
   kable_styling()
 ```
 
+### Sea-Level Rise
+
+```{r message=FALSE, warning=FALSE, include=FALSE}
+slr_data <- NPSETr::get_sea_level_data(park = params$park_code, nauset = params$nauset, end_year = year(Sys.Date())-1)
+```
+
+The long-term relative rate of sea-level rise was obtained from the [NOAA tides and currents website](https://tidesandcurrents.noaa.gov/sltrends/) for the nearby tide gauge at `r` . This long-term SLR rate is based on the full record of water level observations collected between the year that the gauge was installed (`r min(slr_data$Year`) to the previous year (`r year(Sys.Date())-1`).
+
 ```{r station-map, out.width = '100%', echo=FALSE, fig.cap=paste0("Individual SET stations within ", params$park_name, ". Click on the points to see the site and station labels."), message=FALSE, warning=FALSE}
 
+#to-do 8/4/2025 - add tide gauges/water loggers to map
 map_SETs(data)
 ```
 
@@ -237,9 +247,9 @@ site_set_rates %>%
          last_year = map_chr(data, function(x) as.character(lubridate::year(max(x$event_date_UTC)))),
          date_range = paste0(first_year, "-", last_year)) %>%
   ungroup() %>%
-  select(site_name, site_set_rate_text_tbl, adj_r2, date_range) %>%  
-  kable(booktabs = T, label = NA, caption = paste0("Site-level rates of surface elevation change within ", params$park_name, ". Symbols next to surface elevation change rates denote the model p-value, where * indicates the rate is significantly different from 0, and · indicates the rate is not significantly different from 0."), col.names = c("Site", "Rate of surface elevation change (mm/yr)", "Adjusted *r*^2^", "Date range"), format = "markdown") %>%
-  kable_styling() 
+  select(site_name, site_set_rate_text_tbl, adj_r2, date_range) %>%
+  kable(booktabs = T, label = NA, caption = paste0("Site-level rates of surface elevation change within ", params$park_name, ". Symbols next to surface elevation change rates denote the model p-value, where * indicates the rate is significantly different from 0, and • indicates the rate is not significantly different from 0."), col.names = c("Site", "Rate of surface elevation change (mm/yr)", "Adjusted *r*^2^", "Date range"), format = "markdown") %>%
+  kable_styling()
 ```
 
 ```{r site-sets-fig, echo=FALSE, fig.cap=paste0("Site-level surface elevation change at ", params$park_name, ". Rates of surface elevation change (SEC) are shown in panel labels. Hover the mouse over a data point to see the cumulative surface elevation change value on a specific date, or click and drag over a specific time to zoom in. Double click to zoom back out"), message=FALSE, warning=FALSE, out.width='100%'}
@@ -276,7 +286,127 @@ ggplotly(p, tooltip = "text") %>%
    style(hoverlabel = text) 
 ```
 
+### 2. How do local wetland elevation dynamics relate to the local hydrology (e.g., local tidal datums)?
 
+```{r message=FALSE, warning=FALSE, include=FALSE}
+
+```
+
+### 3. Is elevation gain sufficient to keep pace with current and predicted sea-level rise?
+
+#### Comparisons to current sea-level rise
+
+```{r message=FALSE, warning=FALSE, include=FALSE}
+long_slr_rate <- NPSETr::get_long_slr_rate(park = params$park_code)
+
+recent_slr_rate <- NPSETr::get_recent_slr_rate(park = params$park_code, start_year = 2001, end_year = 2019)
+
+future_slr_rate <- NPSETr::get_future_slr_rate(park = params$park_code, decade = 2100, scenario_percentile = "MED")
+
+slr_rate_comps <- long_slr_rate %>% 
+  select("slr_rate" = MSL.Trends.mm.yr., "rate_type" = object_type) %>%
+  bind_rows(., recent_slr_rate %>% 
+              filter(term == "yr") %>%
+              select("slr_rate" = estimate, "rate_type" = object_type)) %>%
+  bind_rows(., future_slr_rate %>%
+              select("slr_rate" = future_slr_rate, "rate_type" = scenario_name)) %>%
+  pivot_wider(., names_from = rate_type, values_from = slr_rate) %>%
+  select("long_rate" = `long term slr rate`, "recent_rate" = `recent slr rate`, "future_low_rate"  = low, "future_int_low_rate" = int_low, "future_int_rate" = "int", "future_int_high_rate" = int_high, "future_high_rate" = high) %>%
+  bind_cols(., site_set_rates %>%
+              select(park_code, site_name, rate, rate_se)) %>%
+  mutate(rate_plus_se = rate + rate_se,
+         across(c(long_rate:future_high_rate), ~if_else(rate_plus_se >= .x, TRUE, FALSE), .names = "{.col}_comp"))
+
+slr_current_rate_comp_text <- function(comps_df, rate_type) {
+  
+  park <- params$park_name
+  data <- comps_df
+  num_sites <- n_distinct(data$site_name)
+  
+  
+  if (rate_type == "relative long-term") {
+    col_name <- "long_rate_comp"
+  } else if (rate_type == "relative recent") {
+    col_name <- "recent_rate_comp"
+  }
+  
+  num_greater_sites <- sum(data[[col_name]]) 
+  
+  site_name_text <- data %>%
+    filter(!!sym(col_name)) %>%
+    pull(site_name) %>%
+    knitr::combine_words(.)
+  
+  all_sites_sentence <- function(park, num_sites, rate_type) {
+    paste0("All ", english::english(num_sites), " sites at ", park, " gained elevation at a rate close to or greater than the ", rate_type, " rate of sea-level rise.")
+  }
+  
+  any_sites_sentence <- function(park, num_sites, num_greater_sites, site_name_text, rate_type) {
+    paste0("Out of the ", english::english(num_sites), " sites at ", park, ", ", english::english(num_greater_sites), " sites - ", site_name_text, " - were gaining elevation at a rate close to or greater than the ", rate_type, " rate of sea-level rise")
+  }
+  
+  no_sites_sentence <- function(park, rate_type) {
+    paste0("None of the sites at ", park, " were building elevation at a rate close to or greater than the ", rate_type, " rate of sea-level rise")
+  }
+  
+  if (all(data[[col_name]])) {
+    text <- all_sites_sentence(park = park, num_sites = num_sites, rate_type = rate_type)
+  } else if (any(data[[col_name]]) & !all(data[[col_name]])) {
+    text <- any_sites_sentence(park = park, num_sites = num_sites, num_greater_sites = num_greater_sites, site_name_text = site_name_text, rate_type = rate_type) 
+  } else if (!all(data[[col_name]])) {
+    text <- no_sites_sentence(park = park, rate_type = rate_type)
+  }
+  
+  return(text)
+  
+}
+```
+
+As of `r lubridate::month(Sys.Date(), label = TRUE, abbr = FALSE)` `r lubridate::year(Sys.Date())`, the current long-term rate of relative sea-level rise from the nearest NOAA tide gauge at `r long_slr_rate$Station.Name` was `r long_slr_rate$MSL.Trends.mm.yr.` mm/yr (± `r long_slr_rate$Perc.95.CI.mm.yr.`) for the period between `r long_slr_rate$First.Year` to `r long_slr_rate$Last.Year` (`r paste0("https://tidesandcurrents.noaa.gov/sltrends/sltrends_station.shtml?id=", long_slr_rate$Station.ID)`). `r slr_current_rate_comp_text(comps_df = slr_rate_comps, rate_type = "relative long-term")` (Figure \@ref(fig:site-slr-recent-fig)).
+
+Additionally, using the sea-level data from the nearby NOAA tide gauge, we calculated a recent rate of relative sea-level rise of `r recent_slr_rate %>% filter(term == "yr") %>% mutate(estimate = format_result_vals(estimate)) %>% pull(estimate)` mm/yr (± `r recent_slr_rate %>% filter(term == "yr") %>% mutate(std.error = format_result_vals(std.error)) %>% pull(std.error)`) for `r params$park_name` over the most recent tidal epoch (2001-2019). `r slr_current_rate_comp_text(comps_df = slr_rate_comps, rate_type = "relative recent")` (Figure \@ref(fig:site-slr-recent-fig)).
+
+```{r site-slr-recent-fig, echo=FALSE, message=FALSE, warning=FALSE, out.width='100%', fig.cap="Site-level surface elevation change at ", params$park_name, " compared to relative long-term and recent rates of sea-level rise. ... Hover the mouse over a data point to see the cumulative surface elevation change value on a specific date, or click and drag over a specific time to zoom in. Double click to zoom back out"}
+
+
+slr_rates <- long_slr_rate %>% 
+  select("slr_rate" = MSL.Trends.mm.yr., "rate_type" = object_type) %>%
+  bind_rows(., recent_slr_rate %>% 
+              filter(term == "yr") %>%
+              select("slr_rate" = estimate, "rate_type" = object_type)) 
+  
+ggplotly(NPSETr::plot_rate_comps(data = data, level = "site") +
+  geom_vline(data = slr_rates, aes(xintercept = slr_rate, color = rate_type), inherit.aes = FALSE))
+
+```
+
+#### Comparisons to future sea-level rise
+
+Based on the calculations provided in [Sweet et al. 2022](#refs), future predicted rates of relative sea-level rise by 2100 for `r params$park_name` ranged from a low of `r future_slr_rate %>% slice_min(future_slr_rate) %>% mutate(future_slr_rate = format_result_vals(future_slr_rate)) %>% pull(future_slr_rate)` mm/yr for the "low" sea-level rise scenario to a high of `r future_slr_rate %>% slice_max(future_slr_rate) %>% mutate(future_slr_rate = format_result_vals(future_slr_rate)) %>% pull(future_slr_rate)` mm/yr for the "high" sea-level rise scenario (Table \@ref(tab:future-slr-rates-tbl)).
+
+```{r future-slr-rates-tbl, echo=FALSE, message=FALSE, warning=FALSE, layout="l-body-outset"}
+future_slr_rate %>%
+  select(NOAA_ID, scenario_name, slr_by_2100_m, future_slr_rate) %>%
+  mutate(
+    park = params$park_code,
+    future_slr_rate = format_result_vals(future_slr_rate),
+    scenario_name = case_when(
+      scenario_name == "low" ~ str_to_sentence(scenario_name),
+      scenario_name == "int_low" ~ "Intermdiate-Low",
+      scenario_name == "int" ~ "Intermediate",
+      scenario_name == "int_high" ~ "Intermediate-High",
+      scenario_name == "high" ~ str_to_sentence(scenario_name)
+    )) %>%
+  select(park, NOAA_ID, scenario_name, slr_by_2100_m, future_slr_rate) %>%
+  kable(booktabs = T, label = NA, caption = paste0("Predicted future sea-level rise by 2100 for ", params$park_name, ". Future predicted sea-level and rates of sea-level rise were based on calculations for the nearest NOAA tide gauge provided in Sweet et al. 2022 for the 5th National Climate Assessment ."), col.names = c("Park", "NOAA gauge ID", "Sea level rise scenario", "Sea level rise by 2100 (m)", "Future predicted SLR rate by 2100 (mm/yr)"), format = "markdown", align = "c") %>%
+  kable_styling() %>%
+  collapse_rows(., columns = c(1,2))
+```
+
+```{r}
+
+
+```
 
 # References {#refs}
 
@@ -285,6 +415,8 @@ ggplotly(p, tooltip = "text") %>%
 | [Church, J.A, P.L. Woodworth, T. Aarup, and W.S. Wilson. 2010. Understanding sea level rise and variability. Blackwell, New York, NY.](https://doi.org/10.1002/9781444323276)
 | 
 | [Lynch, J.C., N. Winn, K. Kovalenko, and G. Guntenspergen. 2024. Comparing wetland elevation change using a surface elevation table, digital level, and total station. Estuaries and Coasts, 47, 2071-2079.](https://doi.org/10.1007/s12237-023-01263-1)
+| 
+| [Sweet, W.V., B.D. Hamlington, R.E. Kopp, C.P. Weaver, P.L. Barnard, D. Bekaert, W. Brooks, M. Craghan, G. Dusek, T. Frederikse, G. Garner, A.S. Genz, J.P. Krasting, E. Larour, D. Marcy, J.J. Marra, J. Obeysekera, M. Osler, M. Pendleton, D. Roman, L. Schmied, W. Veatch, K.D. White, and C. Zuzak. 2022. Global and Regional Sea Level Rise Scenarios for the United States: Updated Mean Projections and Extreme Water Level Probabilities Along U.S. Coastlines. NOAA Technical Report NOS 01. National Oceanic and Atmospheric Administration, National Ocean Service, Silver Spring, MD, 111 pp.](https://oceanservice.noaa.gov/hazards/sealevelrise/noaa-nos-techrpt01-global-regional-SLR-scenarios-US.pdf)
 | 
 | [Ainsworth, A., Berkowitz, P., Jacobi, J.D., Loh, R.K., & Kozar, K. 2011. Focal Terrestrial Plant Communities Monitoring Protocol: Pacific Island Network. Natural Resource Report NPS/PACN/NRR---2011/410. National Park Service, Fort Collins, Colorado.](https://irma.nps.gov/DataStore/DownloadFile/429572)
 
