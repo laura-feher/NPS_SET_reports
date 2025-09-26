@@ -21,8 +21,8 @@
 #' 
 #' @rdname format_results
 #' @export
-format_result_vals <- function(x) {
-  format(round(x, 2), nsmall = 2, digits = 2)
+format_result_vals <- function(x, decimals = 2) {
+  format(round(x, decimals), nsmall = decimals, digits = decimals)
 }
 
 #' @rdname format_results
