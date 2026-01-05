@@ -1,0 +1,354 @@
+#' Functions for creating the leaflet map showing SET stations, water loggers,
+#' and NOAA tide gauges for each park.
+#'
+#' @param data dataframe. A dataframe of SET pin_heights.
+#' @param dp_id string. The data package id number from datastore.
+#' @param dp_pub_date string. YYYYMMDD date that the data package was published.
+#' @param park_code string. The 4-letter park unit code.
+#' @param dp_year string. The year that the data package was published on
+#'   datastore.
+#' @param crosstalk TRUE/FALSE. Return a crosstalk object? Defaults to FALSE.
+#' @param crosstalk_group string. If returning a crosstalk object, the crosstalk
+#'   group type. Defaults to "map".
+#'
+#' @description Mapping functions based on
+#'   https://github.com/jakegross808/pacn-veg-package/blob/main/R/spatial.R.
+#'   `r get_station_points()` gets the SET station coordinates from the
+#'   "station_data" csv in the data package. 
+#'   `r get_site_points()` averages the SET station-level coordinates up to the
+#'    site-level. 
+#'   `r get_all_points()` row binds the station and site-level coordinates into a
+#'     single dataframe. 
+#'   `r get_waterlogger_points()` contains the hard-coded coordinates for the
+#'   individual water level loggers. 
+#'   `r get_noaa_tidegauge_points()` contains the hard-corded coordinates for the 
+#'   NOAA tide gauges. 
+#'   `r map_SETs()` creates the leaflet map of the SET stations, water loggers, 
+#'   and NOAA tide gauges.
+#'
+#' @name map_functions
+#' @import dplyr
+#' @import readr
+#' @import sf
+#' @import crosstalk
+#' @import htmltools
+#' @import leaflet
+#' @import leaflet.extras
+#'
+#' @rdname map_functions
+#' @export
+get_station_points <- function(data = data, dp_id, dp_pub_date, park_code, dp_year, crosstalk = FALSE, crosstalk_group = "map"){
+  
+  station_points <- readr::read_csv(here::here("data", dp_id, paste0("station_data_", dp_pub_date, ".csv")), show_col_types = FALSE) %>%
+    filter(., park_code == params$park_code) %>%
+    filter(!(station_code %in% c("JR1S", "JR2S", "JR3S", "EE1S", "EE2S", "EE3S"))) %>% # Exclude shallow SETs at GATE
+    filter(site_name != "Pine Tree Study") %>% # Exclude Pine Tree Study at ASIS
+    # Exclude Duck Harbor at CACO for 2025 since there is only 1 year of data so far
+    {if (park_code == "CACO" & dp_year == "2025")
+      filter(., site_name != "Duck Harbor")
+      else .
+      } %>%
+    left_join(., 
+              data %>%
+                distinct(park_code, park_name, site_name, station_code, station_name),
+              by = c("park_code", "park_name", "site_name", "station_code", "station_name")) %>%
+    # Convert to sf data frame
+    sf::st_as_sf(., coords = c("station_longitude", "station_latitude"), crs = 4326, remove = FALSE) %>% # 4326 is WGS84 CRS
+    rename("longitude" = station_longitude, "latitude" = station_latitude) %>%
+    mutate(layer = "station",
+           pt_label = stringr::str_replace_all(station_code, "_", "-"))
+  
+  if (crosstalk) {
+    station_points <- crosstalk::SharedData$new(station_points, group = crosstalk_group)
+  }
+  
+  return(station_points)
+}
+#'
+#' @rdname map_functions
+#' @export
+get_site_points <- function(data = data, crosstalk = FALSE, crosstalk_group = "map"){
+  
+  site_points <- get_station_points(data) %>%
+    select(-c(station_code, station_name, SET_depth_m, SET_date_established, SET_date_retired, station_status, protected_status, station_notes)) %>%
+    sf::st_drop_geometry(.) %>%
+    group_by(park_code, park_name, site_name) %>%
+    summarise(longitude = mean(longitude, na.rm = TRUE),
+              latitude = mean(latitude, na.rm = TRUE)) %>%
+    sf::st_as_sf(., coords = c("longitude", "latitude"), crs = 4326, remove = FALSE) %>%
+    mutate(layer = "site",
+           pt_label = site_name) %>%
+    ungroup(.)
+  
+  if (crosstalk) {
+    site_points <- crosstalk::SharedData$new(site_points, group = crosstalk_group)
+  }
+  
+  return(site_points)
+}
+
+get_all_points <- function(data = data, crosstalk = FALSE, crosstalk_group = "map"){
+  
+  all_points <- bind_rows(
+    get_station_points(data),
+    get_site_points(data)
+  )
+  
+  if (crosstalk) {
+    all_points <- crosstalk::SharedData$new(all_points, group = crosstalk_group)
+  }
+  
+  return(all_points)
+}
+#'
+#' @rdname map_functions
+#' @export
+get_waterlogger_points <- function(park_code) {
+  if (park_code == "ASIS") {
+    data.frame(Park = c(rep("ASIS",3)),
+               Site = c("Marsh 5 (Pope Bay)", "Marsh 6 (Pine Tree)", "Marsh 8 (Valentines)"),
+               Lat = c(38.048201, 38.143613, 38.089134),
+               Lon = c(-75.234397, -75.187342, -75.222018))
+  } else if (park_code == "ACAD") {
+    data.frame(Park = c(rep("ACAD",4)),
+               Site = c("Schoodic", "Bass Harbor", "Thompson Island", "Maine Coast Heritage Trust"),
+               Lat = c(44.34247, 44.2549, 44.42534, 44.37435),
+               Lon = c(-68.05983, -68.34065, -68.3643, -68.32927))
+  } else if (park_code == "CACO") {
+    data.frame(Park = c(rep("CACO",5)),
+               Site = c("Hatches Harbor Inside Dike", "Hatches Harbor Outside Dike", "Blackfish Creek", "Nauset North", "Nauset South"),
+               Lat = c(42.064801, 42.064471, 41.906561, 41.824418, 41.816709),
+               Lon = c(-70.234242, -70.234815, -69.990951, -69.962908, -69.955279)
+               )
+  } else if (park_code == "COLO") {
+    data.frame(Park = c(rep("COLO",2)),
+               Site = c("Marsh 19", "Marsh 30"),
+               Lat = c(37.206919, 37.217498),
+               Lon = c(-76.759752, -76.76518))
+  } else if (park_code == "FIIS") {
+    data.frame(Park = c(rep("FIIS",3)),
+               Site = c("Watch Hill", "Hospital Point", "Great Gun"),
+               Lat = c(40.695744, 40.727839, 40.75853),
+               Lon = c(-72.981944, -72.893756, -72.78578))
+  } else if (park_code == "GATE") {
+    data.frame(Park = c(rep("GATE",6)),
+               Site = c("Sandy Hook", "Black Bank", "Big Egg Spray-Restored", "Big Egg Control", "JOCO", "JOCO REF"),
+               Lat = c(40.449255, 40.620789, 40.59626, 40.59626, 40.611155, 40.611155),
+               Lon = c(-74.000406, -73.833819, -73.82705, -73.82705, -73.786039, -73.786039))
+  } else if (park_code == "NACE") {
+    data.frame(Park = c("NACE"),
+               Site = "Kenilworth",
+               Lat = 38.912063,
+               Lon = -76.948366)
+  }
+}
+#'
+#' @rdname map_functions
+#' @export
+get_noaa_tidegauge_points <- function(park_code) {
+  if (park_code == "ACAD") {
+    data.frame(Park = "ACAD", 
+               Site = NA,
+               Name = "Bar Harbor, ME",
+               StationID = "8413320",
+               Lat = 44.38472222,
+               Lon = -68.20083333)
+  } else if (park_code == "BOHA") {
+    data.frame(Park = "BOHA",
+               Site = NA,
+               Name = "Boston, MA",
+               StationID = 8443970,
+               Lat = 42.35055556,
+               Lon = 71.05)
+  } else if (park_code == "CACO") {
+    data.frame(Park = c(rep("CACO",2)),
+               Site = c(NA, "Nauset"),
+               Name = c("Boston, MA", "Nantucket Island, MA"),
+               StationID = c(8443970, 8449130),
+               Lat = c(42.35055556, 41.283611),
+               Lon = c(-71.05, -70.085556))
+  } else if (park_code == "FIIS" | park_code == "GATE") {
+    if (park_code == "FIIS"){
+      data.frame(Park = "FIIS",
+                 Site = NA,
+                 Name = "Sandy Hook, NJ",
+                 StationID = 8531680,
+                 Lat = 40.46666669,
+                 Lon = -74.00166667)
+    } else if (park_code == "GATE") {
+      data.frame(Park = "GATE",
+                 Site = NA,
+                 Name = "Sandy Hook, NJ",
+                 StationID = 8531680,
+                 Lat = 40.46666669,
+                 Lon = -74.00166667)
+    }
+  } else if (park_code == "ASIS") {
+    data.frame(Park = "ASIS",
+               Site = NA, 
+               Name = "Ocean City Inlet, MD",
+               StationID = 8570283,
+               Lat = 38.31861111,
+               Lon = -75.08472222)
+  } else if (park_code == "NACE" | park_code == "GWMP") {
+    if (park_code == "NACE") {
+      data.frame(Park = "NACE",
+                 Site = NA, 
+                 Name = "Washington, DC",
+                 StationID = 8594900,
+                 Lat = 38.86777778,
+                 Lon = -77.0175)
+    } else if (park_code == "GWMP") {
+      data.frame(Park = "GWMP",
+                 Site = NA, 
+                 Name = "Washington, DC",
+                 StationID = 8594900,
+                 Lat = 38.86777778,
+                 Lon = -77.0175)
+    }
+  } else if (park_code == "COLO") {
+    data.frame(Park = "COLO",
+               Site = NA,
+               Name = "Sewells Point, VA",
+               StationID = 8638610, 
+               Lat = 36.935,
+               Lon = -76.31861111)
+  } else if (park_code == "CAHA" | park_code == "CALO") {
+    if (park_code == "CAHA") {
+      data.frame(Park = "CAHA",
+                 Site = NA,
+                 Name = "USCG Station Hatteras, NC",
+                 StationID = 8654467,
+                 Lat = 35.20138889,
+                 Lon = -75.70083333)
+    } else if (park_code == "CALO") {
+      data.frame(Park = "CALO",
+                 Site = NA,
+                 Name = "USCG Station Hatteras, NC",
+                 StationID = 8654467,
+                 Lat = 35.20138889,
+                 Lon = -75.70083333)
+    }
+  } else if (park_code == "FOPU") {
+    data.frame(Park = "FOPU",
+               Site = NA,
+               Name = "Fort Pulaski, GA",
+               StationID = 8670870,
+               Lat = 32.03361111,
+               Lon = -80.90055556)
+  } else if (park_code == "FOFR" | park_code == "CUIS") {
+    if (park_code == "FOFR") {
+      data.frame(Park = "FOFR",
+                 Site = NA,
+                 Name = "Kings Bay MSF Pier, GA",
+                 StationID = 8679598,
+                 Lat = 30.76861111,
+                 Lon = -81.48472222)
+    } else if (park_code == "CUIS") {
+      data.frame(Park = "CUIS",
+                 Site = NA,
+                 Name = "Kings Bay MSF Pier, GA",
+                 StationID = 8679598,
+                 Lat = 30.76861111,
+                 Lon = -81.48472222)
+    }
+  } else if (park_code == "TIMU") {
+    data.frame(Park = "TIMU", 
+               Site = NA,
+               Name = "Fernandina Beach, FL",
+               StationID = 8720030,
+               Lat = 30.6675,
+               Lon = -81.46666667)
+  } else if (park_code == "FOMA") {
+    data.frame(Park = "FOMA",
+               Site = NA,
+               Name = "Mayport (Bar Pilots Dock), FL",
+               StationID = 8720218,
+               Lat = 30.38583333,
+               Lon = -81.41861111)
+  } else if (park_code == "CANA") {
+    data.frame(Park = "CANA",
+               Site = NA,
+               Name = "Trident Pier, Port Canaveral, FL",
+               StationID = 8721604,
+               Lat = 28.4025,
+               Lon = -80.585)
+  } else if (park_code == "BISC") {
+    data.frame(Park = "BISC",
+               Site = NA, 
+               Name = "Virginia Key, FL",
+               StationID = 8723214,
+               Lat = 25.71916667,
+               Lon = -80.15194444)
+  } else if (park_code == "SARI") {
+    data.frame(Park = "SARI",
+               Site = NA,
+               Name = "Christiansted Harbor, St Croix, VI",
+               StationID = 9751364,
+               Lat = 17.73583333,
+               Lon = -64.68583333)
+  } else if (park_code == "VIIS") {
+    data.frame(Park = "VIIS",
+               Site = NA,
+               Name = "Lameshur Bay, St John, VI",
+               StationID = 9751381,
+               Lat = 18.31694444,
+               Lon = -64.71805556)
+  }
+}
+#'
+#' @rdname map_functions
+#' @export
+map_SETs <- function(data = data, park_code, dp_id, dp_year, dp_pub_date, crosstalk = FALSE, crosstalk_group = "map") {
+  
+  points_data <- get_station_points(data = data, park_code = park_code, dp_id = dp_id, dp_year = dp_year, dp_pub_date = dp_pub_date, crosstalk = crosstalk, crosstalk_group = crosstalk_group)
+  wl_points <- get_waterlogger_points(park_code = park_code)
+  tide_gauge_points <- get_noaa_tidegauge_points(park_code = park_code)
+  
+  # If points is a crosstalk object, extract just the data for functions that need a regular tibble/dataframe
+  if (crosstalk) {
+    points_data <- points_data$data()
+  } 
+  
+  # Make NPS map Attribution
+  NPSAttrib <-
+    htmltools::HTML(
+      "<a href='https://www.nps.gov/npmap/disclaimer/'>Disclaimer</a> |
+      &copy; <a href='http://mapbox.com/about/maps' target='_blank'>Mapbox</a>
+      &copy; <a href='http://openstreetmap.org/copyright' target='_blank'>OpenStreetMap</a> contributors |
+      <a class='improve-park-tiles'
+      href='http://insidemaps.nps.gov/places/editor/#background=mapbox-satellite&map=4/-95.97656/39.02772&overlays=park-tiles-overlay'
+      target='_blank'>Improve Park Tiles</a>"
+    )
+  
+  # NPS park tiles URLs
+  NPSbasic = "https://atlas-stg.geoplatform.gov/styles/v1/atlas-user/ck58pyquo009v01p99xebegr9/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiYXRsYXMtdXNlciIsImEiOiJjazFmdGx2bjQwMDAwMG5wZmYwbmJwbmE2In0.lWXK2UexpXuyVitesLdwUg"
+  NPSimagery = "https://atlas-stg.geoplatform.gov/styles/v1/atlas-user/ck72fwp2642dv07o7tbqinvz4/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiYXRsYXMtdXNlciIsImEiOiJjazFmdGx2bjQwMDAwMG5wZmYwbmJwbmE2In0.lWXK2UexpXuyVitesLdwUg"
+  NPSslate = "https://atlas-stg.geoplatform.gov/styles/v1/atlas-user/ck5cpvc2e0avf01p9zaw4co8o/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiYXRsYXMtdXNlciIsImEiOiJjazFmdGx2bjQwMDAwMG5wZmYwbmJwbmE2In0.lWXK2UexpXuyVitesLdwUg"
+  NPSlight = "https://atlas-stg.geoplatform.gov/styles/v1/atlas-user/ck5cpia2u0auf01p9vbugvcpv/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiYXRsYXMtdXNlciIsImEiOiJjazFmdGx2bjQwMDAwMG5wZmYwbmJwbmE2In0.lWXK2UexpXuyVitesLdwUg"
+  
+  map <- leaflet::leaflet(points_data) %>%
+    leaflet::addTiles(group = "Basic", urlTemplate = NPSbasic, attribution = NPSAttrib) %>%
+    leaflet::addTiles(group = "Imagery", urlTemplate = NPSimagery, attribution = NPSAttrib) %>%
+    leaflet::addTiles(group = "Slate", urlTemplate = NPSslate, attribution = NPSAttrib) %>%
+    leaflet::addTiles(group = "Light", urlTemplate = NPSlight, attribution = NPSAttrib) %>%
+    leaflet::addLayersControl(baseGroups = c("Basic", "Imagery", "Slate", "Light"),
+                            options=leaflet::layersControlOptions(collapsed = TRUE)) %>%
+    leaflet::addCircleMarkers(lng = ~longitude,
+                        lat = ~latitude,
+                        label = ~pt_label,
+                        clusterOptions = markerClusterOptions(),
+                        labelOptions = leaflet::labelOptions(noHide = TRUE, opacity = .9, textOnly = TRUE, offset = c(0,0), direction = "center", style = list("color" = "white", "font-weight" = "bold")),
+                        popup = ~paste0("<strong>Site: </strong>", site_name, 
+                                        "<br><strong>Station: </strong>", station_code)) %>%
+    leaflet::addCircles(data = wl_points, lng = ~Lon, lat = ~Lat, color = "red", popup = ~paste0("<strong>Water logger: </strong>", Site), labelOptions = leaflet::labelOptions(noHide = TRUE, opacity = .9, textOnly = TRUE, offset = c(0,0), direction = "center", style = list("color" = "white", "font-weight" = "bold"))) %>%
+    leaflet::addCircles(data = tide_gauge_points, lng = ~Lon, lat = ~Lat, color = "green", popup = ~paste0("<strong>NOAA Tide Gauge: </strong>", Name), labelOptions = leaflet::labelOptions(noHide = TRUE, opacity = .9, textOnly = TRUE, offset = c(0,0), direction = "center", style = list("color" = "white", "font-weight" = "bold"))) %>%
+    leaflet::addScaleBar(position = "bottomleft") %>%
+    leaflet::addLegend(., labels = c("Water loggers"), colors = c("red"), position = "bottomleft") %>%
+    leaflet::addLegend(., labels = c("NOAA Tide Gauge"), colors = c("green"), position = "bottomleft") %>%
+    leaflet::addLegend(., labels = c("SET stations"), colors = c("blue"), position = "bottomleft") %>%
+    
+    leaflet.extras::addResetMapButton()
+  
+  return(map)
+}

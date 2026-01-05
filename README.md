@@ -1,0 +1,231 @@
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+# NPS SET Report Markdown Templates
+
+The goal of these markdown templates is to allow for rapid and
+repeatable analyses of NPS SET data and publication of results in a
+standardized annual report format.
+
+In general, data analyses are conducted according to the [NPS Surface
+Elevation Table
+Protocol](https://irma.nps.gov/DataStore/Reference/Profile/2225005)
+([Lynch et al. 2015](#refs)).
+
+Note that there is a different template markdown file for each I&M
+Network that uses the SET protocol.
+
+# 1. Setup
+
+1.  Download the NPS_SET_reports repository from github.
+    1.  Go to <https://github.com/laura-feher/NPS_SET_reports>
+
+    2.  Click the green ‘Code’ button on the upper right and select
+        ‘Download ZIP’. Then unzip the folder.
+
+        <figure>
+        <img src="instructions_images/github_download_zip.jpg" width="579"
+        alt="Download the NPS_SET_reports repo from github" />
+        <figcaption aria-hidden="true">Download the NPS_SET_reports repo from
+        github</figcaption>
+        </figure>
+2.  Open the repository in Rstudio by double-clicking on the file called
+    ‘NPS_SET_reports.Rproj’.
+3.  Double click on a .Rmd template file to open it in Rstudio (e.g.,
+    NCBN_SET_report_template.Rmd).
+
+# 2. Set the Park-Specific Parameters
+
+Each time you want to analyze data or produce a new annual report,
+you’ll need to set some park-specific variables (hereafter referred to
+as parameters) in the header of the Rmd template file.
+
+These parameters live at the bottom of the first block of the template
+file (the YAML block; see example below) and should be set as follows:
+
+- park_code: The capitalized 4 letter park code - e.g. “ASIS”
+
+- park_name: The full official park name - e.g. “Assateague Island
+  National Seashore”
+
+- front_photo_file: The name of a jpg file for the cover photo that you
+  want to use for the report. You can use the default options that are
+  already saved in the ‘images’ folder or choose your own photo (you
+  must put it in the images folder for it to show up) -
+  e.g. “ASIS_title_photo.jpg”
+
+- INM_network: The relevant I&M network. Either NCBN, NETN, NCRN, SECN,
+  or SFCN. e.g. “NCBN”
+
+- data_package_id: The 7-digit ID of the most recent SET data package on
+  NPS DataStore - e.g. “2309427”
+
+- data_package_year: The 4-digit year that the most recent data package
+  was published on NPS DataStore - e.g. “2025”
+
+- data_package_pub_date: The date (YYYYMMDD) that the most recent SET
+  data package was published on NPS DataStore - e.g. “20250409”
+
+- ❗**download_DP: Do you need to download the latest SET data
+  package?** See instructions in next section.
+
+- accepted_data: Do you want to include only accepted data or all data?
+  Default is TRUE but you can change it to FALSE if you want to explore
+  results when all data is included.
+
+- no_double_reads: Do you want to exclude data from double-reads.
+  Default is TRUE.
+
+- exclude_cumul_noted: Do you want to exclude data that was noted for
+  exclusion in the SET database? Default is TRUE.
+
+<figure>
+<img src="instructions_images/set_park_params.jpg"
+alt="Setting park-specific parameters before running the report" />
+<figcaption aria-hidden="true">Setting park-specific parameters before
+running the report</figcaption>
+</figure>
+
+# 3. Download the most recent SET Data Package
+
+If this is your first time using these templates, you’ll need to
+download the most recent SET data package from NPS DataStore. Do this by
+setting the ‘download_DP’ parameter to TRUE. Note that if a new data
+package has come out since the last time you ran the template, you’ll
+again want to set this parameter to TRUE to make sure you have the most
+up-to-date package. Otherwise, set this parameter to FALSE.
+
+<figure>
+<img src="instructions_images/download_dp.jpg"
+alt="Set the download_DP parameter to TRUE the first time you run the template" />
+<figcaption aria-hidden="true">Set the download_DP parameter to TRUE the
+first time you run the template</figcaption>
+</figure>
+
+> ❗Set Aquaris credentials - Note that the first time you run the
+> report, you’ll be prompted to enter the password for the NPS Aquarius
+> database. After setting it the first time, you should not need to set
+> it again. Contact lfeher at nps.gov for details.
+
+# 4. Data Exploration & Analysis: Running the template as chunks
+
+Before you create a report from the template, you’ll want to run all of
+the ‘chunks’ (the individual code blocks) and examine the results since
+some of the report text will need to be changed/updated manually
+depending on the results. Note that this assumes you have already set
+the park-specific parameters in the previous step. You can run all
+chunks in the report by clicking the drop-down next to the ‘Run’ button
+at the top right, then click ‘Run All’:
+
+<figure>
+<img src="instructions_images/run_all_chunks.jpg"
+alt="Use ‘Run All’ to run all code chunks" />
+<figcaption aria-hidden="true">Use ‘Run All’ to run all code
+chunks</figcaption>
+</figure>
+
+Alternately, if you only want to run a specific portion of the code,
+scroll down to the relevant chunk and then click the grey down arrow at
+the top right of the chunk to ‘Run all chunks above’:
+
+<figure>
+<img src="instructions_images/run_chunks_above.jpg"
+alt="Run specific code chunks" />
+<figcaption aria-hidden="true">Run specific code chunks</figcaption>
+</figure>
+
+# 5. Update report text based on the results
+
+A small amount of the text providing an interpretation of the results
+will need to be updated manually each year that a new annual report is
+created. This is info that is either not easily incorporated into a R
+function or is based on expert interpretation of the results by I&M
+biologists. This includes:
+
+- Comparisons of the park-specific future predicted rates of sea-level
+  rise to rates of surface elevation change at each site. This is the
+  last sentence of Results section 3: ‘Comparisons to Future Sea-level
+  Rise’.
+
+- Two short summary paragraphs (the Discussion & Conclusions section)
+  that help to synthesize the results for park resource managers.
+
+To edit these:
+
+1.  Within the folder that contains the NPS_SET_report templates,
+    navigate to the folder called ‘R’ and double-click the file named
+    ‘format_text.R’.
+
+2.  To edit the comparisons of future SLR to surface elevation change:
+
+    1.  Scroll down to the function called ‘extra_slr_results_text’,
+
+    2.  Within this function, go to the section for the relevant park,
+
+    3.  Update the text that is defined as ‘extra_future_slr_text2’:
+
+        <figure>
+        <img src="instructions_images/edit_future_slr_text.jpg"
+        alt="To edit the comparisons to future SLR for CACO, find the CACO section in the function ‘extra_slr_results_text’ and edit the text defined as ‘extra_future_slr_text2’" />
+        <figcaption aria-hidden="true">To edit the comparisons to future SLR for
+        CACO, find the CACO section in the function ‘extra_slr_results_text’ and
+        edit the text defined as ‘extra_future_slr_text2’</figcaption>
+        </figure>
+
+3.  To edit the final summary paragraphs:
+
+    1.  Scroll down to the function called ‘summary_paragraph’,
+
+    2.  Within this function, go to the section for the relevant park,
+
+    3.  Update the text that is defined as ‘summary_paragraph1’ and
+        ‘summary_paragraph2’:
+
+        <figure>
+        <img src="instructions_images/edit_summary_text.jpg"
+        alt="To edit the summary paragraphs for ASIS, scroll down to the ASIS section of the function ‘summary_paragraph’ and edit the text for ‘summary_paragraph1’ and ‘summary_paragraph2’" />
+        <figcaption aria-hidden="true">To edit the summary paragraphs for ASIS,
+        scroll down to the ASIS section of the function ‘summary_paragraph’ and
+        edit the text for ‘summary_paragraph1’ and
+        ‘summary_paragraph2’</figcaption>
+        </figure>
+
+# 6. Create the annual report
+
+Once you’ve finished exploring the results and updating the necessary
+text, you can ‘knit’ the report to an html file that can be published on
+NPS DataStore:
+
+1.  At the top of the .Rmd template file, click on the ‘Knit’ icon with
+    the ball of yarn:
+
+    <figure>
+    <img src="instructions_images/knit_report.jpg"
+    alt="Output the annual report to an html file" />
+    <figcaption aria-hidden="true">Output the annual report to an html
+    file</figcaption>
+    </figure>
+
+2.  Once the report finishes rendering, there should be an .html file
+    within the top-level NPS_SET_reports folder with the same name as
+    the .Rmd template e.g., ‘NCBN_SET_report_template.html’:
+
+    <figure>
+    <img src="instructions_images/report_html_file.jpg"
+    alt="Note that the output report will have the same name as the .Rmd template file" />
+    <figcaption aria-hidden="true">Note that the output report will have the
+    same name as the .Rmd template file</figcaption>
+    </figure>
+
+3.  Rename the .html file to something more meaningful (e.g.,
+    “ASIS_annual_SET_report_2024.html”). **Note that if you don’t rename
+    this file, it will be overwritten each time you re-Knit the
+    report.**
+
+# References
+
+[Lynch, J.C., Hensel, P., and Cahoon, D.R., 2015. The surface elevation
+table and marker horizon technique: A protocol for monitoring wetland
+elevation dynamics. Natural Resource Report NPS/NCBN/NRR—2015/1078.
+National Park Service, Fort Collins,
+Colorado.](https://irma.nps.gov/DataStore/Reference/Profile/2225005)
