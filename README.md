@@ -10,7 +10,9 @@ standardized annual report format.
 In general, data analyses are conducted according to the [NPS Surface
 Elevation Table
 Protocol](https://irma.nps.gov/DataStore/Reference/Profile/2225005)
-([Lynch et al. 2015](#refs)).
+([Lynch et al. 2015](#refs)) using functions from the
+[NPSETr](https://github.com/laura-feher/NPSETr) and
+[NCBNAqua](https://github.com/laura-feher/NCBNAqua) packages.
 
 Note that there is a different template markdown file for each I&M
 Network that uses the SET protocol.

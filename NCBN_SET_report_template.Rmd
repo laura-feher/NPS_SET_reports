@@ -4,8 +4,12 @@ date: "`r format(Sys.time(), '%B %d, %Y')`"
 execute:
   message: false
   warning: false
+editor options: 
+  markdown:
+    wrap: none
 output: 
-  bookdown::html_document2:
+  html_document:
+    keep_md: false
     toc: true
     toc_float: true
     fig_caption: true
@@ -18,14 +22,14 @@ output:
           - header.html
 
 params:
-  park_code: "ASIS"
-  park_name: "Assateague Island National Seashore"
-  front_photo_file: "ASIS_title_photo.jpg"
+  park_code: "GATE"
+  park_name: "Gateway National Recreation Area"
+  front_photo_file: "GATE_title_photo.jpg"
   INM_network: "NCBN"
-  data_package_id: "2309427"
-  data_package_year: "2025"
-  data_package_pub_date: "20250409"
-  download_DP: TRUE
+  data_package_id: "2316550"
+  data_package_year: "2026"
+  data_package_pub_date: "20260128"
+  download_DP: FALSE
   accepted_data: TRUE
   no_double_reads: TRUE
   exclude_cumul_noted: TRUE
@@ -63,7 +67,7 @@ if (!require("pacman", character.only = TRUE)) {
 }
 
 # Install/Load CRAN packages
-pacman::p_load(tidyverse, kable, kableExtra, leaflet, leaflet.extras, sf, english, bookdown, here, plotly, data.table, DT, crosstalk, htmltools, ggforce, ggnewscale, remotes, ggrepel, keyring)
+pacman::p_load(tidyverse, kable, kableExtra, leaflet, leaflet.extras, sf, english, bookdown, here, plotly, data.table, DT, crosstalk, htmltools, ggforce, ggnewscale, remotes, ggrepel, keyring, glue)
 
 # Install/Load Github packages
 pacman::p_load_gh("nationalparkservice/fetchaquarius", "laura-feher/NCBNAqua", "laura-feher/NPSETr")
@@ -132,8 +136,8 @@ data <- raw_data %>%
                                station_code %in% c("H4", "H5", "H6", "HH1", "HH2", "HH3", "HH4", "HH5", "HH6") ~ "Hatches Harbor restricted",
                                station_code %in% c("N1", "N2", "N3", "Old N1", "Old N2", "Old N3", "Old N4") ~ "Nauset Marsh",
                                T ~ site_name)) %>%
-    # Exclude Duck Harbor because theres only 1 year of data so far
-    { if(params$data_package_year == "2025")
+    # Exclude Duck Harbor because theres less than 5 years of data so far
+    { if(as.numeric(params$data_package_year) < 2027)
       filter(., site_name != "Duck Harbor")
       else .}
     else .
@@ -163,13 +167,13 @@ years <- data %>%
 title: "Salt Marsh Elevation Monitoring at `r params$park_name`: `r years`"
 ---
 
-```{r title-park-fig, echo=FALSE, fig.cap=paste0("Surface elevation table (SET) monitoring at ", params$park_name, "."), out.width = '100%'}
+```{r title-park-fig, echo=FALSE, fig.cap=paste0("Figure 1. Surface elevation table (SET) monitoring at ", params$park_name, "."), out.width = '100%'}
 knitr::include_graphics(paste0(here::here("images"), "/", params$front_photo_file))
 ```
 
 # Background
 
-Coastal wetlands exist within a narrow range of elevation which is influenced by local hydrologic conditions. As sea level rises, coastal wetland systems must build elevation at a rate equal to or greater than the rate of sea-level rise to maintain favorable hydrologic conditions for their survival (Figure \@ref(fig:surface-elev-diagram)). With global rates of sea-level rise predicted to increase over the coming decades ([Church et al. 2010](#refs)), many more coastal wetlands may become vulnerable to increased inundation. Additionally, certain areas of the coast, such as the mid-Atlantic region, can undergo even greater sea-level rise due to changes in coastal ocean circulation ([Sallenger et al. 2012](#refs)).
+Coastal wetlands exist within a narrow range of elevation which is influenced by local hydrologic conditions. As sea level rises, coastal wetland systems must build elevation at a rate equal to or greater than the rate of sea-level rise to maintain favorable hydrologic conditions for their survival (Figure 2). With global rates of sea-level rise predicted to increase over the coming decades ([Church et al. 2010](#refs)), many more coastal wetlands may become vulnerable to increased inundation. Additionally, certain areas of the coast, such as the mid-Atlantic region, can undergo even greater sea-level rise due to changes in coastal ocean circulation and spatial variation in rates of glacio-isostatic adjustment and Holocene sediment compaction ([Engelhart et al. 2009](#refs), [Miller et al. 2013](#refs), [Sallenger et al. 2012](#refs)).
 
 The Northeast Coastal & Barrier Inventory and Monitoring Network (NCBN) uses the SET technique (surface elevation table) to monitor elevation change as a vital sign of salt marsh health at `r params$park_name`. The SET technique has been widely used for documenting and interpreting trends in surface elevation dynamics over time and assessing wetland vulnerability to sea-level rise ([Cahoon et al. 2006](#refs), [Jankowski et al. 2017](#refs), [McKee 2011](#refs), [Saintilan et al. 2022](#refs), [Sasmito et al. 2016](#refs), [Webb et al. 2013](#refs)). In the following sections, we use these data to answer the following questions:
 
@@ -179,7 +183,7 @@ The Northeast Coastal & Barrier Inventory and Monitoring Network (NCBN) uses the
 
 3.  Is elevation gain sufficient to keep pace with current and predicted future sea level rise? (Figure 2D; Results Section 3)
 
-```{r surface-elev-diagram, echo=FALSE, fig.cap=paste("Conceptual diagram showing the relationship among wetland surface elevation (A), tidal datums (C), and their respective rates of change (B and D). Understanding these relationships is important for evaluating the survival of a wetland community in response to sea-level rise."), message=FALSE, warning=FALSE, out.width='100%'}
+```{r surface-elev-diagram, echo=FALSE, fig.cap=paste("Figure 2. Conceptual diagram showing the relationship among wetland surface elevation (A), tidal datums (C), and their respective rates of change (B and D). Understanding these relationships is important for evaluating the survival of a wetland community in response to sea-level rise."), message=FALSE, warning=FALSE, out.width='100%'}
 
 knitr::include_graphics(paste0(here::here("images"), "/surface_elevation_diagram.jpg"))
 ```
@@ -188,7 +192,7 @@ knitr::include_graphics(paste0(here::here("images"), "/surface_elevation_diagram
 
 ### Protocol
 
-NCBN's long-term, standardized monitoring protocol for monitoring surface elevation change ([Lynch et al. 2015](#refs)) is implemented semiannually in the spring and fall at `r params$park_name` (Figure \@ref(fig:title-park-fig)). The SET is a portable mechanical leveling device providing repeated, high-resolution measurements of elevation change in wetland sediments or shallow water bottoms relative to the depth of a permanent benchmark that has been anchored into the soil until refusal. During measurements, the SET arm is attached to the permanent SET benchmark and extended over the marsh surface at four fixed positions. The SET arm is carefully leveled to rest horizontally to the ground, and each of nine fiberglass pins are lowered through the arm to the soil surface. The height of each pin above the arm is measured on repeated sampling events. Changes in the height of the pins between sampling events are used to quantify soil surface elevation change over time relative to the permanent benchmark. `r total_measurements_text(park_code = params$park_code)` Additional details on the SET technique can be found in [Cahoon et al. 2002a](#refs), [Cahoon et al. 2002b](#refs), [Cahoon 2024](#refs), [Callaway et al. 2013](#refs), [Lynch et al. 2015](#refs).
+NCBN's long-term, standardized monitoring protocol for monitoring surface elevation change ([Lynch et al. 2015](#refs)) is implemented semiannually in the spring and fall at `r params$park_name` (Figure 1). The SET is a portable mechanical leveling device providing repeated, high-resolution measurements of elevation change in wetland sediments or shallow water bottoms relative to the depth of a permanent benchmark that has been anchored into the soil until refusal. During measurements, the SET arm is attached to the permanent SET benchmark and extended over the marsh surface at four fixed positions. The SET arm is carefully leveled, and each of nine fiberglass pins are lowered through the arm to the soil surface. The height of each pin above the arm is measured on repeated sampling events. Changes in the height of the pins between sampling events are used to quantify soil surface elevation change over time relative to the permanent benchmark. `r total_measurements_text(park_code = params$park_code)` Additional details on the SET technique can be found in [Cahoon et al. 2002a](#refs), [Cahoon et al. 2002b](#refs), [Cahoon 2024](#refs), [Callaway et al. 2013](#refs), [Lynch et al. 2015](#refs).
 
 ### Study Site & Sample Size
 
@@ -201,9 +205,9 @@ active_site_count <- data %>%
   pull(site_count)
 ```
 
-Surface elevation change is actively monitored at `r as.character(english::english(active_site_count))` site`r if (active_site_count > 1){'s'}` within `r params$park_name` (Figure \@ref(fig:station-map)). Sites were located so as to be both representative of the marsh habitat throughout each park and also to facilitate ease of access for repeated sampling trips ([Lynch et al. 2015](#refs) - see SOP 1: Project Planning). `r extra_sample_size_text(park_code = params$park_code)` Additional details on the status of each site, the number of replicate SET stations at each site, and the dates of the initial and most recent measurements are shown in Table 1 below.
+Surface elevation change is actively monitored at `r as.character(english::english(active_site_count))` site`r if (active_site_count > 1){'s'}` within `r params$park_name` (Figure 3). Sites were located so as to be both representative of the marsh habitat throughout each park and also to facilitate ease of access for repeated sampling trips ([Lynch et al. 2015](#refs) - see SOP 1: Project Planning). `r extra_sample_size_text(park_code = params$park_code)` Additional details on the status of each site, the number of replicate SET stations at each site, and the dates of the initial and most recent measurements are shown in Table 1 below.
 
-All data utilized in this report have undergone quality assurance, quality control, and certification according to the procedures outlined in the [NPS Coastal Elevation Data QAQC and Publication SOP](https://irma.nps.gov/DataStore/Reference/Profile/2298702) ([Thorsdatter et al. 2023](#refs)). These data are available for public use and can be downloaded from the [NPS DataStore](%60r%20DP_url%60).
+All data utilized in this report have undergone quality assurance, quality control, and certification according to the procedures outlined in the [NPS Coastal Elevation Data QAQC and Publication SOP](https://irma.nps.gov/DataStore/Reference/Profile/2298702) ([Thorsdatter et al. 2023](#refs)). These data are available for public use and can be downloaded from the [NPS DataStore](https://irma.nps.gov/DataStore/Reference/Profile/2316550).
 
 ```{r site-info-tbl, echo=FALSE, message=FALSE, warning=FALSE, layout="l-body-outset"}
 
@@ -212,7 +216,7 @@ site_info_tbl(data_df = data, dom_veg_df = dom_veg, park_name = params$park_name
 
 ### SET Data Summerization & Analysis
 
-Prior to data analyses, the SET data were summarized using the procedures outlined in the [NPS Surface Elevation Table Protocol](https://irma.nps.gov/DataStore/Reference/Profile/2225005) ([Lynch et al. 2015](#refs) - see SOP 8: SET and Marker Horizon Data Analysis). In brief, the height of each pin above the SET arm on each sampling date was first subtracted from its initial value to determine cumulative surface elevation change. Next, the pin-level cumulative surface elevation change values for each measurement date were then averaged across each of the four bearings on each SET, then the bearing-level values were averaged to the station level, and finally the station-level values were averaged to the site level. To estimate the rate of marsh surface elevation change at each site, we used a simple linear regression model where the independent variable was the time since the first measurement and the dependent variable was site-level cumulative surface elevation change as outlined in [Feher et al. 2024](#refs) and [Russell et al. 2022](#refs).
+Prior to data analyses, the SET data were summarized using the procedures outlined in the [NPS Surface Elevation Table Protocol](https://irma.nps.gov/DataStore/Reference/Profile/2225005) ([Lynch et al. 2015](#refs) - see SOP 8: SET and Marker Horizon Data Analysis). In brief, the height of each pin above the SET arm on each sampling date was first subtracted from its initial value (i.e., the value on the first measurement date) to determine cumulative surface elevation change. Next, the pin-level cumulative surface elevation change values for each measurement date were then averaged for each SET bearing, then the bearing-level values were averaged to the station level, and finally the station-level values were averaged to the site level. To estimate the rate of marsh surface elevation change at each site, we used a simple linear regression model where the independent variable was the time since the first measurement and the dependent variable was site-level cumulative surface elevation change as outlined in [Feher et al. 2024](#refs) and [Russell et al. 2022](#refs).
 
 ### Marsh Surface Elevation Data
 
@@ -222,11 +226,11 @@ $$
 MSE = A + B - (D-C)
 $$
 
-where MSE is the marsh surface elevation in meters NAVD88, A is the NAVD88 elevation of the SET benchmark, B is the vertical offset of the SET instrument above the marsh, C is the SET pin measurement, and D is the length of the pin.
+where MSE is the marsh surface elevation in meters NAVD88 (North American Vertical Datum of 1988), A is the NAVD88 elevation of the SET benchmark, B is the vertical offset of the SET instrument above the marsh, C is the SET pin measurement, and D is the length of the pin.
 
 ### Hydrologic Data, Tidal Datums, & Marsh Flooding
 
-Water level data were collected at continuous 15 minute intervals from `r english::english(n_wl_loggers)` permanent water level loggers (HOBO® 13-Foot Water Level Data Logger, model U20-001-04) installed in the nearest creek/ditch at `r wl_sites` as outlined in the [NCBN Water Level Data Collection and Management](https://irma.nps.gov/DataStore/Reference/Profile/2237862) methods document ([Curdts 2017](#refs)). `r extra_hydro_text(park_code = params$park_code)` Prior to the calculation of marsh flooding time and tidal datums, the raw water level data were first converted to meters NAVD88 using the absolute elevation of the water loggers derived from on-the-ground RTK surveys as outlined in the [NPS Surface Elevation Table Protocol](https://irma.nps.gov/DataStore/Reference/Profile/2225005) ([Lynch et al. 2015](#refs) - see SOP 6: Surveying the SET Mark). Both the raw water level data and water level data relative to NAVD88 (North American Vertical Datum of 1988) were then uploaded to the NPS AQUARIUS WebPortal for QAQC, certification, and storage. In order to calculate the percentage of time that each marsh was flooded, the water level data referenced to NAVD88 were compared to the NAVD88 ground elevations of the marsh at each site ([Curdts 2017](#refs)). Similarly, we also used the water level data referenced to NAVD88 to calculate site-level tidal datums for mean high water (MHW), mean low water (MLW), and mean sea level (MSL) as defined by NOAA ([NOAA Tides and Currents Glossary](https://tidesandcurrents.noaa.gov/publications/glossary2.pdf)).
+Water level data were collected at continuous 15 minute intervals from `r english::english(n_wl_loggers)` permanent water level loggers (HOBO® 13-Foot Water Level Data Logger, model U20-001-04) installed in the nearest creek/ditch at `r wl_sites` as outlined in the [NCBN Water Level Data Collection and Management](https://irma.nps.gov/DataStore/Reference/Profile/2237862) methods document ([Curdts 2017](#refs)). `r extra_hydro_text(park_code = params$park_code)` Prior to the calculation of marsh flooding time and tidal datums, the raw water level data were first converted to meters NAVD88 using the absolute elevation of the water loggers derived from on-the-ground RTK surveys as outlined in the [NPS Surface Elevation Table Protocol](https://irma.nps.gov/DataStore/Reference/Profile/2225005) ([Lynch et al. 2015](#refs) - see SOP 6: Surveying the SET Mark). Both the raw water level data and water level data relative to NAVD88 were then uploaded to the NPS AQUARIUS WebPortal for QAQC, certification, and storage. In order to calculate the percentage of time that each marsh was flooded, the water level data referenced to NAVD88 were compared to the NAVD88 ground elevations of the marsh at each site ([Curdts 2017](#refs)). Similarly, we also used the water level data referenced to NAVD88 to calculate site-level tidal datums for mean high water (MHW), mean low water (MLW), and mean sea level (MSL) as defined by NOAA ([NOAA Tides and Currents Glossary](https://tidesandcurrents.noaa.gov/publications/glossary2.pdf)).
 
 ### Elevation Capital
 
@@ -262,9 +266,9 @@ We estimated a recent rate of relative sea-level rise using the method described
 
 #### Future SLR
 
-We estimated future projected relative sea-level rise rates using the five alternative SLR scenarios produced by [Sweet et al. 2022](#refs) for the 5th National Climate Assessment. The low, intermediate-low, intermediate, intermediate-high, and high SLR scenarios correspond to global mean sea level increases of 0.3 m, 0.5 m, 1.0 m, 1.5 m, and 2.0 m (respectively) by 2100. To approximate the RSLR rate by 2100 under each of the five scenarios, we used the data provided by [Sweet et al. (2022)](#refs) to estimate future RSLR rates for the 2090-2100 decade for the `r get_long_slr_rate(params$park_code)$Station.Name` tide gauge as outlined in [Chivoiu et al. 2020](#refs), [Moon et al. 2022](#refs), and [Osland et al. 2024](#refs). `r extra_slr_methods_text$extra_slr_methods_text3`
+We estimated future projected relative sea-level rise rates using the five alternative SLR scenarios produced by [Sweet et al. 2022](#refs) for the 5th National Climate Assessment. The low, intermediate-low, intermediate, intermediate-high, and high SLR scenarios correspond to global mean sea level increases of 0.3 m, 0.5 m, 1.0 m, 1.5 m, and 2.0 m (respectively) by 2100. To approximate the RSLR rate by 2100 under each of the five scenarios, we used the data provided by [Sweet et al. 2022](#refs) to estimate future RSLR rates for the 2090-2100 decade for the `r get_long_slr_rate(params$park_code)$Station.Name` tide gauge as outlined in [Chivoiu et al. 2020](#refs), [Moon et al. 2022](#refs), and [Osland et al. 2024](#refs). `r extra_slr_methods_text$extra_slr_methods_text3`
 
-```{r station-map, out.width = '100%', echo=FALSE, fig.cap=paste0("Individual SET stations within ", params$park_name, ". Click on the points to see the site and station labels."), message=FALSE, warning=FALSE}
+```{r station-map, out.width = '100%', echo=FALSE, fig.cap=paste0("Figure 3. Individual SET stations within ", params$park_name, ". Click on the points to see the site and station labels."), message=FALSE, warning=FALSE}
 map_SETs(data, park_code = params$park_code, dp_id = params$data_package_id, dp_year = params$data_package_year, dp_pub_date = params$data_package_pub_date)
 ```
 
@@ -295,14 +299,14 @@ park_set_rate <- data %>%
   ungroup()
 ```
 
-Across all `r as.character(english::english(active_site_count))` actively monitored sites at `r params$park_name`, the park-wide average rate of surface elevation change was **`r park_set_rate$park_set_rate_text`**. Site-level rates of surface elevation change varied from a low of `r site_set_rates %>% slice_min(as.numeric(format_result_vals(rate))) %>% pull(site_set_rate_text) %>% knitr::combine_words()` at `r site_set_rates %>% slice_min(as.numeric(format_result_vals(rate))) %>% pull(site_name) %>% knitr::combine_words()` to a high of `r site_set_rates %>% slice_max(as.numeric(format_result_vals(rate))) %>% pull(site_set_rate_text) %>% knitr::combine_words()` at `r site_set_rates %>% slice_max(as.numeric(format_result_vals(rate))) %>% pull(site_name) %>% knitr::combine_words()` (Table 2; Figure \@ref(fig:site-sets-fig)).
+Across all `r as.character(english::english(active_site_count))` actively monitored sites at `r params$park_name`, the park-wide average rate of surface elevation change was **`r park_set_rate$park_set_rate_text`**. Site-level rates of surface elevation change varied from a low of `r site_set_rates %>% slice_min(as.numeric(format_result_vals(rate))) %>% pull(site_set_rate_text) %>% knitr::combine_words()` at `r site_set_rates %>% slice_min(as.numeric(format_result_vals(rate))) %>% pull(site_name) %>% knitr::combine_words()` to a high of `r site_set_rates %>% slice_max(as.numeric(format_result_vals(rate))) %>% pull(site_set_rate_text) %>% knitr::combine_words()` at `r site_set_rates %>% slice_max(as.numeric(format_result_vals(rate))) %>% pull(site_name) %>% knitr::combine_words()` (Table 2; Figure 4).
 
 ```{r site-elev-rates-tbl, echo=FALSE, message=FALSE, warning=FALSE, layout="l-body-outset"}
 
 site_elev_rates_tbl(site_set_rates_df = site_set_rates)
 ```
 
-```{r site-sets-fig, echo=FALSE, fig.cap=paste0("Site-level surface elevation change at ", params$park_name, ". Rates of surface elevation change (SEC) are shown in panel labels. Hover the mouse over a data point to see the cumulative surface elevation change value on a specific date, or click and drag over a specific time to zoom in. Double click to zoom back out."), message=FALSE, warning=FALSE, out.width='100%', out.height=fig4_height}
+```{r site-sets-fig, echo=FALSE, fig.cap=paste0("Figure 4. Site-level surface elevation change at ", params$park_name, ". Rates of surface elevation change (SEC) are shown in panel labels. Hover the mouse over a data point to see the cumulative surface elevation change value on a specific date, or click and drag over a specific time to zoom in. Double click to zoom back out."), message=FALSE, warning=FALSE, out.width='100%', out.height=fig4_height}
 
 if (params$park_code == "ASIS") {
   site_sets_fig_plot(site_set_rates_df = site_set_rates, ncol = 2, panel.spacing.x = 20, panel.spacing.y = 20, strip.text.margin = 14)
@@ -475,9 +479,9 @@ park_hydro <- site_hydro %>%
 
 #### Local Hydrology & Tidal Datums
 
-Water level data was collected in nearby tidal creeks at `r wl_sites` over the period between `r year(park_hydro$first_date)` - `r year(park_hydro$last_date)` and is presented in Figure \@ref(fig:site-wl-fig) below. `r extra_hydro_text(park_code = params$park_code)` Mean low water (MLW) at the `r as.character(english::english(active_site_count))` sites varied by `r format_result_vals((max(site_hydro$MLW)-min(site_hydro$MLW)), decimals = 3)` m, with `r site_hydro %>% ungroup() %>% slice_min(as.numeric(format_result_vals(MLW, decimals = 3)), n = 1) %>% pull(site_name) %>% knitr::combine_words()` having the lowest MLW value (`r format_result_vals(min(site_hydro$MLW), decimals = 3)` m NAVD88) and `r site_hydro %>% ungroup() %>% slice_max(as.numeric(format_result_vals(MLW, decimals = 3)), n = 1) %>% pull(site_name) %>% knitr::combine_words()` having the highest MLW value (`r format_result_vals(max(site_hydro$MLW), decimals = 3)` m NAVD88). Similarly, mean high water (MHW) varied by `r format_result_vals((max(site_hydro$MHW)-min(site_hydro$MHW)), decimals = 3)` m, with `r site_hydro %>% ungroup() %>% slice_min(as.numeric(format_result_vals(MHW, decimals = 3)), n = 1) %>% pull(site_name) %>% knitr::combine_words()` having the lowest MHW value (`r format_result_vals(min(site_hydro$MHW), decimals = 3)` m NAVD88) and `r site_hydro %>% ungroup() %>% slice_max(as.numeric(format_result_vals(MHW, decimals = 3)), n = 1) %>% pull(site_name) %>% knitr::combine_words()` having the highest MHW value (`r format_result_vals(max(site_hydro$MHW), decimals = 3)` m). Finally, mean sea level varied by `r format_result_vals((max(site_hydro$MSL)-min(site_hydro$MSL)), decimals = 3)` m, with `r site_hydro %>% ungroup() %>% slice_min(as.numeric(format_result_vals(MSL, decimals = 3)), n = 1) %>% pull(site_name) %>% knitr::combine_words()` having the lowest MSL value (`r format_result_vals(min(site_hydro$MSL), decimals = 3)` m NAVD88) and `r site_hydro %>% ungroup() %>% slice_max(as.numeric(format_result_vals(MSL, decimals = 3)), n = 1) %>% pull(site_name) %>% knitr::combine_words()` having the highest MSL value (`r format_result_vals(max(site_hydro$MSL), decimals = 3)` m NAVD88). The park-wide average values for MLW, MHW, and MSL were `r format_result_vals(park_datums$MLW, decimals = 3)`, `r format_result_vals(park_datums$MHW, decimals = 3)`, and `r format_result_vals(park_datums$MSL, decimals = 3)` m NAVD88, respectively.
+Water level data was collected in nearby tidal creeks at `r wl_sites` over the period between `r year(park_hydro$first_date)` - `r year(park_hydro$last_date)` and is presented in Figure 5 below. `r extra_hydro_text(park_code = params$park_code)` Mean low water (MLW) at the `r as.character(english::english(active_site_count))` sites varied by `r format_result_vals((max(site_hydro$MLW)-min(site_hydro$MLW)), decimals = 3)` m, with `r site_hydro %>% ungroup() %>% slice_min(as.numeric(format_result_vals(MLW, decimals = 3)), n = 1) %>% pull(site_name) %>% knitr::combine_words()` having the lowest MLW value (`r format_result_vals(min(site_hydro$MLW), decimals = 3)` m NAVD88) and `r site_hydro %>% ungroup() %>% slice_max(as.numeric(format_result_vals(MLW, decimals = 3)), n = 1) %>% pull(site_name) %>% knitr::combine_words()` having the highest MLW value (`r format_result_vals(max(site_hydro$MLW), decimals = 3)` m NAVD88). Similarly, mean high water (MHW) varied by `r format_result_vals((max(site_hydro$MHW)-min(site_hydro$MHW)), decimals = 3)` m, with `r site_hydro %>% ungroup() %>% slice_min(as.numeric(format_result_vals(MHW, decimals = 3)), n = 1) %>% pull(site_name) %>% knitr::combine_words()` having the lowest MHW value (`r format_result_vals(min(site_hydro$MHW), decimals = 3)` m NAVD88) and `r site_hydro %>% ungroup() %>% slice_max(as.numeric(format_result_vals(MHW, decimals = 3)), n = 1) %>% pull(site_name) %>% knitr::combine_words()` having the highest MHW value (`r format_result_vals(max(site_hydro$MHW), decimals = 3)` m). Finally, mean sea level varied by `r format_result_vals((max(site_hydro$MSL)-min(site_hydro$MSL)), decimals = 3)` m, with `r site_hydro %>% ungroup() %>% slice_min(as.numeric(format_result_vals(MSL, decimals = 3)), n = 1) %>% pull(site_name) %>% knitr::combine_words()` having the lowest MSL value (`r format_result_vals(min(site_hydro$MSL), decimals = 3)` m NAVD88) and `r site_hydro %>% ungroup() %>% slice_max(as.numeric(format_result_vals(MSL, decimals = 3)), n = 1) %>% pull(site_name) %>% knitr::combine_words()` having the highest MSL value (`r format_result_vals(max(site_hydro$MSL), decimals = 3)` m NAVD88). The park-wide average values for MLW, MHW, and MSL were `r format_result_vals(park_datums$MLW, decimals = 3)`, `r format_result_vals(park_datums$MHW, decimals = 3)`, and `r format_result_vals(park_datums$MSL, decimals = 3)` m NAVD88, respectively.
 
-```{r site-wl-fig, echo=FALSE, fig.cap=paste0("Site-level water level data at ", params$park_name, ". Note that the red line indicates the marsh surface elevation (m NAVD88)."), message=FALSE, warning=FALSE, out.width='100%'}
+```{r site-wl-fig, echo=FALSE, fig.cap=paste0("Figure 5. Site-level water level data at ", params$park_name, ". Note that the red line indicates the marsh surface elevation (m NAVD88). Hover the mouse over a data point to see the water level, or click and drag over a specific area to zoom in. Double click to zoom back out."), message=FALSE, warning=FALSE, out.width='100%'}
 
 if (params$park_code == "ASIS") {
   site_wl_plot(wl_df = wl_data, site_hydro_df = site_hydro, nrow = 4, show.longest.flood = FALSE)
@@ -494,9 +498,9 @@ if (params$park_code == "ASIS") {
 
 #### Marsh Elevation, Flooding, & Elevation Capital
 
-Marsh surface elevation at `r params$park_name` varied by `r format_result_vals((max(site_hydro$elev_navd88)-min(site_hydro$elev_navd88)), decimals = 3)` m, with `r site_hydro %>% ungroup() %>% slice_min(format_result_vals(elev_navd88, decimals = 3), n = 1) %>% pull(site_name) %>% knitr::combine_words()` having the lowest elevation (`r format_result_vals(min(site_hydro$elev_navd88), decimals = 3)` m NAVD88) and `r site_hydro %>% ungroup() %>% slice_max(format_result_vals(elev_navd88, decimals = 3), n = 1) %>% pull(site_name)` having the highest elevation (`r format_result_vals(max(site_hydro$elev_navd88), decimals = 3)` m NAVD88). The park-wide average marsh surface elevation was `r format_result_vals(park_hydro$elev_navd88, decimals = 3)` m NAVD88. Accordingly, the percentage of time that the marsh was flooded ranged from a low of `r format_result_vals(min(site_hydro$percent_time_flooded), decimals = 0)`% at `r site_hydro %>% ungroup() %>% slice_min(format_result_vals(percent_time_flooded, decimals = 0), n = 1) %>% pull(site_name) %>% knitr::combine_words()` to a high of `r format_result_vals(max(site_hydro$percent_time_flooded), decimals = 0)`% at `r site_hydro %>% ungroup() %>% slice_max(format_result_vals(percent_time_flooded, decimals = 0), n = 1) %>% pull(site_name) %>% knitr::combine_words()` (park-wide average: `r format_result_vals(park_hydro$percent_time_flooded, decimals = 0)`%). Elevation capital ranged from a low of `r format_result_vals(min(site_hydro$elev_capital), decimals = 2)` at `r site_hydro %>% ungroup() %>% slice_min(format_result_vals(elev_capital, decimals = 2), n = 1) %>% pull(site_name) %>% knitr::combine_words()` to a high of `r format_result_vals(max(site_hydro$elev_capital), decimals = 2)` at `r site_hydro %>% ungroup() %>% slice_max(format_result_vals(elev_capital, decimals = 2), n = 1) %>% pull(site_name) %>% knitr::combine_words()`. `r elev_capital_comp_text(park_name = params$park_name, park_code = params$park_code, data_df = data, site_hydro_df = site_hydro)` Figure \@ref(fig:site-hydro-fig) below illustrates the relationship between marsh surface elevation, local tidal datums, flooding, and elevation capital.
+Marsh surface elevation at `r params$park_name` in `r str_sub(years, 8,11)` varied by `r format_result_vals((max(site_hydro$elev_navd88)-min(site_hydro$elev_navd88)), decimals = 3)` m, with `r site_hydro %>% ungroup() %>% slice_min(format_result_vals(elev_navd88, decimals = 3), n = 1) %>% pull(site_name) %>% knitr::combine_words()` having the lowest elevation (`r format_result_vals(min(site_hydro$elev_navd88), decimals = 3)` m NAVD88) and `r site_hydro %>% ungroup() %>% slice_max(format_result_vals(elev_navd88, decimals = 3), n = 1) %>% pull(site_name)` having the highest elevation (`r format_result_vals(max(site_hydro$elev_navd88), decimals = 3)` m NAVD88). The park-wide average marsh surface elevation was `r format_result_vals(park_hydro$elev_navd88, decimals = 3)` m NAVD88. Accordingly, the percentage of time that the marsh was flooded ranged from a low of `r format_result_vals(min(site_hydro$percent_time_flooded), decimals = 0)`% at `r site_hydro %>% ungroup() %>% slice_min(format_result_vals(percent_time_flooded, decimals = 0), n = 1) %>% pull(site_name) %>% knitr::combine_words()` to a high of `r format_result_vals(max(site_hydro$percent_time_flooded), decimals = 0)`% at `r site_hydro %>% ungroup() %>% slice_max(format_result_vals(percent_time_flooded, decimals = 0), n = 1) %>% pull(site_name) %>% knitr::combine_words()` (park-wide average: `r format_result_vals(park_hydro$percent_time_flooded, decimals = 0)`%). Elevation capital ranged from a low of `r format_result_vals(min(site_hydro$elev_capital), decimals = 2)` at `r site_hydro %>% ungroup() %>% slice_min(format_result_vals(elev_capital, decimals = 2), n = 1) %>% pull(site_name) %>% knitr::combine_words()` to a high of `r format_result_vals(max(site_hydro$elev_capital), decimals = 2)` at `r site_hydro %>% ungroup() %>% slice_max(format_result_vals(elev_capital, decimals = 2), n = 1) %>% pull(site_name) %>% knitr::combine_words()`. `r elev_capital_comp_text(park_name = params$park_name, park_code = params$park_code, data_df = data, site_hydro_df = site_hydro)` Figure 6 below illustrates the relationship between marsh surface elevation, local tidal datums, flooding, and elevation capital.
 
-```{r site-hydro-fig, echo=FALSE, fig.cap=paste0("Bivariate relationships between site-level rates of surface elevation change, tidal datums, marsh flooding, and elevation capital at ", params$park_name, ". Labeled values represent the site-level hydrology metric or tidal datum. The dashed red line on the final panel represents the elevation capital threshold for marsh vulnerability to sea-level rise." ), message=FALSE, warning=FALSE, out.width='100%'}
+```{r site-hydro-fig, echo=FALSE, fig.cap=paste0("Figure 6. Bivariate relationships between site-level rates of surface elevation change, tidal datums, marsh flooding, and elevation capital at ", params$park_name, ". Labeled values represent the site-level hydrology metric or tidal datum. The dashed red line on the final panel represents the elevation capital threshold for marsh vulnerability to sea-level rise." ), message=FALSE, warning=FALSE, out.width='100%'}
 
 if (params$park_code == "ASIS") {
   site_hydro_plot(park_code = params$park_code, site_hydro_df = site_hydro, site_order = site_order, legend_position = c(0.83, 0.25), legend_top_margin = 0)
@@ -542,11 +546,11 @@ if(params$park_code == "CACO") {
 
 ```
 
-As of `r lubridate::month(Sys.Date(), label = TRUE, abbr = FALSE)` `r lubridate::year(Sys.Date())`, the current long-term rate of relative sea-level rise from the nearest NOAA tide gauge at `r long_slr_rate$Station.Name` was `r long_slr_rate$MSL.Trends.mm.yr.` mm/yr (± `r format_result_vals(long_slr_rate$long_rate_se, decimals = 2)`) for the period between `r long_slr_rate$First.Year` to `r long_slr_rate$Last.Year` (`r paste0("https://tidesandcurrents.noaa.gov/sltrends/sltrends_station.shtml?id=", long_slr_rate$Station.ID)`). `r extra_slr_results_text$extra_long_slr_text1` `r slr_current_rate_comp_text(park_name = params$park_name, slr_rate_comps_df = slr_rate_comps, data_df = data, rate_type = "relative long-term")` (Figure \@ref(fig:site-slr-recent-fig)).
+As of `r lubridate::month(Sys.Date(), label = TRUE, abbr = FALSE)` `r lubridate::year(Sys.Date())`, the current long-term rate of relative sea-level rise from the nearest NOAA tide gauge at `r long_slr_rate$Station.Name` was `r long_slr_rate$MSL.Trends.mm.yr.` mm/yr (± `r format_result_vals(long_slr_rate$long_rate_se, decimals = 2)`) for the period between `r long_slr_rate$First.Year` to `r long_slr_rate$Last.Year` (`r paste0("https://tidesandcurrents.noaa.gov/sltrends/sltrends_station.shtml?id=", long_slr_rate$Station.ID)`). `r extra_slr_results_text$extra_long_slr_text1` `r slr_current_rate_comp_text(park_name = params$park_name, slr_rate_comps_df = slr_rate_comps, data_df = data, rate_type = "relative long-term")` (Figure 7).
 
-Additionally, using the sea-level data from the nearby NOAA tide gauge, we calculated a recent rate of relative sea-level rise of `r recent_slr_rate %>% filter(term == "yr") %>% mutate(estimate = format_result_vals(estimate)) %>% pull(estimate)` mm/yr (± `r recent_slr_rate %>% filter(term == "yr") %>% mutate(std.error = format_result_vals(std.error)) %>% pull(std.error)`) for `r params$park_name` over the most recent tidal epoch (2001-2019). `r extra_slr_results_text$extra_recent_slr_text1` `r slr_current_rate_comp_text(park_name = params$park_name, slr_rate_comps_df = slr_rate_comps, data_df = data, rate_type = "relative recent")` (Figure \@ref(fig:site-slr-recent-fig)).
+Additionally, using the sea-level data from the nearby NOAA tide gauge, we calculated a recent rate of relative sea-level rise of `r recent_slr_rate %>% filter(term == "yr") %>% mutate(estimate = format_result_vals(estimate)) %>% pull(estimate)` mm/yr (± `r recent_slr_rate %>% filter(term == "yr") %>% mutate(std.error = format_result_vals(std.error)) %>% pull(std.error)`) for `r params$park_name` over the most recent tidal epoch (2001-2019). `r extra_slr_results_text$extra_recent_slr_text1` `r slr_current_rate_comp_text(park_name = params$park_name, slr_rate_comps_df = slr_rate_comps, data_df = data, rate_type = "relative recent")` (Figure 7).
 
-```{r site-slr-recent-fig, echo=FALSE, message=FALSE, warning=FALSE, out.width='100%', fig.cap=paste0("Site-level surface elevation change at ", params$park_name, " compared to relative long-term and recent rates of sea-level rise. Hover the mouse over a data point to see the rate of surface elevation change or sea-level rise, or click and drag over a specific area to zoom in. Double click to zoom back out.")}
+```{r site-slr-recent-fig, echo=FALSE, message=FALSE, warning=FALSE, out.width='100%', fig.cap=paste0("Figure 7. Site-level surface elevation change at ", params$park_name, " compared to relative long-term and recent rates of sea-level rise. Hover the mouse over a data point to see the rate of surface elevation change or sea-level rise, or click and drag over a specific area to zoom in. Double click to zoom back out.")}
 
 if (params$park_code == "CACO") {
   site_slr_recent_plot(park_code = params$park_code, long_slr_rate_df = long_slr_rate, recent_slr_rate_df = recent_slr_rate , site_set_rates_df = site_set_rates, long_slr_rate_nau = long_slr_rate_nauset, recent_slr_rate_nau = recent_slr_rate_nauset)
@@ -557,9 +561,9 @@ if (params$park_code == "CACO") {
 
 #### Comparisons to future sea-level rise
 
-Based on the calculations provided in [Sweet et al. 2022](#refs), future predicted rates of relative sea-level rise by 2100 for `r params$park_name` were `r future_slr_rate$future_slr_rate[future_slr_rate$scenario_name == "low"]`, `r future_slr_rate$future_slr_rate[future_slr_rate$scenario_name == "int_low"]`, `r future_slr_rate$future_slr_rate[future_slr_rate$scenario_name == "int"]`, `r future_slr_rate$future_slr_rate[future_slr_rate$scenario_name == "int_high"]`, and `r future_slr_rate$future_slr_rate[future_slr_rate$scenario_name == "high"]` mm/yr for the low, intermediate-low, intermediate, intermediate-high, and high future sea-level rise scenarios, respectively. `r extra_slr_results_text$extra_future_slr_text1` `r extra_slr_results_text$extra_future_slr_text2` (Figure \@ref(fig:site-future-slr-fig)).
+Based on the calculations provided in [Sweet et al. 2022](#refs), future predicted rates of relative sea-level rise by 2100 for `r params$park_name` were `r future_slr_rate$future_slr_rate[future_slr_rate$scenario_name == "low"]`, `r future_slr_rate$future_slr_rate[future_slr_rate$scenario_name == "int_low"]`, `r future_slr_rate$future_slr_rate[future_slr_rate$scenario_name == "int"]`, `r future_slr_rate$future_slr_rate[future_slr_rate$scenario_name == "int_high"]`, and `r future_slr_rate$future_slr_rate[future_slr_rate$scenario_name == "high"]` mm/yr for the low, intermediate-low, intermediate, intermediate-high, and high future sea-level rise scenarios, respectively. `r extra_slr_results_text$extra_future_slr_text1` `r extra_slr_results_text$extra_future_slr_text2` (Figure 8).
 
-```{r site-future-slr-fig, echo=FALSE, message=FALSE, warning=FALSE, out.width='100%', fig.cap=paste0("Site-level surface elevation change at ", params$park_name, " compared to future predicted rates of sea-level rise. Hover the mouse over a data point to see the rate of surface elevation change or future predicted sea-level rise, or click and drag over a specific area to zoom in. Double click to zoom back out.")}
+```{r site-future-slr-fig, echo=FALSE, message=FALSE, warning=FALSE, out.width='100%', fig.cap=paste0("Figure 8. Site-level surface elevation change at ", params$park_name, " compared to future predicted rates of sea-level rise. Hover the mouse over a data point to see the rate of surface elevation change or future predicted sea-level rise, or click and drag over a specific area to zoom in. Double click to zoom back out.")}
 
 if(params$park_code == "CACO") {
   site_slr_future_plot(park_code = params$park_code, future_slr_rate_df = future_slr_rate, site_set_rates_df = site_set_rates, future_slr_rate_nau = future_slr_rate_nauset)
@@ -574,13 +578,13 @@ if(params$park_code == "CACO") {
 summary_paragraphs <- summary_paragraph(park_code = params$park_code)
 
 if(params$park_code == "CACO"){
-  fig9_caption <- paste("Surface elevation change rates and site elevations at ", params$park_name, " compared to local tidal datums and rates of SLR. Note that the dashed horizontal lines represent park-wide average Mean High Water (MHW) and Mean Sea Level (MSL). Note that long-term and recent SLR rates for Nauset are not shown here.")
+  fig9_caption <- paste("Figure 9. Surface elevation change rates and site elevations at ", params$park_name, " compared to local tidal datums and rates of SLR. Note that the dashed horizontal lines represent park-wide average Mean High Water (MHW) and Mean Sea Level (MSL). Note that long-term and recent SLR rates for Nauset are not shown here.")
 } else {
-  fig9_caption <- paste("Surface elevation change rates and site elevations at ", params$park_name, " compared to local tidal datums and rates of SLR. Note that the dashed horizontal lines represent park-wide average Mean High Water (MHW) and Mean Sea Level (MSL).")
+  fig9_caption <- paste("Figure 9. Surface elevation change rates and site elevations at ", params$park_name, " compared to local tidal datums and rates of SLR. Note that the dashed horizontal lines represent park-wide average Mean High Water (MHW) and Mean Sea Level (MSL).")
 }
 ```
 
-Figure \@ref(fig:summary-fig) below visually summarizes the relationships between elevation change, marsh surface elevation, local tidal datums, and long-term and recent rates of sea-level rise. `r summary_paragraphs$summary_paragraph1`
+Figure 9 below visually summarizes the relationships between elevation change, marsh surface elevation, local tidal datums, and long-term and recent rates of sea-level rise. `r summary_paragraphs$summary_paragraph1`
 
 ```{r summary-fig, echo=FALSE, message=FALSE, warning=FALSE, out.width='100%', fig.cap=fig9_caption}
 
@@ -604,6 +608,8 @@ summary_tbl(slr_rate_comps_df = slr_rate_comps, site_hydro_df = site_hydro, park
 | 
 | [Cahoon, D.R., Lynch, J.C., Roman, C.T., Schmidt, J.P., and Skidds, D.E., 2019. Evaluating the relationship among wetland vertical development, elevation capital, sea-level rise, tidal marsh sustainability. Estuaries and Coasts 42:1-15.](https://doi.org/10.1007/s12237-018-0448-x)
 | 
+| [Cahoon, D.R., 2024. Measuring and Interpreting the surface and shallow subsurface process influences on coastal wetland elevation: A review. Estuaries and Coasts 47:1708-1734.](https://doi.org/10.1007/s12237-024-01332-z)
+| 
 | [Callaway, J.C., Cahoon, D.R., and Lynch, J.C., 2013. The surface elevation table-marker horizon method for measuring wetland accretion and elevation dynamics. In *Methods in Biogeochemistry of Wetlands*, ed. R.D. DeLaune, K. Reddy, C. Richardson, and J.P. Megonigal, 901–917. Madison, WI: Soil Science Society of America.](https://doi.org/10.2136/sssabookser10.c46)
 | 
 | [Chivoiu, B., Osland, M.J., Collini, R., Martin, S., Tirpak, J., and Wilson, B., 2020. Local sea level rise information sheets for Texas, Louisiana, Mississippi, Alabama and Florida: Northern Gulf of Mexico Sentinel Site Cooperative, U.S. Geological Survey and U.S. Fish and Wildlife Service: Mississippi-Alabama Sea Grant Consortium, https://placeslr.org/our-products/federally-managed-lands-two-pagers/.](https://placeslr.org/our-products/federally-managed-lands-two-pagers/)
@@ -611,6 +617,8 @@ summary_tbl(slr_rate_comps_df = slr_rate_comps, site_hydro_df = site_hydro, park
 | [Church, J.A, Woodworth, P.L., Aarup, T., and Wilson, W.S., 2010. Understanding sea level rise and variability. Blackwell, New York, NY.](https://doi.org/10.1002/9781444323276)
 | 
 | [Curdts, L.T., 2017. Continuous water level data collection and management using Onset HOBO® data loggers: A Northeast Coastal and Barrier Network methods document. Natural Resource Report. NPS/NCBN/NRR—2017/1370. National Park Service. Fort Collins, Colorado https://irma.nps.gov/DataStore/Reference/Profile/2237862.](https://irma.nps.gov/DataStore/Reference/Profile/2237862)
+| 
+| [Engelhart, S.E., Horton, B.P., Douglas, B.C., Peltier, W.R., and Törnqvist, T.E., 2009. Spatial variability of late Holocene and 20th century sea-level rise along the Atlantic coast of the United States. Geology 37:1115-1118.](https://doi.org/10.1130/G30360A.1)
 | 
 | [Feher, L.C., Osland, M.J., Johnson, D.J., Grace, J.B., Guntenspergen, G.R., Stewart, D.R., Coronado-Molina, C., and Sklar, F.H., 2024. Nonlinear patterns of surface elevation change in coastal wetlands: The value of generalized additive models for quantifying rates of change. Estuaries and Coasts 47:1893-1902.](https://doi.org/10.1007/s12237-023-01268-w)
 | 
@@ -622,6 +630,8 @@ summary_tbl(slr_rate_comps_df = slr_rate_comps, site_hydro_df = site_hydro, park
 | 
 | [McKee, K.L., 2011. Biophysical controls on accretion and elevation change in Caribbean mangrove ecosystems. Estuarine, Coastal and Shelf Science 91:475–483.](https://doi.org/10.1016/j.ecss.2010.05.001)
 | 
+| [Miller, K.G., Kopp, R.E., Horton, B.P., Browning, J.V., Kemp, and A.C., 2013. A geological perspective on sea-level rise and its impacts along the U.S. mid-Atlantic coast. Earth's Future 1:3-18.](https://doi.org/10.1002/2013EF000135)
+| 
 | [Moon, J.A., Feher, L.C., Lane, T.C., Vervaeke, W.C., Osland, M.J., Head, D.M., Chivoiu, B.C., Stewart, D.R., Johnson, D.J., Grace, J.B., and Metzger, K.L., 2022. Surface elevation change dynamics in coastal marshes along the Northwestern Gulf of Mexico: Anticipating effects of rising sea-level and intensifying hurricanes. Wetlands 42(5):49.](https://doi.org/10.1007/s13157-022-01565-3)
 | 
 | [Morris, J.T., Sundareshwar, P.V., Nietch, C.T., Kjerve, B., and Cahoon, D.R., 2002. Responses of coastal wetlands to rising sea level. Ecology 83:2869-2877.](https://doi.org/10.1890/0012-9658(2002)083%5B2869:ROCWTR%5D2.0.CO;2)
@@ -629,6 +639,8 @@ summary_tbl(slr_rate_comps_df = slr_rate_comps, site_hydro_df = site_hydro, park
 | [Morris, J.T., Lynch, J., Renken, K.A., Stevens, S., Tyrrell, M., and Plaisted, H., 2020. Tidal and hurricane impacts on saltmarshes in the northeastern coastal and barrier network: Theory and empirical results. Estuaries and Coasts 43:1658-1671.](https://doi.org/10.1007/s12237-020-00790-5)
 | 
 | [Osland, M.J., Chivoiu, B., Grace, J.B., Enwright, N.M., Guntenspergen, G.R., Buffington, K.J., Thorne, K.M., Carr, J.A., Sweet, W.V., and Couvillion, B.R., 2024. Rising seas could cross thresholds for initiating coastal wetland drowning within decades across much of the United States. Communications Earth & Environment 5(1):372.](https://doi.org/10.1038/s43247-024-01537-x)
+| 
+| [Piecuch, C.G., Huybers, P., Hay, C.C., Kemp, A.C., Little, C.M., Mitrovica, J.X., Ponte, R.M., and Tingley, M.P., 2018. Origins of spatial variation in US East coast sea-level trends during 1900-2017. Nature 564:400-404.](https://doi.org/10.1038/s41586-018-0787-6)
 | 
 | [Roman, C.T., Lynch, J.C., and Cahoon, D.R., 2024. Twenty-year record of salt marsh elevation dynamics in response to sea-level rise and storm-driven barrier island geomorphic processes: Fire Island, NY, USA. Estuaries and Coasts:1903-1917.](https://doi.org/10.1007/s12237-023-01234-6)
 | 
@@ -656,11 +668,11 @@ summary_tbl(slr_rate_comps_df = slr_rate_comps, site_hydro_df = site_hydro, park
 
 ## Contact Information
 
-| Katie Button, NCBN Biologist & SET Protocol Lead
-| Kaitlyn_Button\@nps.gov
-| 
 | Laura Feher, NCBN Biologist & Data Scientist
 | Laura_Feher\@nps.gov
+| 
+| Katie Button, NCBN Biologist & SET Protocol Lead
+| Kaitlyn_Button\@nps.gov
 | 
 | [Vital Signs: Northeastern Coastal & Barrier Inventory and Monitoring Network](https://www.nps.gov/im/ncbn/what-we-monitor.htm)
 | [Reports & Publications (U.S. National Park Service) (nps.gov)](https://www.nps.gov/im/ncbn/reports-publications-data.htm)
