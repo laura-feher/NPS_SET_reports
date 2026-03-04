@@ -43,8 +43,9 @@ get_station_points <- function(data = data, dp_id, dp_pub_date, park_code, dp_ye
     filter(., park_code == params$park_code) %>%
     filter(!(station_code %in% c("JR1S", "JR2S", "JR3S", "EE1S", "EE2S", "EE3S"))) %>% # Exclude shallow SETs at GATE
     filter(site_name != "Pine Tree Study") %>% # Exclude Pine Tree Study at ASIS
+    filter(!(station_code) %in% c("M11-3", "M5-2", "M6-4", "M8-4")) %>% # Exclude fenced stations at ASIS
     # Exclude Duck Harbor at CACO for 2025 since there is only 1 year of data so far
-    {if (park_code == "CACO" & dp_year == "2025")
+    {if (park_code == "CACO" & as.numeric(dp_year) < 2027)
       filter(., site_name != "Duck Harbor")
       else .
       } %>%
@@ -140,6 +141,26 @@ get_waterlogger_points <- function(park_code) {
                Site = "Kenilworth",
                Lat = 38.912063,
                Lon = -76.948366)
+  } else if (park_code == "GWMP") {
+    data.frame(Park = c("GWMP"),
+               Site = "Dyke Marsh",
+               Lat = 38.766537,
+               Lon = -77.048693)
+  } else if (park_code == "VIIS") {
+    data.frame(Park = c("VIIS"),
+               Site = c("Mary's Creek", "Water Creek"),
+               Lat = c(18.367101, 18.351479),
+               Lon = c(-64.734781, -64.688395))
+  } else if (park_code == "SARI") {
+    data.frame(Park = c("SARI"),
+               Site = "SARI 1",
+               Lat = 17.766195,
+               Lon = -64.756298)
+  } else if (park_code == "BISC") {
+    data.frame(Park = c("BISC"),
+               Site = c("BISC 1", "BISC 2"),
+               Lat = c(25.476786, 25.541969),
+               Lon = c(-80.341200, -80.314276))
   }
 }
 #'
@@ -159,7 +180,7 @@ get_noaa_tidegauge_points <- function(park_code) {
                Name = "Boston, MA",
                StationID = 8443970,
                Lat = 42.35055556,
-               Lon = 71.05)
+               Lon = -71.05)
   } else if (park_code == "CACO") {
     data.frame(Park = c(rep("CACO",2)),
                Site = c(NA, "Nauset"),
@@ -280,20 +301,20 @@ get_noaa_tidegauge_points <- function(park_code) {
                StationID = 8723214,
                Lat = 25.71916667,
                Lon = -80.15194444)
-  } else if (park_code == "SARI") {
-    data.frame(Park = "SARI",
-               Site = NA,
-               Name = "Christiansted Harbor, St Croix, VI",
-               StationID = 9751364,
-               Lat = 17.73583333,
-               Lon = -64.68583333)
   } else if (park_code == "VIIS") {
     data.frame(Park = "VIIS",
                Site = NA,
-               Name = "Lameshur Bay, St John, VI",
-               StationID = 9751381,
-               Lat = 18.31694444,
-               Lon = -64.71805556)
+               Name = "Charlotte Amalie, St Thomas, VI",
+               StationID = 9751639,
+               Lat = 18.31888889,
+               Lon = -64.91805556)
+  } else if (park_code == "SARI") {
+    data.frame(Park = "SARI",
+               Site = NA,
+               Name = "Limetree Bay, St Croix, VI",
+               StationID = 9751401,
+               Lat = 17.695146,
+               Lon = -64.753068)
   }
 }
 #'
@@ -341,10 +362,17 @@ map_SETs <- function(data = data, park_code, dp_id, dp_year, dp_pub_date, crosst
                         labelOptions = leaflet::labelOptions(noHide = TRUE, opacity = .9, textOnly = TRUE, offset = c(0,0), direction = "center", style = list("color" = "white", "font-weight" = "bold")),
                         popup = ~paste0("<strong>Site: </strong>", site_name, 
                                         "<br><strong>Station: </strong>", station_code)) %>%
-    leaflet::addCircles(data = wl_points, lng = ~Lon, lat = ~Lat, color = "red", popup = ~paste0("<strong>Water logger: </strong>", Site), labelOptions = leaflet::labelOptions(noHide = TRUE, opacity = .9, textOnly = TRUE, offset = c(0,0), direction = "center", style = list("color" = "white", "font-weight" = "bold"))) %>%
+    { if(park_code %in% c("BOHA"))
+      .
+      else 
+        leaflet::addCircles(., data = wl_points, lng = ~Lon, lat = ~Lat, color = "red", popup = ~paste0("<strong>Water logger: </strong>", Site), labelOptions = leaflet::labelOptions(noHide = TRUE, opacity = .9, textOnly = TRUE, offset = c(0,0), direction = "center", style = list("color" = "white", "font-weight" = "bold")))} %>%
+    # leaflet::addCircles(data = wl_points, lng = ~Lon, lat = ~Lat, color = "red", popup = ~paste0("<strong>Water logger: </strong>", Site), labelOptions = leaflet::labelOptions(noHide = TRUE, opacity = .9, textOnly = TRUE, offset = c(0,0), direction = "center", style = list("color" = "white", "font-weight" = "bold"))) %>%
     leaflet::addCircles(data = tide_gauge_points, lng = ~Lon, lat = ~Lat, color = "green", popup = ~paste0("<strong>NOAA Tide Gauge: </strong>", Name), labelOptions = leaflet::labelOptions(noHide = TRUE, opacity = .9, textOnly = TRUE, offset = c(0,0), direction = "center", style = list("color" = "white", "font-weight" = "bold"))) %>%
     leaflet::addScaleBar(position = "bottomleft") %>%
-    leaflet::addLegend(., labels = c("Water loggers"), colors = c("red"), position = "bottomleft") %>%
+    { if(park_code %in% c("BOHA"))
+      . 
+      else
+        leaflet::addLegend(., labels = c("Water loggers"), colors = c("red"), position = "bottomleft")} %>%
     leaflet::addLegend(., labels = c("NOAA Tide Gauge"), colors = c("green"), position = "bottomleft") %>%
     leaflet::addLegend(., labels = c("SET stations"), colors = c("blue"), position = "bottomleft") %>%
     

@@ -106,13 +106,30 @@ format_slr_rate_comps <- function(park_code, long_slr_rate_df, recent_slr_rate_d
       "future_int_high_rate" = int_high, 
       "future_high_rate" = high
     ) %>%
-    bind_cols(., site_set_rates_df %>%
-                select(
-                  park_code, 
-                  site_name, 
-                  rate, 
-                  rate_se
-                )) %>%
+    {if (park_code != "NACE")
+      bind_cols(., site_set_rates_df %>%
+                              select(
+                                park_code,
+                                site_name,
+                                rate,
+                                rate_se
+                              ))
+      else if (park_code == "NACE")
+        bind_cols(., site_set_rates_df %>%
+                                select(
+                                  park_code,
+                                  "site_name" = station_name,
+                                  rate,
+                                  rate_se
+                                ))
+      } %>%
+    # bind_cols(., site_set_rates_df %>%
+    #             select(
+    #               park_code, 
+    #               site_name, 
+    #               rate, 
+    #               rate_se
+    #             )) %>%
     mutate(rate_plus_se = rate + rate_se) %>%
     {if (park_code == "CACO")
       mutate(.,

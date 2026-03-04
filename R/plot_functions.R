@@ -71,14 +71,24 @@
 #' @export
 site_sets_fig_plot <- function(site_set_rates_df, ncol, panel.spacing.x, panel.spacing.y, strip.text.margin) {
   
+  park <- site_set_rates_df %>%
+    distinct(park_code) %>%
+    pull(park_code)
+  
   site_set_cumu <- site_set_rates_df %>%
     unnest(cols = c(data))
   
   labels <- site_set_rates_df %>%
     ungroup() %>%
-    select(site_name, rate, rate_se) %>%
-    mutate(label = paste0(site_name, "<br>", "SEC Rate: ", format_result_vals(rate), " ± ", format_result_vals(rate_se), " mm/yr")) %>%
-    pull(label, name = site_name)
+    { if (!park %in% c("GWMP", "NACE")) 
+      select(., site_name, rate, rate_se) %>%
+        mutate(label = paste0(site_name, "<br>", "SEC Rate: ", format_result_vals(rate), " ± ", format_result_vals(rate_se), " mm/yr")) %>%
+        pull(label, name = site_name) 
+      else 
+        select(., station_name, rate, rate_se) %>%
+        mutate(label = paste0(station_name, "<br>", "SEC Rate: ", format_result_vals(rate), " ± ", format_result_vals(rate_se), "mm/yr")) %>%
+        pull(label, name = station_name)
+        }
   
   text = list(
     bgcolor = "white",
@@ -89,7 +99,11 @@ site_sets_fig_plot <- function(site_set_rates_df, ncol, panel.spacing.x, panel.s
   p <- ggplot(data = site_set_cumu, aes(x = event_date_UTC, y = mean_cumu)) +
     geom_smooth(method = "lm", formula = y ~ x, fullrange = TRUE, se = FALSE) +
     geom_point(aes(text = paste("Date:", format(event_date_UTC, "%m/%d/%Y"), "<br>", "SEC:", format(round(mean_cumu, 2), nsmall = 2), "mm")), alpha = 0.6) +
-    facet_wrap(~site_name, labeller=as_labeller(labels), ncol = ncol) +
+    { if (!park %in% c("GWMP", "NACE"))
+      facet_wrap(~site_name, labeller=as_labeller(labels), ncol = ncol)
+      else
+        facet_wrap(~station_name, labeller = as_labeller(labels), ncol = ncol)
+      } +
     labs(subtitle = "Marsh Surface elevation change") +
     scale_x_date(date_labels = "%Y") +
     scale_y_continuous(name = "Surface elevation change (mm)") +
@@ -110,23 +124,49 @@ site_sets_fig_plot <- function(site_set_rates_df, ncol, panel.spacing.x, panel.s
 #' @export
 site_wl_plot <- function(wl_df, site_hydro_df, time_interval = "15 min", nrow, show.longest.flood = TRUE, show.marsh.elev = TRUE, date.breaks = "2 years", x.axis.title = "Water level (m NAVD88)") {
   
-  wl_df %>%
+  park <- wl_df %>%
     ungroup() %>%
-    complete(nesting(park, site_name), datetime = seq(min(datetime), max(datetime), by = time_interval)) %>%
-    ggplot(data = ., aes(x = datetime, y = water_level)) +
+    distinct(park) %>%
+    pull(park)
+  
+  p <- wl_df %>%
+    ungroup() %>%
+    {if (!park %in% c("VIIS", "SARI", "BISC", "GWMP", "NACE"))
+      complete(., nesting(park, site_name), datetime = seq(min(datetime), max(datetime), by = time_interval)) %>%
+        ggplot(data = ., aes(x = datetime, y = water_level))
+      else if (park %in% c("VIIS", "SARI", "BISC"))
+        ggplot(data = ., aes(x = datetime, y = water_level, group = format(datetime, "%Y-%m"))) 
+      else if (park %in% c("GWMP", "NACE"))
+        complete(., nesting(park, station_name), datetime = seq(min(datetime), max(datetime), by = time_interval)) %>%
+        ggplot(data = ., aes(x = datetime, y = water_level))
+      } +
     
     {if (show.longest.flood == TRUE)
       list(geom_rect(data = site_hydro_df, aes(xmin = min_date_longest_flood, xmax = max_date_longest_flood, ymin = -Inf, ymax = Inf, fill = "Longest flood event"), color = "#14747e", inherit.aes = FALSE, alpha = 0.5),
         scale_fill_manual(values = "#14747e", label = "Longest flood event"))} +
-    {if (show.marsh.elev == TRUE)
-      list(geom_hline(data = site_hydro_df, aes(yintercept = elev_navd88, color = "Marsh surface elevation")),
-        scale_color_manual(values = "#ff5a67", label = "Marsh surface elevation"))} +
+    {if (show.marsh.elev == TRUE & park == "BOHA")
+        list(geom_hline(data = site_hydro_df, aes(yintercept = elev_navd88, color = site_name)),
+             labs(color = "Site"))
+      else if (show.marsh.elev == TRUE & park %in% c("GWMP", "NACE"))
+        list(geom_hline(data = site_hydro_df, aes(yintercept = elev_navd88, color = station_name)),
+             labs(color = "Station"))
+      else if (show.marsh.elev == TRUE & !park %in% c("BOHA", "GWMP", "NACE"))
+        list(geom_hline(data = site_hydro_df, aes(yintercept = elev_navd88, color = "Marsh surface elevation")),
+             scale_color_manual(values = "#ff5a67", label = "Marsh surface elevation"))
+      } +
     
+    # geom_line(aes(text = paste("Date:", format(datetime, "%m/%d/%Y %H:%M"), "<br>", "Water level:", format(round(water_level, 3), nsmall = 3), "m NAVD88")), alpha = 0.25) + # For some reason the line won't render with plotly when I try to change the text labels
     geom_line(alpha = 0.25) +
-    facet_wrap(~site_name, nrow = nrow, scales = "free_y") +
-    scale_x_datetime(date_breaks = date.breaks, date_labels = "%Y") +
+    
+    {if (!park %in% c("BOHA", "GWMP", "NACE"))
+      facet_wrap(~site_name, nrow = nrow, scales = "free_y")} +
+    {if (str_detect(date.breaks, "year"))
+      scale_x_datetime(date_breaks = date.breaks, date_labels = "%Y")
+      else if (str_detect(date.breaks, "month"))
+        scale_x_datetime(date_breaks = date.breaks, date_labels = "%m-%Y")
+    } +
     scale_y_continuous(name = x.axis.title) +
-    {if (show.longest.flood == FALSE)
+    {if (show.longest.flood == FALSE & !park %in% c("BOHA", "GWMP", "NACE"))
       theme(
         axis.title.x = element_blank(),
         panel.border = element_rect(fill = NA, color = "black"),
@@ -134,6 +174,17 @@ site_wl_plot <- function(wl_df, site_hydro_df, time_interval = "15 min", nrow, s
         strip.text = element_text(margin = margin(5,1,3,1, "pt")),
         strip.background = element_blank(),
         legend.position = "none"
+        )
+      else if (show.longest.flood == FALSE & park %in% c("BOHA", "GWMP", "NACE"))
+        theme(
+          axis.title.x = element_blank(),
+          panel.border = element_rect(fill = NA, color = "black"),
+          panel.spacing.y = unit(10, "pt"),,
+          strip.text = element_text(margin = margin(5,1,3,1, "pt")),
+          strip.background = element_blank(),
+          legend.title = element_blank(),
+          legend.direction = "horizontal",
+          legend.position = "bottom"
         )
       else 
       theme(
@@ -148,6 +199,12 @@ site_wl_plot <- function(wl_df, site_hydro_df, time_interval = "15 min", nrow, s
       legend.position = "bottom"
     )
     }
+  
+  if (show.longest.flood == TRUE) {
+    p # ggplotly doesn't work with geom_rect
+  } else if (show.longest.flood == FALSE) {
+    ggplotly(p)
+  }
 }
 #'
 #' @rdname plot_functions
@@ -168,8 +225,13 @@ site_hydro_plot <- function(
   # Format site-level hydro data & marsh surface elevation for plotting
   plot_data <- site_hydro_df %>%
     ungroup() %>%
-    select(site_name, elev_navd88, MLW, MHW, MSL, percent_time_flooded, elev_capital) %>%
-    pivot_longer(., cols = -c(site_name, elev_navd88), values_to = "Hydro metric") %>%
+    { if (park_code %in% c("GWMP", "NACE"))
+      select(., station_name, elev_navd88, percent_time_flooded, elev_capital) %>%
+        pivot_longer(., cols = -c(station_name, elev_navd88), values_to = "Hydro metric")
+      else 
+        select(., site_name, elev_navd88, MLW, MHW, MSL, percent_time_flooded, elev_capital) %>%
+        pivot_longer(., cols = -c(site_name, elev_navd88), values_to = "Hydro metric")
+      } %>%
     mutate(label = case_when(name == "percent_time_flooded" & `Hydro metric` < 1 & `Hydro metric` > 0 ~ format(round(`Hydro metric`, 1), nsmall = 1),
                              name == "percent_time_flooded" & (`Hydro metric` >= 1 | `Hydro metric` == 0) ~ format(round(`Hydro metric`, 0), nsmall = 0),
                              name == "MLW" ~ format(round(`Hydro metric`, datum_digits), nsmall = datum_digits),
@@ -177,15 +239,24 @@ site_hydro_plot <- function(
                              name == "MSL" ~ format(round(`Hydro metric`, datum_digits), nsmall = datum_digits),
                              name == "elev_capital" ~ format(round(`Hydro metric`, 2), nsmall = 2))) %>%
     mutate(`Marsh surface elevation` = elev_navd88,
-           Site = site_name,
            name = case_when(name == "percent_time_flooded" ~ "Percent time flooded (%)",
                             name == "MLW" ~ "MLW (m NAVD88)",
                             name == "MHW" ~ "MHW (m NAVD88)",
                             name == "MSL" ~ "MSL (m NAVD88)",
                             name == "elev_capital" ~ "Elevation capital")) %>%
-    mutate(name = fct_relevel(name, "MLW (m NAVD88)", "MHW (m NAVD88)", "MSL (m NAVD88)", "Percent time flooded (%)", "Elevation capital")) %>%
+    { if (park_code %in% c("GWMP", "NACE"))
+      mutate(., Site = station_name,
+             name = fct_relevel(name, "Percent time flooded (%)", "Elevation capital"))
+      else 
+        mutate(., Site = site_name,
+               name = fct_relevel(name, "MLW (m NAVD88)", "MHW (m NAVD88)", "MSL (m NAVD88)", "Percent time flooded (%)", "Elevation capital"))
+      } %>%
     tidyr::drop_na(`Hydro metric`) %>%
-    mutate(., Site = if_else(site_name != "unknown", forcats::fct_relevel(Site, site_order), forcats::as_factor(Site)))
+    { if (park_code %in% c("GWMP", "NACE"))
+      mutate(., Site = if_else(station_name != "unknown", forcats::fct_relevel(Site, station_order), forcats::as_factor(Site)))
+      else
+        mutate(., Site = if_else(site_name != "unknown", forcats::fct_relevel(Site, site_order), forcats::as_factor(Site)))
+      }
   
   # Format a vertical line for the 0.5 threshold of elevation capital
   elev_cap_threshold <- plot_data %>%
@@ -200,6 +271,9 @@ site_hydro_plot <- function(
     geom_hline(data = elev_cap_threshold, aes(yintercept = y_val), linetype = "dashed", color = "red") +
     facet_wrap(name~., scales = "free_y", strip.position = "left", nrow = facet_nrow, ncol = facet_ncol) +
     scale_x_continuous(name = "Marsh surface elevation (m NAVD88)") +
+    {if (park_code %in% c("GWMP", "NACE"))
+      labs(color = "Station")
+      } +
     theme(strip.background = element_blank(),
           strip.placement = "outside",
           panel.border = element_rect(fill = NA, color = "black"),
@@ -209,7 +283,12 @@ site_hydro_plot <- function(
           legend.key.spacing.y = unit(-3,"pt"),
           legend.title = element_text(hjust = 0.5),
           axis.title.x = element_text(hjust = 0.25),
-          axis.title.y = element_blank())
+          axis.title.y = element_blank()) +
+    {if (park_code %in% c("GWMP", "NACE"))
+      theme(legend.position = "bottom",
+            legend.direction = "horizontal",
+            axis.title.x = element_text(hjust = 0.5))
+      }
 }
 #'
 #' @rdname plot_functions
@@ -218,7 +297,7 @@ site_slr_recent_plot <- function(park_code, long_slr_rate_df, recent_slr_rate_df
   
   # Format slr_rates for plotting
   slr_rates <- long_slr_rate_df %>%
-    {if(park_code == "CACO")
+    {if (park_code == "CACO")
       bind_rows(., long_slr_rate_nau) %>%
         select("slr_rate" = MSL.Trends.mm.yr., "SLR rate type" = object_type, Station.Name) %>%
         
@@ -241,7 +320,7 @@ site_slr_recent_plot <- function(park_code, long_slr_rate_df, recent_slr_rate_df
                                        `SLR rate type` == "recent slr rate" ~ "Recent SLR")) 
   
   # Get the number of sites - this determines the range of the y-axis
-  n_sites <- length(unique(site_set_rates_df$site_name))
+  n_sites <- if_else(park_code != "NACE", length(unique(site_set_rates_df$site_name)), length(unique(site_set_rates_df$station_name)))
   
   # Use expand_grid to create a df with all combos of the slr rates and the y-axis range values so that hover labels will show along the entire line
   slr_rates_expanded <- data.frame(yvals = seq(0, n_sites+1, by = 0.1)) %>%
@@ -252,9 +331,17 @@ site_slr_recent_plot <- function(park_code, long_slr_rate_df, recent_slr_rate_df
   
   # Plot
   pp <- ggplotly(
-    ggplot(site_set_rates_df, aes(x = rate, y = site_name)) +
+    {if (park_code != "NACE") 
+      ggplot(site_set_rates_df, aes(x = rate, y = site_name))
+      else if (park_code == "NACE")
+        ggplot(site_set_rates_df, aes(x = rate, y = station_name))
+        } +
       geom_errorbar(aes(xmin = rate - rate_se, xmax = rate + rate_se)) +
-      geom_point(aes(text = paste("SEC rate:", format(round(rate, 2), nsmall = 2), " mm/yr<br>Site:", site_name))) +
+      {if (park_code != "NACE")
+        geom_point(aes(text = paste("SEC rate:", format(round(rate, 2), nsmall = 2), " mm/yr<br>Site:", site_name)))
+        else if (park_code == "NACE")
+          geom_point(aes(text = paste("SEC rate:", format(round(rate, 2), nsmall = 2), " mm/yr<br>Station:", station_name)))
+        } +
       geom_line(data = slr_rates_expanded, aes(x = slr_rate, y = yvals, color = `SLR rate type`, text = paste0(`SLR rate type`, ": <br>", format(round(slr_rate, 2), nsmall = 2), " mm/yr"))) +
       scale_y_discrete(limits = rev) +
       scale_x_continuous(name = "Rate of surface elevation change or SLR (mm/yr)") +
@@ -293,7 +380,7 @@ site_slr_future_plot <- function(park_code, future_slr_rate_df, site_set_rates_d
   
   
   # Get the number of sites - this determines the range of the y-axis
-  n_sites <- length(unique(site_set_rates_df$site_name))
+  n_sites <- if_else(park_code != "NACE", length(unique(site_set_rates_df$site_name)), length(unique(site_set_rates_df$station_name)))
   
   # Use expand_grid to create a df with all combos of the slr rates and the y-axis range values so that hover labels will show along the entire line
   future_slr_rates_expanded <- data.frame(yvals = seq(0, n_sites+1, by = 0.1)) %>%
@@ -304,9 +391,17 @@ site_slr_future_plot <- function(park_code, future_slr_rate_df, site_set_rates_d
   
   # Plot
   pp <- ggplotly(
-    ggplot(site_set_rates_df, aes(x = rate, y = site_name)) +
+    {if (park_code != "NACE")
+      ggplot(site_set_rates_df, aes(x = rate, y = site_name))
+      else if (park_code == "NACE")
+        ggplot(site_set_rates_df, aes(x = rate, y = station_name))
+      } +
       geom_errorbar(aes(xmin = rate - rate_se, xmax = rate + rate_se), width = 0.6) +
-      geom_point(aes(text = paste("SEC rate:", format(round(rate, 2), nsmall = 2), " mm/yr<br>Site:", site_name))) +
+      {if (park_code != "NACE")
+        geom_point(aes(text = paste("SEC rate:", format(round(rate, 2), nsmall = 2), " mm/yr<br>Site:", site_name)))
+        else if (park_code == "NACE")
+          geom_point(aes(text = paste("SEC rate:", format(round(rate, 2), nsmall = 2), " mm/yr<br>Station:", station_name)))
+        } +
       geom_line(data = future_slr_rates_expanded, aes(x = future_slr_rate, y = yvals, color = `Future SLR scenario`, text = paste0(`Future SLR scenario`, ": <br>", format(round(future_slr_rate, 2), nsmall = 2), " mm/yr"))) +
       scale_y_discrete(limits = rev) +
       scale_x_continuous(name = "Rate of surface elevation change or future SLR (mm/yr)") +
@@ -326,14 +421,15 @@ site_slr_future_plot <- function(park_code, future_slr_rate_df, site_set_rates_d
 #' @export
 summary_fig <- function(site_set_rates_df, marsh_elev_df, park_datums_df, long_slr_rate_df, recent_slr_rate_df, label_padding = 0.1) {
   
+  park <- unique(site_set_rates_df$park_code)
+  
+  sites_stations <- if_else(park %in% c("GWMP", "NACE"), "station_name", "site_name")
   # Plot data
-  plot_data <- full_join(site_set_rates_df, marsh_elev_df, by = "site_name")
+  plot_data <- full_join(site_set_rates_df, marsh_elev_df, by = sites_stations)
   
   # Format df of recent SLR
   recent_slr <- recent_slr_rate_df %>%
     filter(term == "yr")
-  
-  park <- unique(site_set_rates_df$park_code)
   
   ggplot(plot_data, aes(x = rate, y = elev_navd88)) +
     geom_hline(data = park_datums_df, aes(yintercept = MHW), linetype = "dashed") +
@@ -344,11 +440,15 @@ summary_fig <- function(site_set_rates_df, marsh_elev_df, park_datums_df, long_s
     geom_vline(data = recent_slr, aes(xintercept = estimate), color = "#1abc9c") +
     geom_errorbar(aes(xmin = rate-rate_se, xmax = rate+rate_se, y = elev_navd88)) +
     geom_point() +
-    geom_text_repel(aes(label = site_name), box.padding = label_padding) +
+    {if (!park %in% c("GWMP", "NACE"))
+      geom_text_repel(aes(label = site_name), box.padding = label_padding)
+      else if (park %in% c("GWMP", "NACE"))
+        geom_text_repel(aes(label = station_name), box.padding = label_padding)
+      } +
     annotate("text", x = Inf, y = park_datums_df$MHW, label = "MHW", hjust = -0.1) +
     annotate("text", x = Inf, y = park_datums_df$MSL, label = "MSL", hjust = -0.1) +
     annotate("text", x = long_slr_rate_df$MSL.Trends.mm.yr., y = Inf, label = "Long-term SLR", vjust = -0.3) +
-    {if (park == "GATE")
+    {if (park %in% c("GATE", "GWMP", "NACE"))
       annotate("text", x = recent_slr$estimate, y = Inf, label = "Recent SLR", vjust = -0.3, hjust = -0.05) 
       else
         annotate("text", x = recent_slr$estimate, y = Inf, label = "Recent SLR", vjust = -0.3)} +
