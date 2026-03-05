@@ -349,7 +349,7 @@ map_SETs <- function(data = data, park_code, dp_id, dp_year, dp_pub_date, crosst
       href='http://insidemaps.nps.gov/places/editor/#background=mapbox-satellite&map=4/-95.97656/39.02772&overlays=park-tiles-overlay'
       target='_blank'>Improve Park Tiles</a>"
     )
-  
+  #f
   # NPS park tiles URLs
   NPSbasic = paste0("https://atlas-stg.geoplatform.gov/styles/v1/atlas-user/ck58pyquo009v01p99xebegr9/tiles/256/{z}/{x}/{y}@2x?access_token=", password)
   NPSimagery = paste0("https://atlas-stg.geoplatform.gov/styles/v1/atlas-user/ck72fwp2642dv07o7tbqinvz4/tiles/256/{z}/{x}/{y}@2x?access_token=", password)
