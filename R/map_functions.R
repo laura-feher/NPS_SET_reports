@@ -34,6 +34,7 @@
 #' @import htmltools
 #' @import leaflet
 #' @import leaflet.extras
+#' @import keyring
 #'
 #' @rdname map_functions
 #' @export
@@ -320,7 +321,14 @@ get_noaa_tidegauge_points <- function(park_code) {
 #'
 #' @rdname map_functions
 #' @export
-map_SETs <- function(data = data, park_code, dp_id, dp_year, dp_pub_date, crosstalk = FALSE, crosstalk_group = "map") {
+map_SETs <- function(data = data, park_code, dp_id, dp_year, dp_pub_date, crosstalk = FALSE, crosstalk_group = "map", password = keyring::key_get(service = "NPS Park Tiles")) {
+  
+  # Check if the NPS Park Tiles API key is already set. If not, prompt for password.
+  # if (any(keyring::key_list()$service == "NPS Park Tiles")) {
+  #   message("NPS Park Tiles key is already set")
+  # } else {
+  #   keyring::key_set(service = "NPS Park Tiles", keyring = "NPS")
+  # }
   
   points_data <- get_station_points(data = data, park_code = park_code, dp_id = dp_id, dp_year = dp_year, dp_pub_date = dp_pub_date, crosstalk = crosstalk, crosstalk_group = crosstalk_group)
   wl_points <- get_waterlogger_points(park_code = park_code)
@@ -343,10 +351,10 @@ map_SETs <- function(data = data, park_code, dp_id, dp_year, dp_pub_date, crosst
     )
   
   # NPS park tiles URLs
-  NPSbasic = "https://atlas-stg.geoplatform.gov/styles/v1/atlas-user/ck58pyquo009v01p99xebegr9/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiYXRsYXMtdXNlciIsImEiOiJjazFmdGx2bjQwMDAwMG5wZmYwbmJwbmE2In0.lWXK2UexpXuyVitesLdwUg"
-  NPSimagery = "https://atlas-stg.geoplatform.gov/styles/v1/atlas-user/ck72fwp2642dv07o7tbqinvz4/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiYXRsYXMtdXNlciIsImEiOiJjazFmdGx2bjQwMDAwMG5wZmYwbmJwbmE2In0.lWXK2UexpXuyVitesLdwUg"
-  NPSslate = "https://atlas-stg.geoplatform.gov/styles/v1/atlas-user/ck5cpvc2e0avf01p9zaw4co8o/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiYXRsYXMtdXNlciIsImEiOiJjazFmdGx2bjQwMDAwMG5wZmYwbmJwbmE2In0.lWXK2UexpXuyVitesLdwUg"
-  NPSlight = "https://atlas-stg.geoplatform.gov/styles/v1/atlas-user/ck5cpia2u0auf01p9vbugvcpv/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiYXRsYXMtdXNlciIsImEiOiJjazFmdGx2bjQwMDAwMG5wZmYwbmJwbmE2In0.lWXK2UexpXuyVitesLdwUg"
+  NPSbasic = paste0("https://atlas-stg.geoplatform.gov/styles/v1/atlas-user/ck58pyquo009v01p99xebegr9/tiles/256/{z}/{x}/{y}@2x?access_token=", password)
+  NPSimagery = paste0("https://atlas-stg.geoplatform.gov/styles/v1/atlas-user/ck72fwp2642dv07o7tbqinvz4/tiles/256/{z}/{x}/{y}@2x?access_token=", password)
+  NPSslate = paste0("https://atlas-stg.geoplatform.gov/styles/v1/atlas-user/ck5cpvc2e0avf01p9zaw4co8o/tiles/256/{z}/{x}/{y}@2x?access_token=", password) 
+  NPSlight = paste0("https://atlas-stg.geoplatform.gov/styles/v1/atlas-user/ck5cpia2u0auf01p9vbugvcpv/tiles/256/{z}/{x}/{y}@2x?access_token=", password)
   
   map <- leaflet::leaflet(points_data) %>%
     leaflet::addTiles(group = "Basic", urlTemplate = NPSbasic, attribution = NPSAttrib) %>%
