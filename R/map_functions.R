@@ -45,9 +45,20 @@ get_station_points <- function(data = data, dp_id, dp_pub_date, park_code, dp_ye
     filter(!(station_code %in% c("JR1S", "JR2S", "JR3S", "EE1S", "EE2S", "EE3S"))) %>% # Exclude shallow SETs at GATE
     filter(site_name != "Pine Tree Study") %>% # Exclude Pine Tree Study at ASIS
     filter(!(station_code) %in% c("M11-3", "M5-2", "M6-4", "M8-4")) %>% # Exclude fenced stations at ASIS
-    # Exclude Duck Harbor at CACO for 2025 since there is only 1 year of data so far
     {if (park_code == "CACO" & as.numeric(dp_year) < 2027)
-      filter(., site_name != "Duck Harbor")
+      filter(., site_name != "Duck Harbor") # Exclude Duck Harbor at CACO for 2025 since there is only 1 year of data so far
+      else if (park_code == "CANA" & as.numeric(dp_year) < 2027)
+        filter(., site_name != "CANA02") # Exclude CANA02 at CANA for 2025 since there is not enough data yet
+      else if (park_code == "CUIS") 
+        filter(., site_name != "CUIS04") # leave out CUIS04 - only 3 years of data from 2015-2018
+      else if (park_code == "FOFR")
+        filter(., site_name != "FOFR16")  #leave out FOFR16 - only 3 years of data from 2015-2018
+      else if (park_code == "FOPU")
+        filter(., !station_code %in% c("FOPU02A", "FOPU02B", "FOPU02C")) #leave out earlier stations at FOPU
+      else if (park_code == "TIMU")
+        filter(., site_name %in% c("TIMU03", "TIMU04")) # exclude other sites - not enough data
+      else if (park_code == "FOMA")
+        filter(., site_name == "FOMA021")
       else .
       } %>%
     left_join(., 
@@ -148,20 +159,55 @@ get_waterlogger_points <- function(park_code) {
                Lat = 38.766537,
                Lon = -77.048693)
   } else if (park_code == "VIIS") {
-    data.frame(Park = c("VIIS"),
+    data.frame(Park = c("VIIS"), # Need to get exact coordinates from Kevin
                Site = c("Mary's Creek", "Water Creek"),
                Lat = c(18.367101, 18.351479),
                Lon = c(-64.734781, -64.688395))
   } else if (park_code == "SARI") {
-    data.frame(Park = c("SARI"),
+    data.frame(Park = c("SARI"), # Need to get exact coordinates from Kevin
                Site = "SARI 1",
                Lat = 17.766195,
                Lon = -64.756298)
   } else if (park_code == "BISC") {
-    data.frame(Park = c("BISC"),
+    data.frame(Park = c("BISC"), # Need to get exact coordinates from Kevin
                Site = c("BISC 1", "BISC 2"),
                Lat = c(25.476786, 25.541969),
                Lon = c(-80.341200, -80.314276))
+  } else if (park_code == "CANA") {
+    data.frame(Park = c("CANA"), 
+               Site = "Dyke Marsh",
+               Lat = 28.926843,
+               Lon = -80.824903)
+  } else if (park_code == "CAHA") {
+    data.frame(Park = c("CAHA"), # Need to get exact coordinates from Ches
+               Site = c("Ocracoke boat dock"),
+               Lat = c(35.189016),
+               Lon = c(-75.783196))
+  } else if (park_code == "CUIS") {
+    data.frame(Park = c("CUIS"),
+               Site = "Sea Camp Ranger Station dock",
+               Lat = 30.764172,
+               Lon = -81.470977)
+  } else if (park_code == "FOPU") {
+    data.frame(Park = c("FOPU"),
+               Site = "Lazaretto Creek dock",
+               Lat = 32.014153,
+               Lon = -80.884304)
+  } else if (park_code == "TIMU") {
+    data.frame(Park = c("TIMU"),
+               Site = c("Kingsley Plantation dock"),
+               Lat = c(30.441042),
+               Lon = c(-81.439171))
+  } else if (park_code == "FOMA") {
+    data.frame(Park = c("FOMA"),
+               Site = "Visitors Center dock",
+               Lat = 29.714803,
+               Lon = -81.234876)
+  } else if (park_code == "CALO") {
+    data.frame(Park = c("CALO"), # Need to get exact coordinates from Ches
+               Site = "Middle Marsh",
+               Lat = 34.749887, 
+               Lon = -76.424893)
   }
 }
 #'
@@ -235,22 +281,13 @@ get_noaa_tidegauge_points <- function(park_code) {
                StationID = 8638610, 
                Lat = 36.935,
                Lon = -76.31861111)
-  } else if (park_code == "CAHA" | park_code == "CALO") {
-    if (park_code == "CAHA") {
-      data.frame(Park = "CAHA",
-                 Site = NA,
-                 Name = "USCG Station Hatteras, NC",
-                 StationID = 8654467,
-                 Lat = 35.20138889,
-                 Lon = -75.70083333)
-    } else if (park_code == "CALO") {
-      data.frame(Park = "CALO",
-                 Site = NA,
-                 Name = "USCG Station Hatteras, NC",
-                 StationID = 8654467,
-                 Lat = 35.20138889,
-                 Lon = -75.70083333)
-    }
+  } else if (park_code == "CAHA") {
+    data.frame(Park = "CAHA",
+               Site = NA,
+               Name = "Oregon Inlet Marina, NC",
+               StationID = 8652587,
+               Lat = 35.78527778,
+               Lon = -75.53583333)
   } else if (park_code == "FOPU") {
     data.frame(Park = "FOPU",
                Site = NA,
@@ -262,32 +299,34 @@ get_noaa_tidegauge_points <- function(park_code) {
     if (park_code == "FOFR") {
       data.frame(Park = "FOFR",
                  Site = NA,
-                 Name = "Kings Bay MSF Pier, GA",
-                 StationID = 8679598,
-                 Lat = 30.76861111,
-                 Lon = -81.48472222)
-    } else if (park_code == "CUIS") {
+                 Name = "Fernandina Beach, FL",
+                 StationID = 8720030,
+                 Lat = 30.6675,
+                 Lon = -81.46666667)
+    } else if (park_code == "CUIS"){
       data.frame(Park = "CUIS",
                  Site = NA,
-                 Name = "Kings Bay MSF Pier, GA",
-                 StationID = 8679598,
-                 Lat = 30.76861111,
-                 Lon = -81.48472222)
+                 Name = "Fernandina Beach, FL",
+                 StationID = 8720030,
+                 Lat = 30.6675,
+                 Lon = -81.46666667)
     }
-  } else if (park_code == "TIMU") {
-    data.frame(Park = "TIMU", 
-               Site = NA,
-               Name = "Fernandina Beach, FL",
-               StationID = 8720030,
-               Lat = 30.6675,
-               Lon = -81.46666667)
-  } else if (park_code == "FOMA") {
-    data.frame(Park = "FOMA",
-               Site = NA,
-               Name = "Mayport (Bar Pilots Dock), FL",
-               StationID = 8720218,
-               Lat = 30.38583333,
-               Lon = -81.41861111)
+  } else if (park_code == "FOMA" | park_code == "TIMU") {
+    if (park_code == "FOMA") {
+      data.frame(Park = "FOMA",
+                 Site = NA,
+                 Name = "Mayport (Bar Pilots Dock), FL",
+                 StationID = 8720218,
+                 Lat = 30.38583333,
+                 Lon = -81.41861111)
+    } else if (park_code == "TIMU") {
+      data.frame(Park = "TIMU",
+                 Site = NA,
+                 Name = "Mayport (Bar Pilots Dock), FL",
+                 StationID = 8720218,
+                 Lat = 30.38583333,
+                 Lon = -81.41861111)
+    }
   } else if (park_code == "CANA") {
     data.frame(Park = "CANA",
                Site = NA,
@@ -316,6 +355,13 @@ get_noaa_tidegauge_points <- function(park_code) {
                StationID = 9751401,
                Lat = 17.695146,
                Lon = -64.753068)
+  } else if (park_code == "CALO") {
+    data.frame(Park = "CALO",
+               Site = NA,
+               Name = "Beaufort, NC",
+               StationID = 8656483,
+               Lat = 34.71666667,
+               Lon = -76.66722222)
   }
 }
 #'
@@ -331,7 +377,10 @@ map_SETs <- function(data = data, park_code, dp_id, dp_year, dp_pub_date, crosst
   # }
   
   points_data <- get_station_points(data = data, park_code = park_code, dp_id = dp_id, dp_year = dp_year, dp_pub_date = dp_pub_date, crosstalk = crosstalk, crosstalk_group = crosstalk_group)
-  wl_points <- get_waterlogger_points(park_code = park_code)
+  {if (park_code == "FOFR")
+    wl_points <- NULL
+    else
+      wl_points <- get_waterlogger_points(park_code = park_code)}
   tide_gauge_points <- get_noaa_tidegauge_points(park_code = park_code)
   
   # If points is a crosstalk object, extract just the data for functions that need a regular tibble/dataframe
@@ -349,7 +398,7 @@ map_SETs <- function(data = data, park_code, dp_id, dp_year, dp_pub_date, crosst
       href='http://insidemaps.nps.gov/places/editor/#background=mapbox-satellite&map=4/-95.97656/39.02772&overlays=park-tiles-overlay'
       target='_blank'>Improve Park Tiles</a>"
     )
-  #f
+  
   # NPS park tiles URLs
   NPSbasic = paste0("https://atlas-stg.geoplatform.gov/styles/v1/atlas-user/ck58pyquo009v01p99xebegr9/tiles/256/{z}/{x}/{y}@2x?access_token=", password)
   NPSimagery = paste0("https://atlas-stg.geoplatform.gov/styles/v1/atlas-user/ck72fwp2642dv07o7tbqinvz4/tiles/256/{z}/{x}/{y}@2x?access_token=", password)
@@ -366,18 +415,24 @@ map_SETs <- function(data = data, park_code, dp_id, dp_year, dp_pub_date, crosst
     leaflet::addCircleMarkers(lng = ~longitude,
                         lat = ~latitude,
                         label = ~pt_label,
-                        clusterOptions = markerClusterOptions(),
+                        clusterOptions = markerClusterOptions(iconCreateFunction=JS("function (cluster) {    
+    var childCount = cluster.getChildCount();  
+      c = 'rgba(0, 0, 255, 0.5);' // Change marker cluster color to blue
+      h = 'rgba(255, 255, 255, 1);' // change marker cluster text color to white
+    return new L.DivIcon({ html: '<div style=\"color:'+h+'; background-color:'+c+'\"><span>' + childCount + '</span></div>', className: 'marker-cluster', iconSize: new L.Point(40, 40) });
+
+  }")),
                         labelOptions = leaflet::labelOptions(noHide = TRUE, opacity = .9, textOnly = TRUE, offset = c(0,0), direction = "center", style = list("color" = "white", "font-weight" = "bold")),
                         popup = ~paste0("<strong>Site: </strong>", site_name, 
                                         "<br><strong>Station: </strong>", station_code)) %>%
-    { if(park_code %in% c("BOHA"))
+    { if(park_code %in% c("BOHA", "FOFR"))
       .
       else 
         leaflet::addCircles(., data = wl_points, lng = ~Lon, lat = ~Lat, color = "red", popup = ~paste0("<strong>Water logger: </strong>", Site), labelOptions = leaflet::labelOptions(noHide = TRUE, opacity = .9, textOnly = TRUE, offset = c(0,0), direction = "center", style = list("color" = "white", "font-weight" = "bold")))} %>%
     # leaflet::addCircles(data = wl_points, lng = ~Lon, lat = ~Lat, color = "red", popup = ~paste0("<strong>Water logger: </strong>", Site), labelOptions = leaflet::labelOptions(noHide = TRUE, opacity = .9, textOnly = TRUE, offset = c(0,0), direction = "center", style = list("color" = "white", "font-weight" = "bold"))) %>%
     leaflet::addCircles(data = tide_gauge_points, lng = ~Lon, lat = ~Lat, color = "green", popup = ~paste0("<strong>NOAA Tide Gauge: </strong>", Name), labelOptions = leaflet::labelOptions(noHide = TRUE, opacity = .9, textOnly = TRUE, offset = c(0,0), direction = "center", style = list("color" = "white", "font-weight" = "bold"))) %>%
     leaflet::addScaleBar(position = "bottomleft") %>%
-    { if(park_code %in% c("BOHA"))
+    { if(park_code %in% c("BOHA", "FOFR"))
       . 
       else
         leaflet::addLegend(., labels = c("Water loggers"), colors = c("red"), position = "bottomleft")} %>%

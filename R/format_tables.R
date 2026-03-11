@@ -33,6 +33,11 @@ site_info_tbl <- function(data_df, dom_veg_df, park_name, site_order){
     distinct(park_code) %>%
     pull(park_code)
   
+  network <- data_df %>%
+    mutate(network_code = if_else(park_code %in% c("ACAD", "BOHA"), "NCBN", network_code)) %>%
+    distinct(network_code) %>%
+    pull(network_code)
+  
   if (!park %in% c("GWMP", "NACE")){
     data_df %>%
       mutate(site_name = forcats::fct_relevel(site_name, site_order)) %>%
@@ -44,12 +49,7 @@ site_info_tbl <- function(data_df, dom_veg_df, park_name, site_order){
       ungroup() %>%
       left_join(., dom_veg_df) %>%
       select("Site" = site_name, "SET station count" = station_count, "First reading" = first_year, "Most recent reading" = last_year, "Status" = site_status, "Dominant vegetation" = dom_veg) %>%
-      { if (park %in% c("ACAD", "ASIS", "BOHA", "CACO", "COLO", "FIIS", "GATE"))
-        kable(., booktabs = T, label = NA, align = "c", escape = FALSE, caption = paste0("Table 1. Surface elevation table sites monitored by NCBN within ", park_name, "."))
-        else if (park %in% c("BISC", "SARI", "VIIS"))
-          kable(., booktabs = T, label = NA, align = "c", escape = FALSE, caption = paste0("Table 1. Surface elevation table sites monitored by SFCN within ", park_name, "."))
-      } %>%
-      # kable(booktabs = T, label = NA, align = "c", escape = FALSE, caption = paste0("Table 1. Surface elevation table sites monitored by NCBN within ", park_name, ".")) %>%
+      kable(., booktabs = T, label = NA, align = "c", escape = FALSE, caption = paste0("Table 1. Surface elevation table sites monitored by ", network, " within ", park_name, ".")) %>%
       kable_styling(bootstrap_options = c("striped", "hover")) 
   } else {
     data_df %>%
@@ -105,9 +105,13 @@ summary_tbl <- function(slr_rate_comps_df, site_hydro_df, park_name, long_slr_ra
   
   site_station <- if_else(!park %in% c("GWMP", "NACE"), "Site", "Station")
   
-  if (!park %in% c("VIIS", "SARI", "BISC")) {
+  if (!park %in% c("VIIS", "SARI", "BISC", "CANA", "CAHA", "CUIS", "FOFR", "FOPU", "TIMU", "FOMA", "CALO")) {
     slr_rate_comps_df %>%
-      left_join(., site_hydro_df, by = c("site_name" = "station_name"), keep = TRUE) %>%
+      {if (park %in% c("GWMP", "NACE"))
+           left_join(., site_hydro_df, by = c("site_name" = "station_name"), keep = TRUE) 
+           else
+             left_join(., site_hydro_df, by = "site_name") 
+             } %>%
       select(., site_name, park_code, rate, rate_se, elev_navd88, MHW, MSL, percent_time_flooded, elev_capital, long_rate_comp, recent_rate_comp) %>%
       mutate(.,
              rate_max = as.numeric(format(round(max(rate), 2), nsmall = 2)),
@@ -214,10 +218,63 @@ summary_tbl <- function(slr_rate_comps_df, site_hydro_df, park_name, long_slr_ra
       footnote(., number = c(paste0("Long-term SLR - rate of surface elevation change compared to the long-term rate of SLR from the NOAA gauge at ", long_slr_rate_df$Station.Name, " (", long_slr_rate_df$First.Year, "-", long_slr_rate_df$Last.Year, ")."), paste0("Recent SLR - rate of surface elevation change compared to the recent rate of SLR from the NOAA gauge at ", long_slr_rate_df$Station.Name, " (2001-2019)."))) %>%
       kable_styling(bootstrap_options = c("striped", "hover", "responsive")) %>%
       scroll_box(width = "100%")
+  } else if (park == "FOFR") {
+    slr_rate_comps_df %>%
+      select(site_name, rate, rate_se, long_rate_comp, recent_rate_comp) %>%
+      mutate(
+        rate_max = as.numeric(format(round(max(rate), 2), nsmall = 2)),
+        rate_min = as.numeric(format(round(min(rate), 2), nsmall = 2)),
+        across(c(rate, rate_se), ~format_result_vals(.x, decimals = 2), .names = "{.col}_text"),
+        rate_plus_se_text = paste0(rate_text, " ± ", rate_se_text),
+        long_rate_comp_text = if_else(long_rate_comp, "close or greater", "lower"),
+        recent_rate_comp_text = if_else(recent_rate_comp, "close or greater", "lower")
+      ) %>%
+      mutate(
+        rate_plus_se_text = cell_spec(
+          rate_plus_se_text,
+          format = "html",
+          color = case_when(
+            as.numeric(rate_text) == rate_max ~ "green",
+            as.numeric(rate_text) == rate_min ~ "red",
+            .default = "black"
+          )
+        ),
+        long_rate_comp_text = cell_spec(
+          long_rate_comp_text,
+          format = "html",
+          color = if_else(
+            long_rate_comp_text == "lower",
+            "red",
+            "green"
+          )
+        ),
+        recent_rate_comp_text = cell_spec(
+          recent_rate_comp_text,
+          format = "html",
+          color = if_else(
+            recent_rate_comp_text == "lower",
+            "red",
+            "green"
+          )
+        )
+      ) %>%
+      select(., site_name, rate_plus_se_text, long_rate_comp_text, recent_rate_comp_text) %>%
+      kable(booktabs = T, label = NA, escape = FALSE, align = "c",
+            caption = paste0("Table 3. ", park_name, " data summary (", years, ")."),
+            col.names = c("Site", "SEC rate (mm/yr)", paste0("SEC vs. SLR-long", footnote_marker_number(1)), paste0("SEC vs. SLR-recent", footnote_marker_number(2)))) %>%
+      footnote(number = c(paste0("Long-term SLR - rate of surface elevation change compared to the long-term rate of SLR from the NOAA gauge at ", long_slr_rate_df$Station.Name, " (", long_slr_rate_df$First.Year, "-", long_slr_rate_df$Last.Year, ")."), paste0("Recent SLR - rate of surface elevation change compared to the recent rate of SLR from the NOAA gauge at ", long_slr_rate_df$Station.Name, " (2001-2019)."))) %>%
+      kable_styling(bootstrap_options = c("striped", "hover", "responsive")) %>%
+      scroll_box(width = "100%")
+    
   } else {
     slr_rate_comps_df %>%
-      left_join(., site_hydro_df, by = "site_name") %>%
-      select(site_name, rate, rate_se, MHW, MSL, long_rate_comp, recent_rate_comp) %>%
+      { if (park %in% c("CANA", "CAHA", "CUIS", "FOPU", "TIMU", "FOMA", "CALO"))
+        bind_cols(., site_hydro_df %>%
+                    ungroup() %>%
+                    select(-c(site_name)))
+        else
+          left_join(., site_hydro_df, by = "site_name")} %>%
+      select(., site_name, rate, rate_se, MHW, MSL, long_rate_comp, recent_rate_comp) %>%
       mutate(
         rate_max = as.numeric(format(round(max(rate), 2), nsmall = 2)),
         rate_min = as.numeric(format(round(min(rate), 2), nsmall = 2)),
@@ -227,7 +284,7 @@ summary_tbl <- function(slr_rate_comps_df, site_hydro_df, park_name, long_slr_ra
         MSL_min = min(MSL),
         across(c(rate, rate_se), ~format_result_vals(.x, decimals = 2), .names = "{.col}_text"),
         MHW_text = format_result_vals(MHW, decimals = 3),
-        MSL_text = if_else(round(MSL_max, 3) == round(MSL_min, 3), format_result_vals(MSL, decimals = 4), format_result_vals(MSL, decimals = 3)),
+        MSL_text = if_else(round(MSL_max, 3) == round(MSL_min, 3) & !park %in% c("CANA", "CAHA", "CUIS", "FOPU", "TIMU", "FOMA", "CALO"), format_result_vals(MSL, decimals = 4), format_result_vals(MSL, decimals = 3)),
         rate_plus_se_text = paste0(rate_text, " ± ", rate_se_text),
         long_rate_comp_text = if_else(long_rate_comp, "close or greater", "lower"),
         recent_rate_comp_text = if_else(recent_rate_comp, "close or greater", "lower")) %>%
@@ -236,7 +293,7 @@ summary_tbl <- function(slr_rate_comps_df, site_hydro_df, park_name, long_slr_ra
           rate_plus_se_text,
           format = "html",
           color = case_when(
-            park == "SARI" ~ "black",
+            park %in% c("SARI", "FOMA", "CALO") ~ "black",
             as.numeric(rate_text) == rate_max ~ "green",
             as.numeric(rate_text) == rate_min ~ "red",
             .default = "black"
@@ -246,7 +303,7 @@ summary_tbl <- function(slr_rate_comps_df, site_hydro_df, park_name, long_slr_ra
           MHW_text,
           format = "html",
           color = case_when(
-            park == "SARI" ~ "black",
+            park %in% c("SARI", "CANA", "CAHA", "CUIS", "FOPU", "TIMU", "FOMA", "CALO") ~ "black",
             as.numeric(MHW_text) == MHW_min ~ "green",
             as.numeric(MHW_text) == MHW_max ~ "red",
             .default = "black"
@@ -257,7 +314,7 @@ summary_tbl <- function(slr_rate_comps_df, site_hydro_df, park_name, long_slr_ra
           MSL_text,
           format = "html",
           color = case_when(
-            park == "SARI" ~ "black",
+            park %in% c("SARI", "CANA", "CAHA", "CUIS", "FOPU", "TIMU", "FOMA", "CALO") ~ "black",
             MSL == MSL_min ~ "green",
             MSL == MSL_max ~ "red",
             .default = "black"
@@ -282,12 +339,12 @@ summary_tbl <- function(slr_rate_comps_df, site_hydro_df, park_name, long_slr_ra
           )
         )
       ) %>%
-      select(., site_name, rate_plus_se_text, elev_navd88_text, MHW_text, MSL_text, long_rate_comp_text, recent_rate_comp_text) %>%
+      select(., site_name, rate_plus_se_text, MHW_text, MSL_text, long_rate_comp_text, recent_rate_comp_text) %>%
       kable(booktabs = T, label = NA, escape = FALSE, align = "c",
             caption = paste0("Table 3. ", park_name, " data summary (", years, ")."),
             col.names = c("Site", "SEC rate (mm/yr)", "MHW (m)", "MSL (m)", paste0("SEC vs. SLR-long", footnote_marker_number(1)), paste0("SEC vs. SLR-recent", footnote_marker_number(2)))) %>%
       footnote(number = c(paste0("Long-term SLR - rate of surface elevation change compared to the long-term rate of SLR from the NOAA gauge at ", long_slr_rate_df$Station.Name, " (", long_slr_rate_df$First.Year, "-", long_slr_rate_df$Last.Year, ")."), paste0("Recent SLR - rate of surface elevation change compared to the recent rate of SLR from the NOAA gauge at ", long_slr_rate_df$Station.Name, " (2001-2019)."))) %>%
       kable_styling(bootstrap_options = c("striped", "hover", "responsive")) %>%
       scroll_box(width = "100%")
-  }
+  } 
 }

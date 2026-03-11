@@ -50,14 +50,12 @@ total_measurements_text <- function(park_code) {
   
   if (park_code == "CACO") {
     text <- paste("Note that each site has between 3 to 9 stations, each station (an individual SET) has four arm positions, and each arm has nine pins - thus a total of 108 to 324 nested measurements are taken at each site on each sampling event.")
-  } else if (park_code %in% c("ASIS", "COLO", "FIIS", "GATE", "ACAD")) {
-    text <- paste("Note that each site has 3 stations, each station (an individual SET) has four arm positions, and each arm has nine pins - thus a total of 108 nested measurements are taken at each site on each sampling event.")
   } else if (park_code == "BOHA") {
     text <- paste("Note that each site has between 3 to 4 stations, each station (an individual SET) has four arm positions, and each arm has nine pins - thus a total of 108 to 144 nested measurements are taken at each site on each sampling event.")
   } else if (park_code %in% c("GWMP", "NACE")) {
     text <- paste("Note that each station has a single SET, each individual SET has four arm positions, and each arm has nine pins - thus a total of 36 nested measurements are taken at each station on each sampling event.")
   } else {
-    text <- ""
+    text <- paste("Note that each site has 3 stations, each station (an individual SET) has four arm positions, and each arm has nine pins - thus a total of 108 nested measurements are taken at each site on each sampling event.")
   }
   
   return(text)
@@ -88,18 +86,81 @@ extra_sample_size_text <- function(park_code) {
 #'
 #' @rdname format_text
 #' @export
-sfcn_water_level_text <- function(park_code) {
-  
-  if (park_code == "SARI") {
-    text <- paste0("Mean low water (MLW) was ", format_result_vals(site_hydro$MLW, decimals = 3), " m, mean high water was ", format_result_vals(site_hydro$MHW, decimals = 3), " m, and mean sea level (MSL) was ", format_result_vals(site_hydro$MSL, decimals = 3), " m.")
+sfcn_secn_water_level_text <- function(park_code) {
+  if (park_code %in% c("SARI", "CANA", "CAHA", "CUIS", "FOPU", "TIMU", "FOMA", "CALO")) {
+    text <- paste0(
+      "Mean low water (MLW) was ",
+      format_result_vals(site_hydro$MLW, decimals = 3),
+      " m, mean high water (MHW) was ",
+      format_result_vals(site_hydro$MHW, decimals = 3),
+      " m, and mean sea level (MSL) was ",
+      format_result_vals(site_hydro$MSL, decimals = 3),
+      " m."
+    )
   } else if (park_code %in% c("VIIS", "BISC")) {
-    text <- paste0("Mean low water (MLW) at the ", as.character(english::english(active_site_count)), " sites varied by ", format_result_vals((max(site_hydro$MLW)-min(site_hydro$MLW)), decimals = 3), " m, with ", site_hydro %>% ungroup() %>% slice_min(as.numeric(format_result_vals(MLW, decimals = 3)), n = 1) %>% pull(site_name) %>% knitr::combine_words(), " having the lowest MLW value (", format_result_vals(min(site_hydro$MLW), decimals = 3), " m) and ", site_hydro %>% ungroup() %>% slice_max(as.numeric(format_result_vals(MLW, decimals = 3)), n = 1) %>% pull(site_name) %>% knitr::combine_words(), " having the highest MLW value (", format_result_vals(max(site_hydro$MLW), decimals = 3), " m). Similarly, mean high water (MHW) varied by ", format_result_vals((max(site_hydro$MHW)-min(site_hydro$MHW)), decimals = 3), " m, with ", site_hydro %>% ungroup() %>% slice_min(as.numeric(format_result_vals(MHW, decimals = 3)), n = 1) %>% pull(site_name) %>% knitr::combine_words(), " having the lowest MHW value (", format_result_vals(min(site_hydro$MHW), decimals = 3), " m) and ", site_hydro %>% ungroup() %>% slice_max(as.numeric(format_result_vals(MHW, decimals = 3)), n = 1) %>% pull(site_name) %>% knitr::combine_words(), " having the highest MHW value (", format_result_vals(max(site_hydro$MHW), decimals = 3), " m). Finally, mean sea level varied by ", if_else(format_result_vals((max(site_hydro$MSL)-min(site_hydro$MSL)), decimals = 3) == "0.000", format(round((max(site_hydro$MSL)-min(site_hydro$MSL)), 4), nsmall = 4, scientific = FALSE), format_result_vals((max(site_hydro$MSL)-min(site_hydro$MSL)), decimals = 3)),  ", with ", site_hydro %>% ungroup() %>% slice_min(as.numeric(format_result_vals(MSL, decimals = 4)), n = 1) %>% pull(site_name) %>% knitr::combine_words(),
-                   " having the lowest MSL value (", if_else(format_result_vals(max(site_hydro$MSL), decimals = 3) == format_result_vals(min(site_hydro$MSL), decimals = 3), format(round(min(site_hydro$MSL), 4), scientific = FALSE), format_result_vals(min(site_hydro$MSL), decimals = 3)),
-                   " m) and ", site_hydro %>% ungroup() %>% slice_max(as.numeric(format_result_vals(MSL, decimals = 4)), n = 1) %>% pull(site_name) %>% knitr::combine_words(),
-                   " having the highest MSL value (", if_else(format_result_vals(max(site_hydro$MSL), decimals = 3) == format_result_vals(min(site_hydro$MSL), decimals = 3), format(round(max(site_hydro$MSL), 4), scientific = FALSE), format_result_vals(max(site_hydro$MSL), decimals = 3)),
-                   " m). The park-wide average values for MLW, MHW, and MSL were ", format_result_vals(park_datums$MLW, decimals = 3),
-                   ", ", format_result_vals(park_datums$MHW, decimals = 3), ", and ", format_result_vals(park_datums$MSL, decimals = 3),
-                   " m, respectively.")
+    text <- paste0(
+      "Mean low water (MLW) at the ",
+      as.character(english::english(active_site_count)),
+      " sites varied by ",
+      format_result_vals((
+        max(site_hydro$MLW) - min(site_hydro$MLW)
+      ), decimals = 3),
+      " m, with ",
+      site_hydro %>% ungroup() %>% slice_min(as.numeric(format_result_vals(MLW, decimals = 3)), n = 1) %>% pull(site_name) %>% knitr::combine_words(),
+      " having the lowest MLW value (",
+      format_result_vals(min(site_hydro$MLW), decimals = 3),
+      " m) and ",
+      site_hydro %>% ungroup() %>% slice_max(as.numeric(format_result_vals(MLW, decimals = 3)), n = 1) %>% pull(site_name) %>% knitr::combine_words(),
+      " having the highest MLW value (",
+      format_result_vals(max(site_hydro$MLW), decimals = 3),
+      " m). Similarly, mean high water (MHW) varied by ",
+      format_result_vals((
+        max(site_hydro$MHW) - min(site_hydro$MHW)
+      ), decimals = 3),
+      " m, with ",
+      site_hydro %>% ungroup() %>% slice_min(as.numeric(format_result_vals(MHW, decimals = 3)), n = 1) %>% pull(site_name) %>% knitr::combine_words(),
+      " having the lowest MHW value (",
+      format_result_vals(min(site_hydro$MHW), decimals = 3),
+      " m) and ",
+      site_hydro %>% ungroup() %>% slice_max(as.numeric(format_result_vals(MHW, decimals = 3)), n = 1) %>% pull(site_name) %>% knitr::combine_words(),
+      " having the highest MHW value (",
+      format_result_vals(max(site_hydro$MHW), decimals = 3),
+      " m). Finally, mean sea level (MSL) varied by ",
+      if_else(
+        format_result_vals((
+          max(site_hydro$MSL) - min(site_hydro$MSL)
+        ), decimals = 3) == "0.000",
+        format(round((
+          max(site_hydro$MSL) - min(site_hydro$MSL)
+        ), 4), nsmall = 4, scientific = FALSE),
+        format_result_vals((
+          max(site_hydro$MSL) - min(site_hydro$MSL)
+        ), decimals = 3)
+      ),
+      " m, with ",
+      site_hydro %>% ungroup() %>% slice_min(as.numeric(format_result_vals(MSL, decimals = 4)), n = 1) %>% pull(site_name) %>% knitr::combine_words(),
+      " having the lowest MSL value (",
+      if_else(
+        format_result_vals(max(site_hydro$MSL), decimals = 3) == format_result_vals(min(site_hydro$MSL), decimals = 3),
+        format(round(min(site_hydro$MSL), 4), scientific = FALSE),
+        format_result_vals(min(site_hydro$MSL), decimals = 3)
+      ),
+      " m) and ",
+      site_hydro %>% ungroup() %>% slice_max(as.numeric(format_result_vals(MSL, decimals = 4)), n = 1) %>% pull(site_name) %>% knitr::combine_words(),
+      " having the highest MSL value (",
+      if_else(
+        format_result_vals(max(site_hydro$MSL), decimals = 3) == format_result_vals(min(site_hydro$MSL), decimals = 3),
+        format(round(max(site_hydro$MSL), 4), scientific = FALSE),
+        format_result_vals(max(site_hydro$MSL), decimals = 3)
+      ),
+      " m). The park-wide average values for MLW, MHW, and MSL were ",
+      format_result_vals(park_datums$MLW, decimals = 3),
+      ", ",
+      format_result_vals(park_datums$MHW, decimals = 3),
+      ", and ",
+      format_result_vals(park_datums$MSL, decimals = 3),
+      " m, respectively."
+    )
   } else {
     text <- ""
   }
@@ -109,7 +170,7 @@ sfcn_water_level_text <- function(park_code) {
 #'
 #' @rdname format_text
 #' @export
-extra_hydro_text <- function(park_code) {
+extra_hydro_text <- function(park_code, wl_sites = NULL) {
   
   if (park_code == "ASIS") {
     text <- paste("Note that the data from the water logger at Marsh 6 was also applied to Marsh 11 given their close proximity.")
@@ -123,6 +184,8 @@ extra_hydro_text <- function(park_code) {
     text <- paste("Note that the data from the single water logger was applied to all stations at Dyke Marsh given their close proximity.")
   } else if (park_code == "NACE") {
     text <- paste("Note that the data from the single water logger was applied to all stations at Kenilworth Marsh and Kingman Lake given their close proximity.")
+  } else if (park_code %in% c("CANA", "CAHA", "CUIS", "FOPU", "TIMU", "FOMA", "CALO")) {
+    text <- paste0("Note that because water level loggers were not installed alongside the SET stations, the water level data from ", if (park_code != "CALO"){"the "}, wl_sites, " was applied to all sites at ", park_code, ".")
   } else {
     text <- ""
     }
@@ -156,8 +219,11 @@ extra_slr_methods_text <- function(park_code) {
 elev_capital_comp_text <- function(park_name, park_code, data_df, site_hydro_df) {
   
   data <- data_df
-  num_sites <- if_else(!park_code %in% c("GWMP", "NACE"), n_distinct(data$site_name), n_distinct(droplevels(site_hydro_df$station_name)))
-  
+  num_sites <- {if (park_code %in% c("NACE", "GWMP"))
+    n_distinct(droplevels(site_hydro_df$station_name))
+    else 
+      n_distinct(data$site_name)}
+
   elev_cap_df <- site_hydro_df %>%
     mutate(., elev_cap_comp = if_else(elev_capital >= 0.5, TRUE, FALSE))
   
@@ -242,54 +308,57 @@ extra_slr_results_text <- function(park_code, long_slr_rate_nau = NA, recent_slr
       )
     } else if (park_code == "GATE") {
       text <- list(
-        extra_long_slr_text1 = "",
-        extra_recent_slr_text1 = "",
-        extra_future_slr_text1 = "",
         extra_future_slr_text2 = paste0("Two sites - JOCO REF and Elders East NF - gained elevation at a rate close to or greater than the future predicted low rate of sea-level. Additionally, one site - Elders East NF - gained elevation at a rate close to or greater than the future predicted intermediate-low rate of sea-level rise. None of the sites gained elevation at a rate close to or greater than the future predicted intermediate, intermediate-high, or high rates of sea-level rise")
       )
-    } else if (park_code %in% c("ASIS", "COLO", "FIIS", "ACAD", "VIIS", "BISC")) {
+    } else if (park_code %in% c("ASIS", "COLO", "FIIS", "ACAD", "BISC", "VIIS", "CANA", "FOPU", "TIMU")) {
       text <- list(
-        extra_long_slr_text1 = "",
-        extra_recent_slr_text1 = "",
-        extra_future_slr_text1 = "",
         extra_future_slr_text2 = paste0("Notably, none of the sites gained elevation at a rate close to or greater than the future predicted low, intermediate-low, intermediate, intermediate-high, or high rates of sea-level rise")
       )
     } else if (park_code == "BOHA") {
       text <- list(
-        extra_long_slr_text1 = "",
-        extra_recent_slr_text1 = "",
-        extra_future_slr_text1 = "",
         extra_future_slr_text2 = paste0("Two sites - Peddocks Island and Thompson Island gained elevation at a rate close to or greater than the future predicted low rate of sea-level rise. Additionally, one site - Thompson Island - gained elevation at a rate close to or greater than the future predicted intermediate-low rate of sea-level rise. None of the sites gained elevation at a rate close to or greater than the future predicted intermediate, intermediate-high, or high rates of sea-level rise")
       )
     } else if (park_code == "SARI") {
       text <- list(
-        extra_long_slr_text1 = "",
-        extra_recent_slr_text1 = "",
-        extra_future_slr_text1 = "",
-        extra_future_slr_text2 = paste0("Notably, SARI 1 gained elevation at a rate close to or greater than the future predicted low rate of sea-level rise although it is unlikely that the site will be able to keep pace with the future predicted intermediate-low, intermediate, intermediate high, or high rates of sea-level rise")
+        extra_future_slr_text2 = paste0("The rate of surface elevation change at SARI 1 was below all future predicted rates of sea-level rise")
       )
     } else if (park_code == "GWMP") {
       text <- list(
-        extra_long_slr_text1 = "",
-        extra_recent_slr_text1 = "",
-        extra_future_slr_text1 = "",
-        extra_future_slr_text2 = paste0("Six stations gained elevation at a rate close to greater than the future predicted low rate of sea-level rise, four stations gained elevation at a rate close to greater than the future predicted intermediate-low rate, and one station - River 3 - gained elevation at a rate close to or greater than the intermediate rate. None of the stations gained elevation at a rate close to or greater than the future predicted intermediate-high or high rates of sea-level rise")
+        extra_future_slr_text2 = paste0("Six stations gained elevation at a rate close to or greater than the future predicted low rate of sea-level rise, four stations gained elevation at a rate close to greater than the future predicted intermediate-low rate, and one station - River 3 - gained elevation at a rate close to or greater than the intermediate rate. None of the stations gained elevation at a rate close to or greater than the future predicted intermediate-high or high rates of sea-level rise")
       )
     } else if (park_code == "NACE") {
       text <- list(
-        extra_long_slr_text1 = "",
-        extra_recent_slr_text1 = "",
-        extra_future_slr_text1 = "",
-        extra_future_slr_text2 = paste0("Eleven stations gained elevation at a rate close to greater than the future predicted low rate of sea-level rise, five stations gained elevation at a rate close to or greater than the future predicted intermediate-low rate, and two stations gained elevation at a rate close to greater than the future predicted intermediate rate (KenSET05 and KenSET06). None of the stations gained elevation at a rate close to or greater than the future predicted intermediate-high or high rates of sea-level rise")
+        extra_future_slr_text2 = paste0("Eleven stations gained elevation at a rate close to or greater than the future predicted low rate of sea-level rise, five stations gained elevation at a rate close to or greater than the future predicted intermediate-low rate, and two stations gained elevation at a rate close to greater than the future predicted intermediate rate (KenSET05 and KenSET06). None of the stations gained elevation at a rate close to or greater than the future predicted intermediate-high or high rates of sea-level rise")
+      )
+    } else if (park_code == "CAHA") {
+      text <- list(
+       extra_future_slr_text2 = paste0("Only one site - CAHA222 Ocracoke - gained elevation at a rate close to or greater than the future predicted low rate of sea-level rise. None of the sites gained elevation at a rate close to or greater than the future predicted intermediate-low, intermediate, intermediate-high, or high rates of sea-level rise") 
+      ) 
+    } else if (park_code == "CUIS") {
+      text <- list(
+        extra_future_slr_text2 = paste0("One site - CUIS221 - gained elevation at a rate close to or greater than the future predicted low and intermediate-low rates of sea-level rise. Neither site gained elevation at a rate close to or greater than the future predicted intermediate, intermediate-high, or high rates of sea-level rise") 
+      )
+    } else if (park_code == "FOFR") {
+      text <- list(
+        extra_future_slr_text2 = paste0("Both sites gained elevation at a rate close to or greater than the future predicted low rate of sea-level rise. Additionally, FOFR121 gained elevation at a rate close to or greater than the future intermediate-low rate of sea-level rise. However, neither site gained elevation at a rate close to or greater than the future predicted intermediate, intermediate-high, or high rates of sea-level rise")
+      )
+    } else if (park_code == "FOMA") {
+      text <- list(
+        extra_future_slr_text2 = paste0("Although the wetlands at FOMA021 gained elevation at a rate close to or greater than the future predicted low rate of sea-level, they are not keeping pace with the other higher future predicted rates of sea-level rise.")
+      )
+    } else if (park_code == "CALO") {
+      text <- list(
+        extra_future_slr_text2 = paste0("The site at CALO01 did not gain elevation at a rate close to or greater than any of the future predicted rates of sea-level rise.")
       )
     } else {
       text <- list(
-        extra_long_slr_text1 = "",
-        extra_recent_slr_text1 = "",
-        extra_future_slr_text1 = "",
         extra_future_slr_text2 = ""
       )
     }
+  
+  if (park_code != "CACO") {
+   text <- append(text, list(extra_long_slr_text1 = "", extra_recent_slr_text1 = "", extra_future_slr_text1 = "")) 
+  }
   
   return(text)
 }
@@ -320,9 +389,9 @@ slr_current_rate_comp_text <- function(park_name, slr_rate_comps_df, data_df, ra
   all_sites_sentence <- function(park_name, num_sites, rate_type) {
     
     if (num_sites == 1) {
-      paste0("The", sites_stations, " at ", park_name, " gained elevation at a rate close to or greater than the ", rate_type, " rate of sea-level rise.")
+      paste0("The", sites_stations, " at ", park_name, " gained elevation at a rate close to or greater than the ", rate_type, " rate of sea-level rise")
     } else {
-      paste0("All ", english::english(num_sites), sites_stations, "s at ", park_name, " gained elevation at a rate close to or greater than the ", rate_type, " rate of sea-level rise.")
+      paste0("All ", english::english(num_sites), sites_stations, "s at ", park_name, " gained elevation at a rate close to or greater than the ", rate_type, " rate of sea-level rise")
     }
   }
   
@@ -331,7 +400,12 @@ slr_current_rate_comp_text <- function(park_name, slr_rate_comps_df, data_df, ra
     if (num_sites == 1) {
       paste0("The", sites_stations, " at ", park_name, " gained elevation at a rate close to or greater than the ", rate_type, " rate of sea-level rise")
     } else {
-      paste0("Out of the ", english::english(num_sites), sites_stations, "s at ", park_name, ", ", english::english(num_greater_sites), sites_stations, "s - ", site_name_text, " - gained elevation at a rate close to or greater than the ", rate_type, " rate of sea-level rise") 
+      if (num_greater_sites == 1) {
+        plural <- " - "
+      } else {
+        plural <- "s - "
+      }
+      paste0("Out of the ", english::english(num_sites), sites_stations, "s at ", park_name, ", ", english::english(num_greater_sites), sites_stations, plural, site_name_text, " - gained elevation at a rate close to or greater than the ", rate_type, " rate of sea-level rise") 
     }
   }
   
@@ -402,8 +476,8 @@ summary_paragraph <- function(park_code) {
     )
   } else if (park_code == "SARI") {
     text <- list(
-      summary_paragraph1 = "The mangroves at SARI 1 had a relatively high rate of surface elevation change and appear to be keeping pace with both the local long-term and recent rates of sea-level rise.",
-      summary_paragraph2 = "Although the site is building elevation at a rate close to or greater than the future predicted low rate of sea-level rise, it is unlikely that the site will be able to keep pace with the higher future predicted sea-level rise scenarios."
+      summary_paragraph1 = "The mangroves at SARI 1 had a rate of surface elevation change that was equivalent to zero - indicating that the mangroves at the site are not building elevation and are unlikely to be able to keep pace with either current or future rates of sea-level rise.",
+      summary_paragraph2 = ""
     )
   } else if (park_code == "BISC") {
     text <- list(
@@ -419,6 +493,46 @@ summary_paragraph <- function(park_code) {
     text <- list(
       summary_paragraph1 = "KenSET05 3 has the highest surface elevation and thus has the highest elevation capital of the 16 stations. Conversely, Kingman 1 has the lowest surface elevation and thus the lowest elevation capital. All 16 stations have surface elevations below the mean-high water tidal datum (0.662 m NAVD88) and four stations have surface elevations below the mean sea level datum (0.329 m NAVD88).",
       summary_paragraph2 = "Notably, a majority of the stations have relatively high rates of surface elevation change and appear to be keeping pace with the local long-term and/or higher recent rates of sea-level rise. In fact, eleven of these stations appear to be building elevation at a rate close to or above the future low or intermediate-low rates of sea-level rise. The stations Kingman 1 and Kingman 2 appear to have the most potential issues affecting their long-term resilience - they have negative rates of surface elevation change, the lowest elevations of the 16 stations, and are flooded greater than 50% of the time."
+    )
+  } else if (park_code == "CANA") {
+    text <- list(
+      summary_paragraph1 = "The wetlands at CANA121 had the highest rate of surface elevation change of the two sites. However, neither site appears to be keeping pace with the local long-term or higher recent rates of sea-level rise. Thus, it is unlikely that either of these sites will be able to keep pace with the elevated future predicted rates of sea-level rise.",
+      summary_paragraph2 = ""
+    )
+  } else if (park_code == "CAHA") {
+    text <- list(
+      summary_paragraph1 = "The wetlands at CAHA222 Ocracoke had the highest rate of surface elevation change of the three sites and appears to be keeping pace with the local long-term rate of sea-level rise, although it is unlikely that this site will be able to keep pace with higher recent rate of sea-level rise.",
+      summary_paragraph2 = "Conversely, the wetlands at CAHA122 Sandy Bay had the lowest rate of surface elevation change. Although CAHA222 Ocracoke Bay appears to be building elevation at a rate close to or greater than the future predicted low rate of sea-level rise, none of the sites are likely to be able to keep pace with the higher future predicted rates of sea-level rise."
+    )
+  } else if (park_code == "CUIS") {
+    text <- list(
+      summary_paragraph1 = "The wetlands at CUIS221 had the highest rate of surface elevation change of the two sites and are building elevation at a rate close to or greater than both the local long-term rate and higher recent rates of sea-level rise. The wetlands at CUIS121 had a lower rate of surface elevation change and appear to be building elevation at a rate close to or greater than the local long-term rate of sea-level rise but not the higher recent rate of sea-level rise.",
+      summary_paragraph2 = "Although the wetlands at CUIS221 may be able to keep pace with the future predicted low or intermediate-low rates of sea-level rise, it is unlikely that either site will be able to keep pace with the higher future predicted rates of sea-level rise."
+    )
+  } else if (park_code == "FOFR") {
+    text <- list(
+      summary_paragraph1 = "The wetlands at FOFR121 had the highest rate of surface elevation change of the two sites, although both sites appear to be building elevation a rate close to or greater than both the local long-term and recent rates of sea-level rise.",
+      summary_paragraph2 = "The wetlands at FOFR121 appeared to be keeping pace with both the future predicted low and intermediate-low rates of sea-level, whereas the wetlands at FOFR221 appear to be keeping pace with just the future predicted low rate of sea-level rise. However, it is unlikely that either site will be able to keep pace with the higher future predicted rates of sea-level rise."
+     )
+  } else if (park_code == "FOPU") {
+    text <- list(
+      summary_paragraph1 = "The wetlands at FOPU02 had the higher rate of surface elevation change of the two sites. The wetlands at FOPU121 had a rate of surface elevation change that was equivalent to zero - indicating that the marshes at this site are not building elevation.",
+      summary_paragraph2 = "As neither site is building elevation at a rate close to greater than the local long-term or recent rates of sea-level rise, it is unlikely that either site will be able to keep pace with the future predicted rates of sea-level rise."
+     )
+  } else if (park_code == "TIMU") {
+    text <- list(
+      summary_paragraph1 = "The wetlands at TIMU04 had the highest rate of surface elevation change of the two sites. However, neither site appears to be keeping pace with the local long-term or higher recent rates of sea-level rise. Thus, it is unlikely that either of these sites will be able to keep pace with the elevated future predicted rates of sea-level rise.",
+      summary_paragraph2 = ""
+     )
+  } else if (park_code == "FOMA") {
+    text <- list(
+      summary_paragraph1 = "The wetlands at FOMA021 appear to be building elevation at a rate close to or greater than both the local long-term and higher recent rates of sea-level rise. Although the site is keeping pace with the future predicted intermediate low rate of sea-level rise, it is unlikely that it will be able to keep pace with the higher future predicted rates of sea-level rise.",
+      summary_paragraph2 = ""
+    )
+  } else if (park_code == "CALO") {
+    text <- list(
+      summary_paragraph1 = "The wetlands at CALO01 are not building elevation at a rate close to or greater than either the local long-term or higher recent rate of sea-level rise. Thus, it is unlikely that this site will be able to keep pace with the future predicted rates of sea-level rise.",
+      summary_paragraph2 = ""
     )
   }
   

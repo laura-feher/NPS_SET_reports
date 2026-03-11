@@ -93,14 +93,24 @@ park_variables(park_code = params$park_code)
 # Note that this will always download the most recent version of the data package on datastore
 
 if(params$download_DP == TRUE) {
-  raw_data <- NPSETr::load_set_data() # only needs to be run once to download the data package
+  if(params$park_code == "SARI" & params$data_package_year == "2026") {
+    source("C:/Users/lfeher/OneDrive - DOI/NPS_SET_reports/data/LF_load_set_data_DBconnection.R") # For downloading updated data from SARI
+    raw_data <- load_set_data_DB(park = params$park_code, db_version = "production")
+  } else {
+    raw_data <- NPSETr::load_set_data() 
+  } # only needs to be run once to download the data package 
 } else {
-  raw_data <- readr::read_csv(here::here("data", params$data_package_id, paste0("pin_data_" , params$data_package_pub_date, ".csv")))
+  if(params$park_code == "SARI" & params$data_package_year == "2026") {
+    source("C:/Users/lfeher/OneDrive - DOI/NPS_SET_reports/data/LF_load_set_data_DBconnection.R") # For downloading updated data from SARI
+    raw_data <- load_set_data_DB(park = params$park_code, db_version = "production")
+  } else {
+    raw_data <- readr::read_csv(here::here("data", params$data_package_id, paste0("pin_data_" , params$data_package_pub_date, ".csv"))) 
+  }
 }
 
 data <- raw_data %>%
   filter(park_code == params$park_code) %>%
-  {if (params$accepted_data)
+  {if (params$accepted_data & !(params$park_code == "SARI" & params$data_package_year == "2026"))
     filter(., dpl_label == "Accepted")
     else .} %>%
   {if (params$no_double_reads)
@@ -134,7 +144,7 @@ years <- data %>%
 ```
 
 ---
-title: "DRAFT Mangrove Elevation Monitoring at `r params$park_name`: `r years`"
+title: "Mangrove Elevation Monitoring at `r params$park_name`: `r years`"
 ---
 
 ```{r title-park-fig, echo=FALSE, fig.cap=paste0("Figure 1. Surface elevation table (SET) monitoring at ", params$park_name, "."), out.width = '100%'}
@@ -175,7 +185,7 @@ active_site_count <- data %>%
   pull(site_count)
 ```
 
-Surface elevation change is actively monitored at `r as.character(english::english(active_site_count))` site`r if (active_site_count > 1){'s'}` within `r params$park_name` (Figure 3). Sites were located so as to be both representative of the mangrove habitat throughout each park and also to facilitate ease of access for repeated sampling trips ([Lynch et al. 2015](#refs) - see SOP 1: Project Planning). `r extra_sample_size_text(park_code = params$park_code)` Additional details on the status of each site, the number of replicate SET stations at each site, and the dates of the initial and most recent measurements are shown in Table 1 below.
+Surface elevation change is actively monitored at `r as.character(english::english(active_site_count))` site`r if (active_site_count > 1){'s'}` within `r params$park_name` (Figure 3). `r if(active_site_count > 1) {'Sites were'} else {'The site was'}` located so as to be both representative of the mangrove habitat throughout each park and also to facilitate ease of access for repeated sampling trips ([Lynch et al. 2015](#refs) - see SOP 1: Project Planning). `r extra_sample_size_text(park_code = params$park_code)` Additional details on the status of each site, the number of replicate SET stations at each site, and the dates of the initial and most recent measurements are shown in Table 1 below.
 
 All data utilized in this report have undergone quality assurance, quality control, and certification according to the procedures outlined in the [NPS Coastal Elevation Data QAQC and Publication SOP](https://irma.nps.gov/DataStore/Reference/Profile/2298702) ([Thorsdatter et al. 2023](#refs)). These data are available for public use and can be downloaded from the [NPS DataStore](https://irma.nps.gov/DataStore/Reference/Profile/2309427).
 
@@ -190,7 +200,7 @@ Prior to data analyses, the SET data were summarized using the procedures outlin
 
 ### Hydrologic Data & Tidal Datums
 
-Water level data were collected at continuous 1-4 hour intervals from `r english::english(n_wl_loggers)` permanent water level loggers (HOBO® 13-Foot Water Level Data Logger, model U20-001-04) installed in the nearest creek/ditch at `r wl_sites` as outlined in the [NCBN Water Level Data Collection and Management](https://irma.nps.gov/DataStore/Reference/Profile/2237862) methods document ([Curdts 2017](#refs)). `r extra_hydro_text(park_code = params$park_code)` Prior to analyses, water level data were uploaded to the NPS AQUARIUS WebPortal for QAQC, certification, and storage. Water level data were then used to calculate the tidal datums mean high water (MHW), mean low water (MLW), and mean sea level (MSL) as defined by NOAA ([NOAA Tides and Currents Glossary](https://tidesandcurrents.noaa.gov/publications/glossary2.pdf)) for each site.
+Water level data were collected at continuous 1-4 hour intervals from `r english::english(n_wl_loggers)` permanent water level logger`r if(n_wl_loggers > 1){'s'}` (HOBO® 13-Foot Water Level Data Logger, model U20-001-04) installed in the nearest creek/ditch at `r wl_sites` as outlined in the [NCBN Water Level Data Collection and Management](https://irma.nps.gov/DataStore/Reference/Profile/2237862) methods document ([Curdts 2017](#refs)). `r extra_hydro_text(park_code = params$park_code)` Prior to analyses, water level data were uploaded to the NPS AQUARIUS WebPortal for QAQC, certification, and storage. Water level data were then used to calculate the tidal datums mean high water (MHW), mean low water (MLW), and mean sea level (MSL) as defined by NOAA ([NOAA Tides and Currents Glossary](https://tidesandcurrents.noaa.gov/publications/glossary2.pdf)) for each site.
 
 ### Sea-Level Data & Rates of Sea-Level Rise
 
@@ -236,7 +246,7 @@ park_set_rate <- data %>%
   ungroup()
 ```
 
-`r if_else(params$park_code == "SARI", paste0("The average rate of surface elevation change at Salt River National Historic Park and Ecological Preserve was <b>", format_result_vals(mean(site_set_rates$rate), decimals = 2), " ± ", format_result_vals(mean(site_set_rates$rate_se), decimals = 2), "</b> mm/yr (Table 2; Figure 4)."), paste0("Across all ", as.character(english::english(active_site_count)), " actively monitored sites at ", params$park_name, ", the park-wide average rate of surface elevation change was <b>", park_set_rate$park_set_rate_text, "</b>. Site-level rates of surface elevation varied from a low of ", site_set_rates %>% slice_min(as.numeric(format_result_vals(rate))) %>% pull(site_set_rate_text) %>% knitr::combine_words(), " at ", site_set_rates %>% slice_min(as.numeric(format_result_vals(rate))) %>% pull(site_name) %>% knitr::combine_words(), " to a high of ", site_set_rates %>% slice_max(as.numeric(format_result_vals(rate))) %>% pull(site_set_rate_text) %>% knitr::combine_words(), " at ", site_set_rates %>% slice_max(as.numeric(format_result_vals(rate))) %>% pull(site_name) %>% knitr::combine_words(), " (Table 2; Figure 4)."))`
+`r if_else(params$park_code == "SARI", paste0("The average rate of surface elevation change at Salt River National Historic Park and Ecological Preserve was <b>", format_result_vals(mean(site_set_rates$rate), decimals = 2), " ± ", format_result_vals(mean(site_set_rates$rate_se), decimals = 2), "</b> mm/yr (Table 2; Figure 4)."), paste0("Across all ", as.character(english::english(active_site_count)), " actively monitored sites at ", params$park_name, ", the park-wide average rate of surface elevation change was <b>", park_set_rate$park_set_rate_text, "</b>. Site-level rates of surface elevation change varied from a low of ", site_set_rates %>% slice_min(as.numeric(format_result_vals(rate))) %>% pull(site_set_rate_text) %>% knitr::combine_words(), " at ", site_set_rates %>% slice_min(as.numeric(format_result_vals(rate))) %>% pull(site_name) %>% knitr::combine_words(), " to a high of ", site_set_rates %>% slice_max(as.numeric(format_result_vals(rate))) %>% pull(site_set_rate_text) %>% knitr::combine_words(), " at ", site_set_rates %>% slice_max(as.numeric(format_result_vals(rate))) %>% pull(site_name) %>% knitr::combine_words(), " (Table 2; Figure 4)."))`
 
 ```{r site-elev-rates-tbl, echo=FALSE, message=FALSE, warning=FALSE, layout="l-body-outset"}
 
@@ -319,10 +329,10 @@ park_hydro <- site_hydro %>%
             last_date = last(last_date),
             record_count = sum(record_count))
 
-water_level_text <- sfcn_water_level_text(park_code = params$park_code)
+water_level_text <- sfcn_secn_water_level_text(park_code = params$park_code)
 ```
 
-Water level data was collected in nearby tidal creeks at `r wl_sites` over the period between `r year(park_hydro$first_date)` - `r year(park_hydro$last_date)` and is presented in Figure 5 below. `r water_level_text`
+Water level data was collected in the nearby tidal creek`r if (n_wl_loggers > 1){'s'}` at `r wl_sites` over the period between `r year(park_hydro$first_date)` - `r year(park_hydro$last_date)` and is presented in Figure 5 below. `r water_level_text`
 
 ```{r site-wl-fig, echo=FALSE, fig.cap=paste0("Figure 5. Site-level water data at ", params$park_name, ". Hover the mouse over a data point to see the water level, or click and drag over a specific area to zoom in. Double click to zoom back out."), message=FALSE, warning=FALSE, out.width='100%'}
 
@@ -337,7 +347,7 @@ if (params$park_code == "VIIS") {
 } else if (params$park_code == "SARI") {
   site_wl_plot(
     wl_df = wl_data,
-    nrow = 2, 
+    nrow = 1, 
     x.axis.title = "Water level (m)",
     show.marsh.elev = FALSE,
     show.longest.flood = FALSE
@@ -372,7 +382,7 @@ slr_rate_comps <- format_slr_rate_comps(park_code = params$park_code, long_slr_r
 extra_slr_results_text <- extra_slr_results_text(park_code = params$park_code)
 ```
 
-As of `r lubridate::month(Sys.Date(), label = TRUE, abbr = FALSE)` `r lubridate::year(Sys.Date())`, the current long-term rate of relative sea-level rise from the nearest NOAA tide gauge at `r long_slr_rate$Station.Name` was `r long_slr_rate$MSL.Trends.mm.yr.` mm/yr (± `r format_result_vals(long_slr_rate$long_rate_se, decimals = 2)`) for the period between `r long_slr_rate$First.Year` to `r long_slr_rate$Last.Year` (`r paste0("https://tidesandcurrents.noaa.gov/sltrends/sltrends_station.shtml?id=", long_slr_rate$Station.ID)`). `r extra_slr_results_text$extra_long_slr_text1` `r slr_current_rate_comp_text(park_name = params$park_name, slr_rate_comps_df = slr_rate_comps, data_df = data, rate_type = "relative long-term")` (Figure 6).
+As of `r lubridate::month(Sys.Date(), label = TRUE, abbr = FALSE)` `r lubridate::year(Sys.Date())`, the current long-term rate of relative sea-level rise from the nearest NOAA tide gauge at `r long_slr_rate$Station.Name` was `r format_result_vals(long_slr_rate$MSL.Trends.mm.yr.)` mm/yr (± `r format_result_vals(long_slr_rate$long_rate_se, decimals = 2)`) for the period between `r long_slr_rate$First.Year` to `r long_slr_rate$Last.Year` (`r paste0("https://tidesandcurrents.noaa.gov/sltrends/sltrends_station.shtml?id=", long_slr_rate$Station.ID)`). `r extra_slr_results_text$extra_long_slr_text1` `r slr_current_rate_comp_text(park_name = params$park_name, slr_rate_comps_df = slr_rate_comps, data_df = data, rate_type = "relative long-term")` (Figure 6).
 
 Additionally, using the sea-level data from the nearby NOAA tide gauge, we calculated a recent rate of relative sea-level rise of `r recent_slr_rate %>% filter(term == "yr") %>% mutate(estimate = format_result_vals(estimate)) %>% pull(estimate)` mm/yr (± `r recent_slr_rate %>% filter(term == "yr") %>% mutate(std.error = format_result_vals(std.error)) %>% pull(std.error)`) for `r params$park_name` over the most recent tidal epoch (2001-2019). `r extra_slr_results_text$extra_recent_slr_text1` `r slr_current_rate_comp_text(park_name = params$park_name, slr_rate_comps_df = slr_rate_comps, data_df = data, rate_type = "relative recent")` (Figure 6).
 

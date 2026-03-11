@@ -152,6 +152,102 @@ park_variables <- function(park_code) {
       dom_veg = c("<i>Typha latifolia</i>, <i>Peltandra virginica</i>, <i>Sagittaria</i> sp., <i>Phragmites australis</i>", rep("<i>T. latifolia</i>, <i>P. virginica</i>, <i>Sagittaria</i> sp., <i>P. australis</i>", 10), rep("Unvegetated mudflat", 4), "<i>P. australis</i>")
     )
     fig4_height <<- "700px"
+  } else if (park_code == "CANA") {
+    inactive_sites <<- NULL
+    inactive_stations <<- NULL
+    site_order <<- c("CANA121", "CANA 221")
+    station_order <<- NULL
+    wl_sites <<- c("Apollo Beach Visitors Center Dock")
+    n_wl_loggers <<- 1
+    dom_veg <<- data.frame(
+      site_name = c("CANA121", "CANA 221"),
+      dom_veg = c("<i>Spartina alterniflora</i>, <i>Avicennia germinans</i>, <i>Rhizophora mangle</i>", "<i>S. alterniflora</i>, <i>A. germinans</i>, <i>R. mangle</i>")
+    )
+    fig4_height <<- "400px"
+  } else if (park_code == "CAHA") {
+   inactive_sites <<- NULL
+   inactive_stations <<- NULL
+   site_order <<-  c("CAHA11", "CAHA122 Sandy Bay", "CAHA222  Ocracoke")
+   station_order <- NULL
+   wl_sites <<- c("Ocracoke boat dock")
+   n_wl_loggers <<- 1
+   dom_veg <<- data.frame(
+     site_name = c("CAHA11", "CAHA122 Sandy Bay", "CAHA222  Ocracoke"),
+     dom_veg = c("<i>Juncus roemarianus</i>, <i>Spartina alterniflora</i>", "<i>S. alterniflora</i>", "<i>S. alterniflora</i>")
+   )
+   fig4_height <<- "600px"
+  } else if (park_code == "CUIS") {
+    inactive_sites <<- NULL
+    inactive_stations <<- NULL
+    site_order <<- c("CUIS121", "CUIS221")
+    station_order <<- NULL
+    wl_sites <<- c("Sea Camp Ranger Station dock")
+    n_wl_loggers <<- 1
+    dom_veg <<- data.frame(
+      site_name = c("CUIS121", "CUIS221"),
+      dom_veg = c("<i>Spartina alterniflora</i>, <i>Batis maritima</i>, <i>Salicornia bigelovii</i>", "<i>S. alterniflora</i>")
+    )
+    fig4_height <<- "400px"
+  } else if (park_code == "FOFR") {
+    inactive_sites <<- NULL
+    inactive_stations <<- NULL
+    site_order <<- c("FOFR121", "FOFR221")
+    station_order <<- NULL
+    wl_sites <<- NULL
+    n_wl_loggers <<- NULL
+    dom_veg <<- data.frame(
+      site_name = c("FOFR121", "FOFR221"),
+      dom_veg = c("<i>Spartina alterniflora</i>", "<i>Scirpus robustus</i>, <i>Juncus roemarianus</i>")
+    )
+    fig4_height <<- "400px"
+  } else if (park_code == "FOPU") {
+    inactive_sites <<- NULL
+    inactive_stations <<- NULL
+    site_order <<- c("FOPU02", "FOPU121")
+    station_order <<- NULL
+    wl_sites <<- "Lazaretto Creek dock"
+    n_wl_loggers <<- 1 
+    dom_veg <<- data.frame(
+      site_name = c("FOPU02", "FOPU121"),
+      dom_veg = c("<i>Spartina alterniflora</i>", "<i>S. alterniflora</i>")
+    )
+    fig4_height <<- "400px"
+  } else if (park_code == "TIMU") {
+    inactive_sites <<- NULL
+    inactive_stations <<- NULL
+    site_order <<- c("TIMU03", "TIMU04")
+    station_order <<- NULL
+    wl_sites <<- c("Kingsley Plantation dock")
+    n_wl_loggers <<- 1
+    dom_veg <<- data.frame(
+      site_name = c("TIMU03", "TIMU04"),
+      dom_veg = c("<i>Spartina alterniflora</i>", "<i>S. alterniflora</i>")
+    )
+    fig4_height <<- "400px"
+  } else if (park_code == "FOMA") {
+    inactive_sites <<- NULL
+    inactive_stations <<- NULL
+    site_order <<- c("FOMA021")
+    station_order <<- NULL
+    wl_sites <<- c("Visitors Center dock")
+    n_wl_loggers <<- 1
+    dom_veg <<- data.frame(
+      site_name = c("FOMA021"),
+      dom_veg = c("<i>Spartina alterniflora</i>, <i>Batis maritima</i>")
+    )
+    fig4_height <<- "400px"
+  } else if (park_code == "CALO") {
+    inactive_sites <<- NULL
+    inactive_stations <<- NULL
+    site_order <<- c("CALO01")
+    station_order <<- NULL
+    wl_sites <<- c("Middle Marsh")
+    n_wl_loggers <<- 1
+    dom_veg <<- data.frame(
+      site_name = c("CALO01"),
+      dom_veg = c("<i>Juncus roemarianus</i>")
+    )
+    fig4_height <<- "400px"
   } else {
     inactive_sites <<- NULL
     inactive_stations <<- NULL

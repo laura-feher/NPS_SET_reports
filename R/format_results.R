@@ -123,13 +123,6 @@ format_slr_rate_comps <- function(park_code, long_slr_rate_df, recent_slr_rate_d
                                   rate_se
                                 ))
       } %>%
-    # bind_cols(., site_set_rates_df %>%
-    #             select(
-    #               park_code, 
-    #               site_name, 
-    #               rate, 
-    #               rate_se
-    #             )) %>%
     mutate(rate_plus_se = rate + rate_se) %>%
     {if (park_code == "CACO")
       mutate(.,
