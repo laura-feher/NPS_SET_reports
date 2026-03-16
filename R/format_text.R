@@ -70,7 +70,7 @@ extra_sample_size_text <- function(park_code) {
   } else if (park_code == "CACO") {
     text <- paste("Note that 4 stations at Nauset Marsh that used the original-style SET arm were retired in 2013 and replaced with 3 new stations that use the newer deep rod-style SET arm. Similarly, 3 stations at Gut were retired in 2015 for the same reason and replaced with 3 new stations. Finally, the 6 stations at Hatches Harbor restricted and 3 stations at Hatches Harbor unrestricted were retired in 2013 for the same reason and replaced with 6 new stations. At these sites (Hatches Harbor restricted, Hatches Harbor unrestricted, Gut, and Nauset Marsh), data for the older original-style SETs has been combined with the data from the newer deep rod-style SETs by standardizing the pin height measurements to soil elevation referenced to the vertical datum NAVD88 using the formula outlined in the 'Marsh Surface Elevation Data' section below.")
   } else if (park_code == "GATE") {
-    text <- paste("One of the sites - Big Egg Spray-Restored - was restored in 2003 using dregded sediment to raise the elevation of the marsh platform.")
+    text <- paste("One of the sites - Big Egg Spray-Restored - was restored in 2003 using dregded sediment to raise the elevation of the marsh platform. Additionally, the site at Elders East NF was retired in 2018 due to the SETs being buried by sand.")
   } else if (park_code == "ACAD") {
     text <- paste("Note that at station 1 at Bass Harbor, the benchmark was bent by ice in 2016 and was subsequently replaced with a newly installed benchmark in 2017.")
   } else if (park_code == "GWMP") {

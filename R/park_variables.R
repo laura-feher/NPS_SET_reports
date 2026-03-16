@@ -57,7 +57,7 @@ park_variables <- function(park_code) {
     )
     fig4_height <<- "700px"
   } else if (park_code == "GATE") {
-    inactive_sites <<- NULL
+    inactive_sites <<- c("Elders East NF")
     inactive_stations <<- NULL
     site_order <<- c("Elders East", "Elders East NF", "Black Bank", "JOCO", "JOCO REF", "Big Egg Control", "Big Egg Spray-Restored", "Sandy Hook")
     station_order <<- NULL
