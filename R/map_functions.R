@@ -35,7 +35,10 @@
 #' @import leaflet
 #' @import leaflet.extras
 #' @import keyring
-#'
+#' @import basemaps
+#' @import terra
+#' @import tidyterra
+#' 
 #' @rdname map_functions
 #' @export
 get_station_points <- function(data = data, dp_id, dp_pub_date, park_code, dp_year, crosstalk = FALSE, crosstalk_group = "map"){
@@ -80,9 +83,9 @@ get_station_points <- function(data = data, dp_id, dp_pub_date, park_code, dp_ye
 #'
 #' @rdname map_functions
 #' @export
-get_site_points <- function(data = data, crosstalk = FALSE, crosstalk_group = "map"){
+get_site_points <- function(data = data, dp_id, dp_pub_date, park_code, dp_year, crosstalk = FALSE, crosstalk_group = "map"){
   
-  site_points <- get_station_points(data) %>%
+  site_points <- get_station_points(data, dp_id, dp_pub_date, park_code, dp_year) %>%
     select(-c(station_code, station_name, SET_depth_m, SET_date_established, SET_date_retired, station_status, protected_status, station_notes)) %>%
     sf::st_drop_geometry(.) %>%
     group_by(park_code, park_name, site_name) %>%
@@ -100,11 +103,11 @@ get_site_points <- function(data = data, crosstalk = FALSE, crosstalk_group = "m
   return(site_points)
 }
 
-get_all_points <- function(data = data, crosstalk = FALSE, crosstalk_group = "map"){
+get_all_points <- function(data = data, dp_id, dp_pub_date, park_code, dp_year, crosstalk = FALSE, crosstalk_group = "map"){
   
   all_points <- bind_rows(
-    get_station_points(data),
-    get_site_points(data)
+    get_station_points(data, dp_id, dp_pub_date, park_code, dp_year),
+    get_site_points(data, dp_id, dp_pub_date, park_code, dp_year)
   )
   
   if (crosstalk) {
@@ -367,7 +370,7 @@ get_noaa_tidegauge_points <- function(park_code) {
 #'
 #' @rdname map_functions
 #' @export
-map_SETs <- function(data = data, park_code, dp_id, dp_year, dp_pub_date, crosstalk = FALSE, crosstalk_group = "map", password = keyring::key_get(service = "NPS Park Tiles")) {
+map_SETs <- function(data = data, park_code, dp_id, dp_year, dp_pub_date, crosstalk = FALSE, crosstalk_group = "map", password = keyring::key_get(service = "NPS Park Tiles"), static = FALSE) {
   
   # Check if the NPS Park Tiles API key is already set. If not, prompt for password.
   # if (any(keyring::key_list()$service == "NPS Park Tiles")) {
@@ -399,6 +402,7 @@ map_SETs <- function(data = data, park_code, dp_id, dp_year, dp_pub_date, crosst
       target='_blank'>Improve Park Tiles</a>"
     )
   
+  if (static == FALSE) {
   # NPS park tiles URLs
   NPSbasic = paste0("https://atlas-stg.geoplatform.gov/styles/v1/atlas-user/ck58pyquo009v01p99xebegr9/tiles/256/{z}/{x}/{y}@2x?access_token=", password)
   NPSimagery = paste0("https://atlas-stg.geoplatform.gov/styles/v1/atlas-user/ck72fwp2642dv07o7tbqinvz4/tiles/256/{z}/{x}/{y}@2x?access_token=", password)
@@ -440,6 +444,97 @@ map_SETs <- function(data = data, park_code, dp_id, dp_year, dp_pub_date, crosst
     leaflet::addLegend(., labels = c("SET stations"), colors = c("blue"), position = "bottomleft") %>%
     
     leaflet.extras::addResetMapButton()
+  
+  # Static maps for ACAD and BOHA
+  } else if (static == TRUE) {
+    
+    # Basemaps were obtained using basemap_geotif() from the basemaps package - e.g. basemap_geotif(ext = ext, map_service = "carto", map_type = "voyager_labels_under", map_dir = here::here("data"))
+    
+    sf::sf_use_s2(FALSE)
+    
+    if (park_code == "ACAD") {
+      # ACAD ext
+      ext <- st_bbox(c(xmin = -68.45444, xmax = -68.02597, ymin = 44.2199, ymax = 44.44373), crs = 4326)
+      # basemaps::basemap_geotif(ext = ext, map_service = "carto", map_type = "voyager_labels_under", map_dir = here::here("data"))
+      raster_data <- terra::rast(here::here("data", "basemap_carto_voyager_ACAD.tif"))
+      
+      wl_pts <- wl_points %>%
+        sf::st_as_sf(., coords = c("Lon", "Lat"), crs = 4326, remove = FALSE) %>%
+        st_transform(., crs = 3857) %>%
+        mutate(lon = st_coordinates(.)[,1],
+               lat = st_coordinates(.)[,2],
+               pt_type = "water loggers")
+      
+      park_boundary <- st_read(here::here("data", "ACAD_boundary.shp"), quiet = TRUE) %>%
+        st_transform(., crs = 4326) %>%
+        st_crop(., ext) %>%
+        st_transform(., crs = 3857)
+
+    } else if (park_code == "BOHA") {
+      ext <- st_bbox(c(xmin = -71.06300, xmax = -70.86186, ymin = 42.26792, ymax = 42.38442), crs = 4326)
+      # basemaps::basemap_geotif(ext = ext, map_service = "carto", map_type = "voyager_labels_under", map_dir = here::here("data"))
+      raster_data <- terra::rast(here::here("data", "basemap_carto_voyager_BOHA.tif"))
+      
+      park_boundary <- st_read(here::here("data", "BOHA_boundary.shp"), quiet = TRUE) %>%
+        st_transform(., crs = 4326) %>%
+        st_crop(., ext) %>%
+        st_transform(., crs = 3857)
+      
+    }
+    
+    site_pts <- points_data %>%
+      sf::st_drop_geometry(.) %>%
+      group_by(park_code, park_name, site_name) %>%
+      summarise(longitude = mean(longitude, na.rm = TRUE),
+                latitude = mean(latitude, na.rm = TRUE)) %>%
+      sf::st_as_sf(., coords = c("longitude", "latitude"), crs = 4326, remove = FALSE) %>%
+      st_transform(., crs = 3857) %>%
+      mutate(lon = st_coordinates(.)[,1],
+             lat = st_coordinates(.)[,2],
+             pt_type = "SET sites") %>%
+      mutate(., site_name = if_else(site_name == "ThompIsland", "Thompson Island", site_name))
+    
+    tide_pts <- tide_gauge_points %>%
+      sf::st_as_sf(., coords = c("Lon", "Lat"), crs = 4326, remove = FALSE) %>%
+      st_transform(., crs = 3857) %>%
+      mutate(lon = st_coordinates(.)[,1],
+             lat = st_coordinates(.)[,2],
+             pt_type = "NOAA tide gauge")
+    
+    map <- ggplot() +
+      tidyterra::geom_spatraster_rgb(data = raster_data) +
+      geom_sf(data = park_boundary, fill = NA) +
+      {if (park_code == "ACAD")
+        geom_point(data = wl_pts, aes(x = lon, y = lat, fill = pt_type), shape = 21, size = 2, position = position_nudge(x = 500))
+        } +
+      geom_sf(data = tide_pts, aes(fill = pt_type), shape = 21, size = 2) +
+      geom_sf(data = site_pts, aes(fill = pt_type), shape = 21, size = 2) +
+      ggrepel::geom_label_repel(data = site_pts, aes(x = lon, y = lat, label = site_name), seed = 42, point.padding = 5) +
+      coord_sf(expand = c(0,0)) +
+      {if (park_code == "ACAD")
+        scale_fill_manual(values = c("#e41a1c", "#00BA38", "#619CFF"))
+        else if (park_code == "BOHA")
+          scale_fill_manual(values = c("#e41a1c", "#00BA38"))
+        } +
+      theme(
+        legend.title = element_blank(),
+        legend.key = element_blank(),
+        legend.position = "inside",
+        legend.background = element_blank(),
+        legend.position.inside = c(0.85, 0.2),
+        panel.border = element_rect(fill = NA, color = "black"),
+        axis.title = element_blank()
+      ) +
+      {if (park_code == "ACAD")
+        theme(
+          legend.position.inside = c(0.85, 0.2)
+        ) 
+        else if (park_code == "BOHA")
+          theme(
+            legend.position.inside = c(0.85, 0.85)
+          )
+        }
+  }
   
   return(map)
 }

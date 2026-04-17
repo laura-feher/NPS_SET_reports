@@ -122,7 +122,7 @@ site_sets_fig_plot <- function(site_set_rates_df, ncol, panel.spacing.x, panel.s
 #'
 #' @rdname plot_functions
 #' @export
-site_wl_plot <- function(wl_df, site_hydro_df, time_interval = "15 min", nrow, show.longest.flood = TRUE, show.marsh.elev = TRUE, date.breaks = "2 years", x.axis.title = "Water level (m NAVD88)") {
+site_wl_plot <- function(wl_df, site_hydro_df, time_interval = "15 min", nrow, show.longest.flood = TRUE, show.marsh.elev = TRUE, date.breaks = "2 years", x.axis.title = "Water level (m NAVD88)", static = FALSE) {
   
   park <- wl_df %>%
     ungroup() %>%
@@ -203,7 +203,11 @@ site_wl_plot <- function(wl_df, site_hydro_df, time_interval = "15 min", nrow, s
   if (show.longest.flood == TRUE) {
     p # ggplotly doesn't work with geom_rect
   } else if (show.longest.flood == FALSE) {
-    ggplotly(p)
+      if (static == FALSE) {
+        ggplotly(p)
+      } else {
+        p
+      }
   }
 }
 #'

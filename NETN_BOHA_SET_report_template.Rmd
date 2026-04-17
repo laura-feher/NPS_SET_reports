@@ -6,6 +6,8 @@ execute:
   warning: false
 output: 
   html_document:
+    self_contained: true
+    mode: selfcontained
     keep_md: false
     toc: true
     toc_float: true
@@ -217,7 +219,7 @@ where MSE is the marsh surface elevation, MSL is mean sea level, MHW is mean hig
 ### Sea-Level Data & Rates of Sea-Level Rise
 
 ```{r message=FALSE, warning=FALSE, include=FALSE}
-slr_data <- NPSETr::get_sea_level_data(park = params$park_code, nauset = FALSE, end_year = year(Sys.Date())-1)
+slr_data <- get_sea_level_data(park = params$park_code, nauset = FALSE, end_year = year(Sys.Date())-1)
 
 extra_slr_methods_text <- extra_slr_methods_text(park_code = params$park_code)
 ```
@@ -234,8 +236,8 @@ We estimated a recent rate of relative sea-level rise using the method described
 
 We estimated future projected relative sea-level rise rates using the five alternative SLR scenarios produced by [Sweet et al. 2022](#refs) for the 5th National Climate Assessment. The low, intermediate-low, intermediate, intermediate-high, and high SLR scenarios correspond to global mean sea level increases of 0.3 m, 0.5 m, 1.0 m, 1.5 m, and 2.0 m (respectively) by 2100. To approximate the RSLR rate by 2100 under each of the five scenarios, we used the data provided by [Sweet et al. 2022](#refs) to estimate future RSLR rates for the 2090-2100 decade for the `r get_long_slr_rate(params$park_code)$Station.Name` tide gauge as outlined in [Chivoiu et al. 2020](#refs), [Moon et al. 2022](#refs), and [Osland et al. 2024](#refs). `r extra_slr_methods_text$extra_slr_methods_text3`
 
-```{r station-map, out.width = '100%', echo=FALSE, fig.cap=paste0("Figure 3. Individual SET stations within ", params$park_name, ". Click on the points to see the site and station labels."), message=FALSE, warning=FALSE}
-map_SETs(data, park_code = params$park_code, dp_id = params$data_package_id, dp_year = params$data_package_year, dp_pub_date = params$data_package_pub_date)
+```{r station-map, echo=FALSE, fig.cap=paste0("Figure 3. Individual SET stations within ", params$park_name, "."), message=FALSE, warning=FALSE, out.width='100%'}
+map_SETs(data, park_code = params$park_code, dp_id = params$data_package_id, dp_year = params$data_package_year, dp_pub_date = params$data_package_pub_date, static = TRUE)
 ```
 
 # Results
@@ -414,7 +416,7 @@ park_hydro <- site_hydro %>%
 
 Water level data from the nearby NOAA tide gauge at Boston, MA ([NOAA Tides and Currents - Boston, MA](https://tidesandcurrents.noaa.gov/stationhome.html?id=8443970)) is presented in Figure 5 below. Note that tidal datums are the same for all three sites since all water level data was obtained from the nearby NOAA tide gauge in Boston, MA. Tidal datums in Boston Harbor were `r format_result_vals(site_hydro$MLW %>% unique(), 3)` m NAVD88, `r format_result_vals(site_hydro$MHW %>% unique(), 3)` m NAVD88, and `r format_result_vals(site_hydro$MSL %>% unique(), 3)` m NAVD88 for mean low water (MLW), mean high water (MHW), and mean sea level (MSL), respectively, for the period between `r as.character(str_sub(years, 1, 4))` to `r as.character(str_sub(years, 8, 12))`.
 
-```{r site-wl-fig, echo=FALSE, fig.cap=paste0("Figure 5. Water level data from the NOAA tide gauge in Boston, MA (Station ID: 8443970). Note that the colored lines indicate the marsh surface elevation (m NAVD88) at each site. Hover the mouse over a data point to see the water level, or click and drag over a specific area to zoom in. Double click to zoom back out."), message=FALSE, warning=FALSE, out.width='100%', cache=TRUE, cache.extra = tools::md5sum(here::here("data", "BOHA_wl_data_raw.rds"))}
+```{r site-wl-fig, echo=FALSE, fig.cap=paste0("Figure 5. Water level data from the NOAA tide gauge in Boston, MA (Station ID: 8443970). Note that the colored lines indicate the marsh surface elevation (m NAVD88) at each site."), message=FALSE, warning=FALSE, out.width='100%', cache=TRUE, cache.extra = tools::md5sum(here::here("data", "BOHA_wl_data_raw.rds"))}
 
 if (params$park_code == "BOHA") {
   site_wl_plot(
@@ -422,7 +424,8 @@ if (params$park_code == "BOHA") {
     site_hydro_df = site_hydro, 
     time_interval = "6 min",
     nrow = 3, 
-    show.longest.flood = FALSE
+    show.longest.flood = FALSE,
+    static = TRUE
     )
 }
 ```
