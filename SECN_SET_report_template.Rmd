@@ -22,9 +22,9 @@ output:
           - header.html
 
 params:
-  park_code: "CAHA"
-  park_name: "Cape Hatteras National Seashore"
-  front_photo_file: "GATE_title_photo.jpg"
+  park_code: "TIMU"
+  park_name: "Timucuan Ecological and Historic Preserve"
+  front_photo_file: "TIMU_title_photo.jpg"
   INM_network: "SECN"
   data_package_id: "2316550"
   data_package_year: "2026"
@@ -163,32 +163,41 @@ years <- data %>%
 title: "Coastal Wetland Elevation Monitoring at `r params$park_name`: `r years`"
 ---
 
-```{r title-park-fig, echo=FALSE, fig.cap=paste0("Figure 1. Surface elevation table (SET) monitoring at ", params$park_name, "."), out.width = '100%'}
+```{r front-photo-caption, message=FALSE, warning=FALSE, include=FALSE}
+
+if (params$park_code %in% c("FOPU", "TIMU")) {
+  front_photo_caption <- paste0("Salt marsh at ", params$park_name, " (NPS/SECN).")
+} else {
+  front_photo_caption <- paste0("Surfave elevation table (SET) monitoring at ", params$park_name, ".")
+}
+```
+
+```{r title-park-fig, echo=FALSE, fig.cap=front_photo_caption, out.width = '100%'}
 knitr::include_graphics(paste0(here::here("images"), "/", params$front_photo_file))
 ```
 
 # Background
 
-Coastal wetlands exist within a narrow range of elevation which is influenced by local hydrologic conditions. As sea level rises, coastal wetland systems must build elevation at a rate equal to or greater than the rate of sea-level rise to maintain favorable hydrologic conditions for their survival (Figure 2). With global rates of sea-level rise predicted to increase over the coming decades ([Church et al. 2010](#refs)), many more coastal wetlands may become vulnerable to increased inundation. Additionally, certain areas of the coast, such as the mid-Atlantic region, can undergo even greater sea-level rise due to changes in coastal ocean circulation and spatial variation in rates of glacio-isostatic adjustment and Holocene sediment compaction ([Engelhart et al. 2009](#refs), [Miller et al. 2013](#refs), [Sallenger et al. 2012](#refs)).
+Coastal wetlands exist within a narrow range of elevation which is influenced by local hydrologic conditions. As sea level rises, coastal wetland systems must build elevation at a rate equal to or greater than the rate of sea-level rise to maintain favorable hydrologic conditions for their survival (Figure 1). With global rates of sea-level rise predicted to increase over the coming decades ([Church et al. 2010](#refs)), many more coastal wetlands may become vulnerable to increased inundation. Additionally, certain areas of the coast, such as the mid-Atlantic region, can undergo even greater sea-level rise due to changes in coastal ocean circulation and spatial variation in rates of glacio-isostatic adjustment and Holocene sediment compaction ([Engelhart et al. 2009](#refs), [Miller et al. 2013](#refs), [Sallenger et al. 2012](#refs)).
 
 The Southeast Coast Inventory and Monitoring Network (SECN) uses the SET technique (surface elevation table) to monitor elevation change as a vital sign of coastal wetland health at `r params$park_name`. The SET technique has been widely used for documenting and interpreting trends in surface elevation dynamics over time and assessing wetland vulnerability to sea-level rise ([Cahoon et al. 2006](#refs), [Jankowski et al. 2017](#refs), [McKee 2011](#refs), [Saintilan et al. 2022](#refs), [Sasmito et al. 2016](#refs), [Webb et al. 2013](#refs)). In the following sections, we use these data to answer the following questions:
 
 ```{r study-questions, echo=FALSE}
 
 if (params$park_code != "FOFR") {
-  knitr::asis_output(paste0("1. What are the elevation dynamics of coastal wetlands at ", params$park_name, "? (Figure 2B; Results Section 1)\n
+  knitr::asis_output(paste0("1. What are the elevation dynamics of coastal wetlands at ", params$park_name, "? (Figure 1B; Results Section 1)\n
 
-2. How do local hydrology and tidal datums relate to marsh surface elevations? (Figure 2A and C; Results Section 2)\n
+2. How do local hydrology and tidal datums relate to marsh surface elevations? (Figure 1A and C; Results Section 2)\n
 
-3. Is elevation gain sufficient to keep pace with current and predicted future sea level rise? (Figure 2D; Results Section 3)"))
+3. Is elevation gain sufficient to keep pace with current and predicted future sea level rise? (Figure 1D; Results Section 3)"))
 } else {
-  knitr::asis_output(paste0("1. What are the elevation dynamics of coastal wetlands at ", params$park_name, "? (Figure 2B; Results Section 1)\n
+  knitr::asis_output(paste0("1. What are the elevation dynamics of coastal wetlands at ", params$park_name, "? (Figure 1B; Results Section 1)\n
 
-2. Is elevation gain sufficient to keep pace with current and predicted future sea level rise? (Figure 2D; Results Section 2)"))
+2. Is elevation gain sufficient to keep pace with current and predicted future sea level rise? (Figure 1D; Results Section 2)"))
 }
 ```
 
-```{r surface-elev-diagram, echo=FALSE, fig.cap=paste("Figure 2. Conceptual diagram showing the relationship among wetland surface elevation (A), tidal datums (C), and their respective rates of change (B and D). Understanding these relationships is important for evaluating the survival of a wetland community in response to sea-level rise."), message=FALSE, warning=FALSE, out.width='100%'}
+```{r surface-elev-diagram, echo=FALSE, fig.cap=paste("Figure 1. Conceptual diagram showing the relationship among wetland surface elevation (A), tidal datums (C), and their respective rates of change (B and D). Understanding these relationships is important for evaluating the survival of a wetland community in response to sea-level rise."), message=FALSE, warning=FALSE, out.width='100%'}
 
 knitr::include_graphics(paste0(here::here("images"), "/surface_elevation_diagram.jpg"))
 ```
@@ -197,7 +206,7 @@ knitr::include_graphics(paste0(here::here("images"), "/surface_elevation_diagram
 
 ### Protocol
 
-SECN's long-term, standardized monitoring protocol for monitoring surface elevation change ([Lynch et al. 2015](#refs)) is implemented semiannually in the spring and fall at `r params$park_name` (Figure 1). The SET is a portable mechanical leveling device providing repeated, high-resolution measurements of elevation change in wetland sediments or shallow water bottoms relative to the depth of a permanent benchmark that has been anchored into the soil until refusal. During measurements, the SET arm is attached to the permanent SET benchmark and extended over the wetland surface at four fixed positions. The SET arm is carefully leveled, and each of nine fiberglass pins are lowered through the arm to the soil surface. The height of each pin above the arm is measured on repeated sampling events. Changes in the height of the pins between sampling events are used to quantify soil surface elevation change over time relative to the permanent benchmark. `r total_measurements_text(park_code = params$park_code)` Additional details on the SET technique can be found in [Cahoon et al. 2002a](#refs), [Cahoon et al. 2002b](#refs), [Cahoon 2024](#refs), [Callaway et al. 2013](#refs), [Lynch et al. 2015](#refs).
+SECN's long-term, standardized monitoring protocol for monitoring surface elevation change ([Lynch et al. 2015](#refs)) is implemented semiannually in the spring and fall at `r params$park_name`. The SET is a portable mechanical leveling device providing repeated, high-resolution measurements of elevation change in wetland sediments or shallow water bottoms relative to the depth of a permanent benchmark that has been anchored into the soil until refusal. During measurements, the SET arm is attached to the permanent SET benchmark and extended over the wetland surface at four fixed positions. The SET arm is carefully leveled, and each of nine fiberglass pins are lowered through the arm to the soil surface. The height of each pin above the arm is measured on repeated sampling events. Changes in the height of the pins between sampling events are used to quantify soil surface elevation change over time relative to the permanent benchmark. `r total_measurements_text(park_code = params$park_code)` Additional details on the SET technique can be found in [Cahoon et al. 2002a](#refs), [Cahoon et al. 2002b](#refs), [Cahoon 2024](#refs), [Callaway et al. 2013](#refs), [Lynch et al. 2015](#refs).
 
 ### Study Site & Sample Size
 
@@ -210,7 +219,7 @@ active_site_count <- data %>%
   pull(site_count)
 ```
 
-Surface elevation change is actively monitored at `r as.character(english::english(active_site_count))` site`r if (active_site_count > 1){'s'}` within `r params$park_name` (Figure 3). Sites were located so as to be both representative of the coastal wetland habitat throughout each park and also to facilitate ease of access for repeated sampling trips ([Lynch et al. 2015](#refs) - see SOP 1: Project Planning). `r extra_sample_size_text(park_code = params$park_code)` Additional details on the status of each site, the number of replicate SET stations at each site, and the dates of the initial and most recent measurements are shown in Table 1 below.
+Surface elevation change is actively monitored at `r as.character(english::english(active_site_count))` site`r if (active_site_count > 1){'s'}` within `r params$park_name` (Figure 2). Sites were located so as to be both representative of the coastal wetland habitat throughout each park and also to facilitate ease of access for repeated sampling trips ([Lynch et al. 2015](#refs) - see SOP 1: Project Planning). `r extra_sample_size_text(park_code = params$park_code)` Additional details on the status of each site, the number of replicate SET stations at each site, and the dates of the initial and most recent measurements are shown in Table 1 below.
 
 All data utilized in this report have undergone quality assurance, quality control, and certification according to the procedures outlined in the [NPS Coastal Elevation Data QAQC and Publication SOP](https://irma.nps.gov/DataStore/Reference/Profile/2298702) ([Thorsdatter et al. 2023](#refs)). These data are available for public use and can be downloaded from the [NPS DataStore](https://irma.nps.gov/DataStore/Reference/Profile/2316550).
 
@@ -251,7 +260,7 @@ We estimated a recent rate of relative sea-level rise using the method described
 
 We estimated future projected relative sea-level rise rates using the five alternative SLR scenarios produced by [Sweet et al. 2022](#refs) for the 5th National Climate Assessment. The low, intermediate-low, intermediate, intermediate-high, and high SLR scenarios correspond to global mean sea level increases of 0.3 m, 0.5 m, 1.0 m, 1.5 m, and 2.0 m (respectively) by 2100. To approximate the RSLR rate by 2100 under each of the five scenarios, we used the data provided by [Sweet et al. 2022](#refs) to estimate future RSLR rates for the 2090-2100 decade for the `r get_long_slr_rate(params$park_code)$Station.Name` tide gauge as outlined in [Chivoiu et al. 2020](#refs), [Moon et al. 2022](#refs), and [Osland et al. 2024](#refs). `r extra_slr_methods_text$extra_slr_methods_text3`
 
-```{r station-map, out.width = '100%', echo=FALSE, fig.cap=paste0("Figure 3. Individual SET stations within ", params$park_name, ". Click on the points to see the site and station labels."), message=FALSE, warning=FALSE}
+```{r station-map, out.width = '100%', echo=FALSE, fig.cap=paste0("Figure 2. Individual SET stations within ", params$park_name, ". Click on the points to see the site and station labels."), message=FALSE, warning=FALSE}
 map_SETs(data, park_code = params$park_code, dp_id = params$data_package_id, dp_year = params$data_package_year, dp_pub_date = params$data_package_pub_date)
 ```
 
@@ -278,9 +287,9 @@ park_set_rate <- data %>%
 ```{r set-results-text, echo=FALSE, warning=FALSE, message=FALSE}
 
 if (!params$park_code %in% c("FOMA", "CALO")) {
-  knitr::asis_output(paste0("Across all ", as.character(english::english(active_site_count)), " actively monitored sites at ", params$park_name, ", the park-wide average rate of surface elevation change was ", park_set_rate$park_set_rate_text, ". Site-level rates of surface elevation change varied from a low of ", site_set_rates %>% slice_min(as.numeric(format_result_vals(rate))) %>% pull(site_set_rate_text) %>% knitr::combine_words(), " at ", site_set_rates %>% slice_min(as.numeric(format_result_vals(rate))) %>% pull(site_name) %>% knitr::combine_words(), " to a high of ", site_set_rates %>% slice_max(as.numeric(format_result_vals(rate))) %>% pull(site_set_rate_text) %>% knitr::combine_words(), " at ", site_set_rates %>% slice_max(as.numeric(format_result_vals(rate))) %>% pull(site_name) %>% knitr::combine_words(), " (Table 2; Figure 4)."))
+  knitr::asis_output(paste0("Across all ", as.character(english::english(active_site_count)), " actively monitored sites at ", params$park_name, ", the park-wide average rate of surface elevation change was ", park_set_rate$park_set_rate_text, ". Site-level rates of surface elevation change varied from a low of ", site_set_rates %>% slice_min(as.numeric(format_result_vals(rate))) %>% pull(site_set_rate_text) %>% knitr::combine_words(), " at ", site_set_rates %>% slice_min(as.numeric(format_result_vals(rate))) %>% pull(site_name) %>% knitr::combine_words(), " to a high of ", site_set_rates %>% slice_max(as.numeric(format_result_vals(rate))) %>% pull(site_set_rate_text) %>% knitr::combine_words(), " at ", site_set_rates %>% slice_max(as.numeric(format_result_vals(rate))) %>% pull(site_name) %>% knitr::combine_words(), " (Table 2; Figure 3)."))
 } else if (params$park_code %in% c("FOMA", "CALO")) {
-  knitr::asis_output(paste0("Surface elevation change at the single site at ", params$park_name, " was ", site_set_rates %>% pull(site_set_rate_text), " (Table 2; Figure 4)."))
+  knitr::asis_output(paste0("Surface elevation change at the single site at ", params$park_name, " was ", site_set_rates %>% pull(site_set_rate_text), " (Table 2; Figure 3)."))
 }
 ```
 
@@ -289,7 +298,7 @@ if (!params$park_code %in% c("FOMA", "CALO")) {
 site_elev_rates_tbl(site_set_rates_df = site_set_rates)
 ```
 
-```{r site-sets-fig, echo=FALSE, fig.cap=paste0("Figure 4. Site-level surface elevation change at ", params$park_name, ". Rates of surface elevation change (SEC) are shown in panel labels. Hover the mouse over a data point to see the cumulative surface elevation change value on a specific date, or click and drag over a specific time to zoom in. Double click to zoom back out."), message=FALSE, warning=FALSE, out.width='100%', out.height=fig4_height}
+```{r site-sets-fig, echo=FALSE, fig.cap=paste0("Figure 3. Site-level surface elevation change at ", params$park_name, ". Rates of surface elevation change (SEC) are shown in panel labels. Hover the mouse over a data point to see the cumulative surface elevation change value on a specific date, or click and drag over a specific time to zoom in. Double click to zoom back out."), message=FALSE, warning=FALSE, out.width='100%', out.height=fig4_height}
 
 if (params$park_code %in% c("CANA", "CAHA", "CUIS", "FOFR", "FOPU", "TIMU", "FOMA", "CALO")) {
   site_sets_fig_plot(site_set_rates_df = site_set_rates, ncol = 2, panel.spacing.x = 20, panel.spacing.y = 20, strip.text.margin = 14)
@@ -346,10 +355,10 @@ water_level_text <- sfcn_secn_water_level_text(park_code = params$park_code)
 ```
 
 ```{r hydro-results-text, echo=FALSE, eval=include_wl_data}
-knitr::asis_output(paste0("Water level data was collected in the nearby tidal creek", if (n_wl_loggers > 1){'s'}, " at ", if_else(params$park_code %in% c("CANA", "CAHA", "CUIS", "FOPU", "TIMU", "FOMA"), paste0("the ", wl_sites), wl_sites), " over the period between ", year(park_hydro$first_date), " - ", year(park_hydro$last_date), " and is presented in Figure 5 below. ", water_level_text))
+knitr::asis_output(paste0("Water level data was collected in the nearby tidal creek", if (n_wl_loggers > 1){'s'}, " at ", if_else(params$park_code %in% c("CANA", "CAHA", "CUIS", "FOPU", "TIMU", "FOMA"), paste0("the ", wl_sites), wl_sites), " over the period between ", year(park_hydro$first_date), " - ", year(park_hydro$last_date), " and is presented in Figure 4 below. ", water_level_text))
 ```
 
-```{r site-wl-fig, echo=FALSE, eval=include_wl_data, fig.cap=paste0("Figure 5. Water level data at ", params$park_name, ". Hover the mouse over a data point to see the water level, or click and drag over a specific area to zoom in. Double click to zoom back out."), message=FALSE, warning=FALSE, out.width='100%'}
+```{r site-wl-fig, echo=FALSE, eval=include_wl_data, fig.cap=paste0("Figure 4. Water level data at ", params$park_name, ". Hover the mouse over a data point to see the water level, or click and drag over a specific area to zoom in. Double click to zoom back out."), message=FALSE, warning=FALSE, out.width='100%'}
 
 if (params$park_code %in% c("CANA", "CAHA", "CUIS", "FOPU", "TIMU", "FOMA", "CALO")) {
   site_wl_plot(wl_df = wl_data, time_interval = "30 min", site_hydro_df = site_hydro, nrow = 1, show.marsh.elev = FALSE, show.longest.flood = FALSE, x.axis.title = "Water level (m)")
@@ -381,16 +390,16 @@ slr_rate_comps <- format_slr_rate_comps(park_code = params$park_code, long_slr_r
 extra_slr_results_text <- extra_slr_results_text(park_code = params$park_code)
 ```
 
-As of `r lubridate::month(Sys.Date(), label = TRUE, abbr = FALSE)` `r lubridate::year(Sys.Date())`, the current long-term rate of relative sea-level rise from the nearest NOAA tide gauge at `r long_slr_rate$Station.Name` was `r long_slr_rate$MSL.Trends.mm.yr.` mm/yr (± `r format_result_vals(long_slr_rate$long_rate_se, decimals = 2)`) for the period between `r long_slr_rate$First.Year` to `r long_slr_rate$Last.Year` (`r paste0("https://tidesandcurrents.noaa.gov/sltrends/sltrends_station.shtml?id=", long_slr_rate$Station.ID)`). `r extra_slr_results_text$extra_long_slr_text1` `r slr_current_rate_comp_text(park_name = params$park_name, slr_rate_comps_df = slr_rate_comps, data_df = data, rate_type = "relative long-term")` `r if_else(params$park_code != "FOFR", paste0("(Figure 6)"), paste0("(Figure 5)"))`.
+As of `r lubridate::month(Sys.Date(), label = TRUE, abbr = FALSE)` `r lubridate::year(Sys.Date())`, the current long-term rate of relative sea-level rise from the nearest NOAA tide gauge at `r long_slr_rate$Station.Name` was `r long_slr_rate$MSL.Trends.mm.yr.` mm/yr (± `r format_result_vals(long_slr_rate$long_rate_se, decimals = 2)`) for the period between `r long_slr_rate$First.Year` to `r long_slr_rate$Last.Year` (`r paste0("https://tidesandcurrents.noaa.gov/sltrends/sltrends_station.shtml?id=", long_slr_rate$Station.ID)`). `r extra_slr_results_text$extra_long_slr_text1` `r slr_current_rate_comp_text(park_name = params$park_name, slr_rate_comps_df = slr_rate_comps, data_df = data, rate_type = "relative long-term")` `r if_else(params$park_code != "FOFR", paste0("(Figure 5)"), paste0("(Figure 4)"))`.
 
-Additionally, using the sea-level data from the nearby NOAA tide gauge, we calculated a recent rate of relative sea-level rise of `r recent_slr_rate %>% filter(term == "yr") %>% mutate(estimate = format_result_vals(estimate)) %>% pull(estimate)` mm/yr (± `r recent_slr_rate %>% filter(term == "yr") %>% mutate(std.error = format_result_vals(std.error)) %>% pull(std.error)`) for `r params$park_name` over the most recent tidal epoch (2001-2019). `r extra_slr_results_text$extra_recent_slr_text1` `r slr_current_rate_comp_text(park_name = params$park_name, slr_rate_comps_df = slr_rate_comps, data_df = data, rate_type = "relative recent")` `r if_else(params$park_code != "FOFR", paste0("(Figure 6)"), paste0("(Figure 5)"))`.
+Additionally, using the sea-level data from the nearby NOAA tide gauge, we calculated a recent rate of relative sea-level rise of `r recent_slr_rate %>% filter(term == "yr") %>% mutate(estimate = format_result_vals(estimate)) %>% pull(estimate)` mm/yr (± `r recent_slr_rate %>% filter(term == "yr") %>% mutate(std.error = format_result_vals(std.error)) %>% pull(std.error)`) for `r params$park_name` over the most recent tidal epoch (2001-2019). `r extra_slr_results_text$extra_recent_slr_text1` `r slr_current_rate_comp_text(park_name = params$park_name, slr_rate_comps_df = slr_rate_comps, data_df = data, rate_type = "relative recent")` `r if_else(params$park_code != "FOFR", paste0("(Figure 5)"), paste0("(Figure 4)"))`.
 
 ```{r site-slr-recent-fig-num, echo=FALSE}
 
 if(params$park_code != "FOFR") {
-  site_slr_recent_fig_num <- "Figure 6"
-} else {
   site_slr_recent_fig_num <- "Figure 5"
+} else {
+  site_slr_recent_fig_num <- "Figure 4"
 }
 ```
 
@@ -401,13 +410,13 @@ site_slr_recent_plot(park_code = params$park_code, long_slr_rate_df = long_slr_r
 
 #### Comparisons to future sea-level rise
 
-Based on the calculations provided in [Sweet et al. 2022](#refs), future predicted rates of relative sea-level rise by 2100 for `r params$park_name` were `r future_slr_rate$future_slr_rate[future_slr_rate$scenario_name == "low"]`, `r future_slr_rate$future_slr_rate[future_slr_rate$scenario_name == "int_low"]`, `r future_slr_rate$future_slr_rate[future_slr_rate$scenario_name == "int"]`, `r future_slr_rate$future_slr_rate[future_slr_rate$scenario_name == "int_high"]`, and `r future_slr_rate$future_slr_rate[future_slr_rate$scenario_name == "high"]` mm/yr for the low, intermediate-low, intermediate, intermediate-high, and high future sea-level rise scenarios, respectively. `r extra_slr_results_text$extra_future_slr_text1` `r extra_slr_results_text$extra_future_slr_text2` `r if_else(params$park_code != "FOFR", paste0("(Figure 7)"), paste0("(Figure 6)"))`.
+Based on the calculations provided in [Sweet et al. 2022](#refs), future predicted rates of relative sea-level rise by 2100 for `r params$park_name` were `r future_slr_rate$future_slr_rate[future_slr_rate$scenario_name == "low"]`, `r future_slr_rate$future_slr_rate[future_slr_rate$scenario_name == "int_low"]`, `r future_slr_rate$future_slr_rate[future_slr_rate$scenario_name == "int"]`, `r future_slr_rate$future_slr_rate[future_slr_rate$scenario_name == "int_high"]`, and `r future_slr_rate$future_slr_rate[future_slr_rate$scenario_name == "high"]` mm/yr for the low, intermediate-low, intermediate, intermediate-high, and high future sea-level rise scenarios, respectively. `r extra_slr_results_text$extra_future_slr_text1` `r extra_slr_results_text$extra_future_slr_text2` `r if_else(params$park_code != "FOFR", paste0("(Figure 6)"), paste0("(Figure 5)"))`.
 
 ```{r site-future-slr-fig-num, echo=FALSE}
 if(params$park_code != "FOFR") {
-  site_future_slr_fig_num <- "Figure 7"
-} else {
   site_future_slr_fig_num <- "Figure 6"
+} else {
+  site_future_slr_fig_num <- "Figure 5"
 }
 ```
 
