@@ -462,7 +462,9 @@ summary_tbl(slr_rate_comps_df = slr_rate_comps, site_hydro_df = site_hydro, park
 | [Church, J.A, Woodworth, P.L., Aarup, T., and Wilson, W.S., 2010. Understanding sea level rise and variability. Blackwell, New York, NY.](https://doi.org/10.1002/9781444323276)
 | 
 | [Curdts, L.T., 2017. Continuous water level data collection and management using Onset HOBO® data loggers: A Northeast Coastal and Barrier Network methods document. Natural Resource Report. NPS/NCBN/NRR—2017/1370. National Park Service. Fort Collins, Colorado https://irma.nps.gov/DataStore/Reference/Profile/2237862.](https://irma.nps.gov/DataStore/Reference/Profile/2237862)
-| 
+|
+| [Engelhart, S.E., Horton, B.P., Douglas, B.C., Peltier, W.R., and Törnqvist, T.E., 2009. Spatial variability of late Holocene and 20th century sea-level rise along the Atlantic coast of the United States. Geology 37:1115-1118.](https://doi.org/10.1130/G30360A.1)
+|
 | [Feher, L.C., Osland, M.J., Johnson, D.J., Grace, J.B., Guntenspergen, G.R., Stewart, D.R., Coronado-Molina, C., and Sklar, F.H., 2024. Nonlinear patterns of surface elevation change in coastal wetlands: The value of generalized additive models for quantifying rates of change. Estuaries and Coasts 47:1893-1902.](https://doi.org/10.1007/s12237-023-01268-w)
 | 
 | [Jankowski, K.L., Törnqvist, T.E., and Fernandes, A.M., 2017. Vulnerability of Louisiana’s coastal wetlands to present-day rates of relative sea-level rise. Nature Communications 8:1–7.](https://doi.org/10.1038/ncomms14792)
