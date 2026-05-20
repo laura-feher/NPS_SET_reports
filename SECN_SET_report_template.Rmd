@@ -1,6 +1,7 @@
 ---
 author: "Southeast Coast Network (SECN)"
 date: "`r format(Sys.time(), '%B %d, %Y')`"
+lang: en-US
 execute:
   message: false
   warning: false
@@ -22,9 +23,9 @@ output:
           - header.html
 
 params:
-  park_code: "TIMU"
-  park_name: "Timucuan Ecological and Historic Preserve"
-  front_photo_file: "TIMU_title_photo.jpg"
+  park_code: "FOPU"
+  park_name: "Fort Pulaski National Monument"
+  front_photo_file: "FOPU_title_photo.jpg"
   INM_network: "SECN"
   data_package_id: "2316550"
   data_package_year: "2026"
@@ -176,7 +177,7 @@ if (params$park_code %in% c("FOPU", "TIMU")) {
 knitr::include_graphics(paste0(here::here("images"), "/", params$front_photo_file))
 ```
 
-# Background
+## Background
 
 Coastal wetlands exist within a narrow range of elevation which is influenced by local hydrologic conditions. As sea level rises, coastal wetland systems must build elevation at a rate equal to or greater than the rate of sea-level rise to maintain favorable hydrologic conditions for their survival (Figure 1). With global rates of sea-level rise predicted to increase over the coming decades ([Church et al. 2010](#refs)), many more coastal wetlands may become vulnerable to increased inundation. Additionally, certain areas of the coast, such as the mid-Atlantic region, can undergo even greater sea-level rise due to changes in coastal ocean circulation and spatial variation in rates of glacio-isostatic adjustment and Holocene sediment compaction ([Engelhart et al. 2009](#refs), [Miller et al. 2013](#refs), [Sallenger et al. 2012](#refs)).
 
@@ -202,7 +203,7 @@ if (params$park_code != "FOFR") {
 knitr::include_graphics(paste0(here::here("images"), "/surface_elevation_diagram.jpg"))
 ```
 
-# Methods
+## Methods
 
 ### Protocol
 
@@ -264,7 +265,7 @@ We estimated future projected relative sea-level rise rates using the five alter
 map_SETs(data, park_code = params$park_code, dp_id = params$data_package_id, dp_year = params$data_package_year, dp_pub_date = params$data_package_pub_date)
 ```
 
-# Results
+## Results
 
 ### 1. What are the elevation dynamics of coastal wetlands at `r params$park_name`?
 
@@ -425,7 +426,7 @@ if(params$park_code != "FOFR") {
 site_slr_future_plot(park_code = params$park_code, future_slr_rate_df = future_slr_rate, site_set_rates_df = site_set_rates)
 ```
 
-# Discussion & Conclusions
+## Discussion & Conclusions
 
 ```{r message=FALSE, warning=FALSE, include=FALSE}
 summary_paragraphs <- summary_paragraph(park_code = params$park_code)
@@ -442,7 +443,7 @@ if (params$park_code != "FOFR") {
 }
 ```
 
-# References {#refs}
+## References {#refs}
 
 | [Cahoon, D.R., Lynch, J.C., Hensel, P., Boumans, R., Perez, B.C., Segura, B., and Day Jr, J.W., 2002. High-precision measurements of wetland sediment elevation: I. Recent improvements to the sedimentation-erosion table. Journal of Sedimentary Research 72:730-733.](https://doi.org/10.1306/020702720730)
 | 

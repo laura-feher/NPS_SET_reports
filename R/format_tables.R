@@ -105,6 +105,9 @@ summary_tbl <- function(slr_rate_comps_df, site_hydro_df, park_name, long_slr_ra
   
   site_station <- if_else(!park %in% c("GWMP", "NACE"), "Site", "Station")
   
+  green_text <- "green"
+  red_text <- "#AD0000"
+  
   if (!park %in% c("VIIS", "SARI", "BISC", "CANA", "CAHA", "CUIS", "FOFR", "FOPU", "TIMU", "FOMA", "CALO")) {
     slr_rate_comps_df %>%
       {if (park %in% c("GWMP", "NACE"))
@@ -132,8 +135,8 @@ summary_tbl <- function(slr_rate_comps_df, site_hydro_df, park_name, long_slr_ra
           rate_plus_se_text,
           format = "html",
           color = case_when(
-            as.numeric(rate_text) == rate_max ~ "green",
-            as.numeric(rate_text) == rate_min ~ "red",
+            as.numeric(rate_text) == rate_max ~ green_text,
+            as.numeric(rate_text) == rate_min ~ red_text,
             .default = "black"
           )
         ),
@@ -141,8 +144,8 @@ summary_tbl <- function(slr_rate_comps_df, site_hydro_df, park_name, long_slr_ra
           elev_navd88_text,
           format = "html",
           color = case_when(
-            as.numeric(elev_navd88_text) == elev_navd88_max ~ "green",
-            as.numeric(elev_navd88_text) == elev_navd88_min ~ "red",
+            as.numeric(elev_navd88_text) == elev_navd88_max ~ green_text,
+            as.numeric(elev_navd88_text) == elev_navd88_min ~ red_text,
             .default = "black"
           )
         ),
@@ -151,8 +154,8 @@ summary_tbl <- function(slr_rate_comps_df, site_hydro_df, park_name, long_slr_ra
           format = "html",
           color = case_when(
             as.numeric(MHW_text) == MHW_min & park_code == "BOHA" ~ "black",
-            as.numeric(MHW_text) == MHW_min ~ "green",
-            as.numeric(MHW_text) == MHW_max ~ "red",
+            as.numeric(MHW_text) == MHW_min ~ green_text,
+            as.numeric(MHW_text) == MHW_max ~ red_text,
             .default = "black"
           )
         ),
@@ -162,8 +165,8 @@ summary_tbl <- function(slr_rate_comps_df, site_hydro_df, park_name, long_slr_ra
           format = "html",
           color = case_when(
             as.numeric(MSL_text) == MSL_min & park_code == "BOHA" ~ "black",
-            as.numeric(MSL_text) == MSL_min ~ "green",
-            as.numeric(MSL_text) == MSL_max ~ "red",
+            as.numeric(MSL_text) == MSL_min ~ green_text,
+            as.numeric(MSL_text) == MSL_max ~ red_text,
             .default = "black"
           )
         ),
@@ -171,8 +174,8 @@ summary_tbl <- function(slr_rate_comps_df, site_hydro_df, park_name, long_slr_ra
           percent_time_flooded_text,
           format = "html",
           color = case_when(
-            as.numeric(percent_time_flooded_text) == percent_time_flooded_min ~ "green",
-            as.numeric(percent_time_flooded_text) == percent_time_flooded_max ~ "red",
+            as.numeric(percent_time_flooded_text) == percent_time_flooded_min ~ green_text,
+            as.numeric(percent_time_flooded_text) == percent_time_flooded_max ~ red_text,
             .default = "black"
           )
         ),
@@ -181,8 +184,8 @@ summary_tbl <- function(slr_rate_comps_df, site_hydro_df, park_name, long_slr_ra
           format = "html",
           color = if_else(
             as.numeric(elev_capital_text) >= 0.5,
-            "green",
-            "red"
+            green_text,
+            red_text
           )
         ),
         long_rate_comp_text = cell_spec(
@@ -190,8 +193,8 @@ summary_tbl <- function(slr_rate_comps_df, site_hydro_df, park_name, long_slr_ra
           format = "html",
           color = if_else(
             long_rate_comp_text == "lower",
-            "red",
-            "green"
+            red_text,
+            green_text
           )
         ),
         recent_rate_comp_text = cell_spec(
@@ -199,8 +202,8 @@ summary_tbl <- function(slr_rate_comps_df, site_hydro_df, park_name, long_slr_ra
           format = "html",
           color = if_else(
             recent_rate_comp_text == "lower",
-            "red",
-            "green"
+            red_text,
+            green_text
           )
         )
       ) %>%
@@ -234,8 +237,8 @@ summary_tbl <- function(slr_rate_comps_df, site_hydro_df, park_name, long_slr_ra
           rate_plus_se_text,
           format = "html",
           color = case_when(
-            as.numeric(rate_text) == rate_max ~ "green",
-            as.numeric(rate_text) == rate_min ~ "red",
+            as.numeric(rate_text) == rate_max ~ green_text,
+            as.numeric(rate_text) == rate_min ~ red_text,
             .default = "black"
           )
         ),
@@ -244,8 +247,8 @@ summary_tbl <- function(slr_rate_comps_df, site_hydro_df, park_name, long_slr_ra
           format = "html",
           color = if_else(
             long_rate_comp_text == "lower",
-            "red",
-            "green"
+            red_text,
+            green_text
           )
         ),
         recent_rate_comp_text = cell_spec(
@@ -253,8 +256,8 @@ summary_tbl <- function(slr_rate_comps_df, site_hydro_df, park_name, long_slr_ra
           format = "html",
           color = if_else(
             recent_rate_comp_text == "lower",
-            "red",
-            "green"
+            red_text,
+            green_text
           )
         )
       ) %>%
@@ -294,8 +297,8 @@ summary_tbl <- function(slr_rate_comps_df, site_hydro_df, park_name, long_slr_ra
           format = "html",
           color = case_when(
             park %in% c("SARI", "FOMA", "CALO") ~ "black",
-            as.numeric(rate_text) == rate_max ~ "green",
-            as.numeric(rate_text) == rate_min ~ "red",
+            as.numeric(rate_text) == rate_max ~ green_text,
+            as.numeric(rate_text) == rate_min ~ red_text,
             .default = "black"
           )
         ),
@@ -304,8 +307,8 @@ summary_tbl <- function(slr_rate_comps_df, site_hydro_df, park_name, long_slr_ra
           format = "html",
           color = case_when(
             park %in% c("SARI", "CANA", "CAHA", "CUIS", "FOPU", "TIMU", "FOMA", "CALO") ~ "black",
-            as.numeric(MHW_text) == MHW_min ~ "green",
-            as.numeric(MHW_text) == MHW_max ~ "red",
+            as.numeric(MHW_text) == MHW_min ~ green_text,
+            as.numeric(MHW_text) == MHW_max ~ red_text,
             .default = "black"
           )
         ),
@@ -315,8 +318,8 @@ summary_tbl <- function(slr_rate_comps_df, site_hydro_df, park_name, long_slr_ra
           format = "html",
           color = case_when(
             park %in% c("SARI", "CANA", "CAHA", "CUIS", "FOPU", "TIMU", "FOMA", "CALO") ~ "black",
-            MSL == MSL_min ~ "green",
-            MSL == MSL_max ~ "red",
+            MSL == MSL_min ~ green_text,
+            MSL == MSL_max ~ red_text,
             .default = "black"
           )
         ),
@@ -325,8 +328,8 @@ summary_tbl <- function(slr_rate_comps_df, site_hydro_df, park_name, long_slr_ra
           format = "html",
           color = if_else(
             long_rate_comp_text == "lower",
-            "red",
-            "green"
+            red_text,
+            green_text
           )
         ),
         recent_rate_comp_text = cell_spec(
@@ -334,8 +337,8 @@ summary_tbl <- function(slr_rate_comps_df, site_hydro_df, park_name, long_slr_ra
           format = "html",
           color = if_else(
             recent_rate_comp_text == "lower",
-            "red",
-            "green"
+            red_text,
+            green_text
           )
         )
       ) %>%
